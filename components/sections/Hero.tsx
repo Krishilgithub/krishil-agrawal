@@ -1,153 +1,104 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { gsap } from "gsap";
-import { motion } from "framer-motion";
 
 export function Hero() {
-  const containerRef = useRef<HTMLElement>(null);
-  const text1Ref = useRef<HTMLDivElement>(null);
-  const text2Ref = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const tl = gsap.timeline();
 
     tl.fromTo(
-      ".reveal-text",
-      { y: 150, opacity: 0, skewY: 5 },
-      {
-        y: 0,
-        opacity: 1,
-        skewY: 0,
-        duration: 1,
-        stagger: 0.2,
-        ease: "power4.out",
-        delay: 0.2,
-      },
-    )
-      .fromTo(
-        ".hero-image",
-        { scale: 0.8, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 1, ease: "back.out(1.2)" },
-        "-=0.6",
-      )
-      .fromTo(
-        ".hero-fade-in",
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power2.out" },
-        "-=0.5",
-      );
+      ".hero-fade-up",
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out", delay: 0.2 }
+    ).fromTo(
+      ".hero-image-reveal",
+      { scale: 0.8, opacity: 0, filter: "blur(10px)" },
+      { scale: 1, opacity: 1, filter: "blur(0px)", duration: 1, ease: "power2.out" },
+      "-=0.6"
+    );
   }, []);
 
+  const techLogos = [
+    { name: "LangChain", url: "https://cdn.simpleicons.org/langchain" },
+    { name: "Pinecone", url: "https://cdn.simpleicons.org/pinecone" },
+    { name: "n8n", url: "https://cdn.simpleicons.org/n8n" },
+    { name: "Supabase", url: "https://cdn.simpleicons.org/supabase" },
+    { name: "Docker", url: "https://cdn.simpleicons.org/docker" },
+  ];
+
   return (
-    <section
-      id="hero"
-      ref={containerRef}
-      className="relative min-h-screen flex flex-col justify-center items-center pt-20 pb-10 px-6 overflow-hidden bg-white"
+    <section 
+      id="hero" 
+      className="relative min-h-screen flex items-center pt-20 pb-10 px-6 sm:px-12 max-w-7xl mx-auto bg-white"
     >
-      <div className="max-w-7xl w-full mx-auto flex flex-col items-center justify-center relative z-10 pt-16">
-        {/* Top small intro */}
-        <div className="hero-fade-in flex items-center gap-2 mb-6 sm:mb-8 z-20">
-          <span className="text-xl sm:text-2xl">👋</span>
-          <p className="text-lg sm:text-xl md:text-2xl font-medium text-gray-700">
-            Hi, my name is{" "}
-            <span className="font-bold text-black border-b-2 border-red-500">
-              Krishil Agrawal<span className="text-red-500">.</span>
-            </span>{" "}
-            and I am an
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center z-10 pt-10 md:pt-0">
+        
+        {/* LEFT COLUMN: Content */}
+        <div className="flex flex-col items-center md:items-start text-center md:text-left order-1 md:order-1">
+          
+          <div className="hero-fade-up flex flex-wrap justify-center md:justify-start items-center gap-2 mb-6">
+            <span className="text-2xl">👋</span>
+            <p className="text-lg md:text-xl font-medium text-gray-700">
+              Hi, my name is <span className="font-bold text-black border-b-2 border-red-500">Krishil Agrawal</span> and I am an
+            </p>
+          </div>
+
+          <h1 className="hero-fade-up font-outfit text-5xl sm:text-6xl lg:text-[5.5rem] leading-[1.1] tracking-tight font-black text-[#111] mb-6 whitespace-nowrap">
+            ML Engineer<span className="text-red-500">.</span>
+          </h1>
+
+          <p className="hero-fade-up text-lg md:text-xl xl:text-2xl font-light text-gray-600 mb-3 max-w-lg leading-relaxed">
+            Building intelligent systems with AI, ML & scalable backend technologies
           </p>
-        </div>
-
-        {/* Large Typography Container */}
-        <div className="relative w-full flex flex-col items-center justify-center mt-4">
-          {/* Line 1: Solid Text */}
-          <div className="overflow-hidden z-10 w-full text-center">
-            <h1
-              ref={text1Ref}
-              className="reveal-text font-outfit text-[clamp(2rem,11vw,12rem)] leading-none tracking-tight font-extrabold text-[#171717] w-full whitespace-nowrap"
-            >
-              ML Engineer
-            </h1>
-          </div>
-
-          {/* Picture Box */}
-          <div className="absolute top-[10%] md:top-[12%] right-[5%] md:right-[15%] z-20 w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] md:w-[350px] md:h-[350px] pointer-events-none hero-image">
-            <div className="relative w-full h-full grayscale hover:grayscale-0 transition-all duration-500 rounded-full overflow-hidden shadow-2xl bg-[#f0f0f0] border-4 border-white">
-              <Image
-                src="/avatar.png"
-                alt="Krishil Agrawal"
-                fill
-                sizes="(max-width: 768px) 250px, 350px"
-                className="object-cover object-top"
-                priority
-              />
-            </div>
-            
-            {/* Rotating Arrow positioned on the edge of the circle */}
-            <motion.div
-              className="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 bg-white border border-black p-3 md:p-4 rounded-full flex items-center justify-center pointer-events-auto cursor-pointer shadow-lg hover:bg-black hover:text-white transition-colors"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            >
-              <ArrowUpRight size={24} />
-            </motion.div>
-          </div>
-
-          {/* Line 2: Outline Text */}
-          <div className="overflow-hidden z-10 w-full text-center mt-4 sm:mt-8">
-            <h1
-              ref={text2Ref}
-              className="reveal-text font-outfit text-[clamp(2rem,11vw,12rem)] leading-none tracking-tight font-extrabold text-outline uppercase whitespace-nowrap"
-            >
-              & Agentic AI
-            </h1>
-          </div>
-        </div>
-
-        {/* Bottom Location & Logos */}
-        <div className="hero-fade-in mt-16 md:mt-24 w-full flex flex-col md:flex-row justify-between items-center gap-8 md:gap-4 absolute bottom-10 px-8">
-          <p className="text-gray-600 text-lg md:text-xl font-medium">
-            based in Vadodara, India
-            <span className="text-red-500 font-bold ">.</span>
+          
+          <p className="hero-fade-up text-base text-gray-400 font-medium mb-10">
+            Based in Vadodara, India.
           </p>
 
-          <div className="flex items-center gap-6 opacity-60 mix-blend-multiply scale-75 md:scale-100 flex-wrap justify-center">
-            {/* Plain text/basic SVG since exact brand icons are varied */}
-            <span className="font-bold text-xl uppercase tracking-widest font-outfit">
-              LangChain
-            </span>
-            <span className="font-bold text-xl uppercase tracking-widest font-outfit text-gray-500">
-              PyTorch
-            </span>
-            <span className="font-bold text-xl uppercase tracking-widest font-outfit">
-              n8n
-            </span>
-            <span className="font-bold text-xl uppercase tracking-widest font-outfit text-gray-400">
-              Supabase
-            </span>
-            <span className="font-bold text-xl uppercase tracking-widest font-outfit">
-              Docker
-            </span>
+          <div className="hero-fade-up flex flex-col sm:flex-row gap-4 mb-14 w-full sm:w-auto">
+            <a href="#contact" className="px-8 py-4 bg-black text-white rounded-full font-semibold hover:scale-105 transition-transform flex justify-center items-center gap-2 shadow-lg hover:shadow-xl w-full sm:w-auto">
+              Hire Me as AI Engineer <ArrowUpRight size={18} />
+            </a>
+            <a href="#projects" className="px-8 py-4 border border-gray-200 text-black shadow-sm rounded-full font-semibold hover:bg-gray-50 transition-all flex justify-center items-center gap-2 w-full sm:w-auto">
+              View My Projects
+            </a>
           </div>
+
+          {/* Tech Stack Logos */}
+          <div className="hero-fade-up flex items-center justify-center md:justify-start gap-8 flex-wrap">
+            {techLogos.map((tech) => (
+              <div key={tech.name} className="group relative w-8 h-8 md:w-10 md:h-10 cursor-pointer" title={tech.name}>
+                <img 
+                  src={tech.url} 
+                  alt={tech.name} 
+                  className="w-full h-full object-contain grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:-translate-y-1"
+                />
+              </div>
+            ))}
+          </div>
+
         </div>
 
-        {/* Floating Action Buttons */}
-        <div className="hero-fade-in mt-20 flex gap-4 z-30 mb-20 md:mb-0 relative">
-          <a
-            href="#contact"
-            className="px-8 py-4 bg-black text-white rounded-full font-semibold hover:scale-105 transition-transform flex items-center gap-2 shadow-xl hover:shadow-2xl"
-          >
-            Hire me as AI Engineer <ArrowUpRight size={18} />
-          </a>
-          <a
-            href="#projects"
-            className="px-8 py-4 border-2 border-black text-black rounded-full font-semibold hover:bg-black hover:text-white transition-all flex items-center gap-2"
-          >
-            View my Projects
-          </a>
+        {/* RIGHT COLUMN: Profile Image */}
+        <div className="hero-image-reveal flex justify-center items-center order-2 md:order-2 mb-8 md:mb-0 mt-8 md:mt-0 relative">
+          <div className="relative w-[65vw] h-[65vw] max-w-[420px] max-h-[420px] rounded-full overflow-hidden shadow-2xl bg-white border-4 border-gray-50 ring-1 ring-gray-100">
+            <Image 
+              src="/avatar.png" 
+              alt="Krishil Agrawal" 
+              fill
+              sizes="(max-width: 768px) 65vw, 420px"
+              className="object-cover object-top"
+              priority
+            />
+          </div>
+          
+          {/* Subtle accent glow behind the circle */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] max-w-[500px] max-h-[500px] bg-gray-200 rounded-full mix-blend-multiply opacity-40 blur-3xl -z-10 pointer-events-none" />
         </div>
+
       </div>
     </section>
   );

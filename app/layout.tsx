@@ -4,6 +4,7 @@ import "./globals.css";
 import { SmoothScroller } from "@/components/layout/SmoothScroller";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { VerticalNav } from "@/components/navigation/VerticalNav";
+import { Analytics } from "@vercel/analytics/react";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -38,6 +39,7 @@ export default function RootLayout({
         <SmoothScroller>
           {children}
         </SmoothScroller>
+        <Analytics />
       </body>
     </html>
   );
