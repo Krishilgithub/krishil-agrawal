@@ -34,7 +34,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${outfit.variable} ${dmSans.variable} h-full antialiased selection:bg-black selection:text-white`}
     >
-      <body suppressHydrationWarning className="min-h-full flex flex-col font-sans overflow-x-hidden relative">
+      <body suppressHydrationWarning className="min-h-full flex flex-col font-sans overflow-x-hidden relative bg-[#fafafa]">
         <CustomCursor />
         <VerticalNav />
         <SmoothScroller>

@@ -19,7 +19,7 @@ export function MagneticButton({
       const { height, width, left, top } = ref.current.getBoundingClientRect();
       const middleX = clientX - (left + width / 2);
       const middleY = clientY - (top + height / 2);
-      setPosition({ x: middleX * 0.3, y: middleY * 0.3 });
+      setPosition({ x: middleX * 0.5, y: middleY * 0.5 });
     }
   };
 
@@ -34,7 +34,7 @@ export function MagneticButton({
       onMouseMove={handleMouse}
       onMouseLeave={reset}
       animate={{ x: position.x, y: position.y }}
-      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+      transition={{ type: "spring", stiffness: 250, damping: 10, mass: 0.1 }}
     >
       {children}
     </motion.div>
