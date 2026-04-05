@@ -28,7 +28,7 @@ export function About() {
               I engineer <span className="text-red-500">intelligence.</span>
             </h3>
             <p className="text-gray-400 text-lg md:text-xl font-medium max-w-xl z-10 leading-relaxed">
-              My deep passion lies at the intersection of Machine Learning and Agentic workflows. From building LangChain orchestration engines to deploying scalable PyTorch models, I bridge the gap between experimental AI and production-ready applications.
+              I specialize at the intersection of Machine Learning and autonomous Agentic workflows. From building robust LangChain orchestration engines to deploying low-latency PyTorch models, I bridge the gap between AI research and highly scalable, production-ready applications.
             </p>
           </motion.div>
 

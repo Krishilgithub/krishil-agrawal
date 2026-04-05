@@ -160,13 +160,22 @@ function TiltCard({ project, onClick }: { project: ProjectData, onClick: (p: Pro
 export function Projects() {
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
 
-  // Lock body scroll when modal is open
+  // Handle Escape key and body lock
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedProject(null);
+      }
+    };
+
     if (selectedProject) {
       document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
     } else {
       document.body.style.overflow = "auto";
     }
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedProject]);
 
   return (
@@ -221,64 +230,67 @@ export function Projects() {
               exit={{ y: 100, opacity: 0, scale: 0.95 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[#111] border border-white/10 rounded-[2rem] shadow-2xl custom-scrollbar"
+              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-[#0a0a0a] border border-white/10 rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.8)] custom-scrollbar"
             >
               <button 
                 onClick={() => setSelectedProject(null)}
-                className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white text-gray-300 hover:text-black rounded-full transition-all duration-300 z-50"
+                className="absolute top-6 right-6 p-3 bg-white/5 text-gray-400 hover:text-white rounded-full transition-all duration-300 z-50 group"
               >
-                <X size={24} />
+                <X size={24} className="group-hover:scale-110 transition-transform" />
               </button>
 
-              <div className="p-8 md:p-14">
-                <span className="px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-full text-xs font-mono tracking-widest uppercase mb-8 inline-block">
-                  Case Study
-                </span>
+              <div className="p-8 md:p-12 lg:p-16 relative z-10">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-2 h-2 rounded-full bg-white opacity-50" />
+                  <span className="text-gray-400 text-sm font-mono tracking-widest uppercase">
+                    Case Study
+                  </span>
+                </div>
                 
-                <h2 className="font-outfit text-4xl md:text-6xl font-bold mb-6 text-white">
+                <h2 className="font-outfit text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 text-white tracking-tight">
                   {selectedProject.title}
                 </h2>
                 
-                <p className="text-xl text-gray-400 font-light max-w-3xl mb-12 leading-relaxed">
+                <p className="text-xl text-gray-400 font-light max-w-3xl mb-16 leading-relaxed">
                   {selectedProject.description}
                 </p>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 relative z-10">
                   
                   {/* Left Column: Problem & Results */}
-                  <div className="lg:col-span-2 flex flex-col gap-10">
-                    <div className="bg-white/5 border border-white/5 rounded-3xl p-8">
-                      <div className="flex items-center gap-3 mb-4">
-                        <Activity className="text-red-500" size={24} />
-                        <h3 className="text-2xl font-bold font-outfit">The Problem</h3>
+                  <div className="lg:col-span-2 flex flex-col gap-6">
+                    <div className="bg-[#111] border border-white/5 rounded-2xl p-8 md:p-10">
+                      <div className="flex items-center gap-4 mb-6">
+                        <Activity className="text-gray-500" size={24} />
+                        <h3 className="text-2xl font-bold font-outfit text-gray-200">The Problem</h3>
                       </div>
                       <p className="text-gray-400 leading-relaxed text-lg">
                         {selectedProject.deepDive?.problem}
                       </p>
                     </div>
 
-                    <div className="bg-green-500/5 border border-green-500/10 rounded-3xl p-8">
-                      <div className="flex items-center gap-3 mb-4">
-                        <Database className="text-green-500" size={24} />
-                        <h3 className="text-2xl font-bold font-outfit">Metrics & Results</h3>
+                    <div className="bg-[#111] border border-white/5 rounded-2xl p-8 md:p-10">
+                      <div className="flex items-center gap-4 mb-6">
+                        <Database className="text-gray-500" size={24} />
+                        <h3 className="text-2xl font-bold font-outfit text-gray-200">Metrics & Results</h3>
                       </div>
-                      <p className="text-gray-300 leading-relaxed text-lg font-medium">
+                      <p className="text-white leading-relaxed text-lg font-medium">
                         {selectedProject.deepDive?.results}
                       </p>
                     </div>
                   </div>
 
                   {/* Right Column: Architecture */}
-                  <div className="bg-white/5 border border-white/5 rounded-3xl p-8 lg:col-span-1 h-fit">
-                    <div className="flex items-center gap-3 mb-6">
-                      <Server className="text-blue-400" size={24} />
-                      <h3 className="text-2xl font-bold font-outfit">Architecture</h3>
+                  <div className="bg-[#111] border border-white/5 rounded-2xl p-8 md:p-10 lg:col-span-1 h-fit">
+                    <div className="flex items-center gap-4 mb-8">
+                      <Server className="text-gray-500" size={24} />
+                      <h3 className="text-2xl font-bold font-outfit text-gray-200">Architecture</h3>
                     </div>
                     
                     <ul className="flex flex-col gap-4">
                       {selectedProject.deepDive?.architecture.map((item, idx) => (
-                        <li key={idx} className="flex gap-3 text-gray-400 items-start">
-                          <ChevronRight className="text-red-500 mt-1 flex-shrink-0" size={18} />
+                        <li key={idx} className="flex gap-4 text-gray-400 items-start">
+                          <ChevronRight className="text-gray-600 mt-1 flex-shrink-0" size={16} />
                           <span className="leading-relaxed">{item}</span>
                         </li>
                       ))}
@@ -286,9 +298,9 @@ export function Projects() {
                     
                     <a 
                       href={selectedProject.deepDive?.link}
-                      className="mt-10 px-6 py-4 bg-white text-black rounded-xl font-semibold hover:bg-gray-200 transition-colors flex justify-center items-center gap-2 w-full shadow-lg"
+                      className="mt-10 px-6 py-4 border border-white/10 hover:border-white/30 text-white rounded-xl font-medium transition-all flex justify-center items-center gap-2 w-full shadow-sm"
                     >
-                      View Live Deployment <ExternalLink size={18} />
+                      View Deployment <ExternalLink size={16} />
                     </a>
                   </div>
                   
