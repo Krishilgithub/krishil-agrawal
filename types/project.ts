@@ -27,6 +27,7 @@ export interface ProjectCaseStudy {
   tagline: string;
   type: string;
   status: string;
+  category: "AI" | "Web";
   links: {
     demo?: string;
     github?: string;

@@ -49,7 +49,8 @@ export default function RootLayout({
     "image": "https://krishil-agrawal.vercel.app/avatar.png",
     "sameAs": [
       "https://www.linkedin.com/in/krishil-agrawal-49aaa9283",
-      "https://github.com/Krishilgithub"
+      "https://github.com/Krishilgithub",
+      "https://x.com/KrishilAgrawal1"
     ],
     "description": "AI ML Engineer focused on scaling intelligent Agentic Systems and deep learning computer vision."
   };
