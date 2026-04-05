@@ -40,20 +40,16 @@ export function Hero() {
         {/* LEFT COLUMN: Content */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left order-1 md:order-1">
           
-          <div className="hero-fade-up flex flex-wrap justify-center md:justify-start items-center gap-2 mb-6">
-            <span className="text-2xl">👋</span>
-            <p className="text-lg md:text-xl font-medium text-gray-700">
-              Hi, my name is <span className="font-bold text-black border-b-2 border-red-500">Krishil Agrawal</span> and I am an
-            </p>
-          </div>
-
           <h1 className="hero-fade-up font-outfit text-5xl sm:text-6xl xl:text-7xl leading-[1.1] tracking-tight font-black text-[#111] mb-6 flex flex-col">
-            <span>Agentic Systems</span>
-            <span>Developer<span className="text-red-500">.</span></span>
+            <span className="text-2xl md:text-3xl font-medium text-gray-700 tracking-normal mb-2 flex items-center gap-3">
+              👋 Hi, I&apos;m <span className="font-bold text-black border-b-4 border-red-500">Krishil Agrawal</span>
+            </span>
+            <span>AI ML Engineer &</span>
+            <span>Agentic Developer<span className="text-red-500">.</span></span>
           </h1>
 
           <p className="hero-fade-up text-lg md:text-xl xl:text-2xl font-light text-gray-600 mb-3 max-w-xl leading-relaxed">
-            Building multi-agent architectures, RAG pipelines, and end-to-end ML systems using LangChain, LangGraph, and CrewAI.
+            Building multi-agent architectures, RAG pipelines, and end-to-end ML systems using LangChain, LangGraph, and PyTorch.
           </p>
           
           <p className="hero-fade-up text-base text-gray-400 font-medium mb-10">
@@ -79,7 +75,7 @@ export function Hero() {
               <div key={tech.name} className="group relative w-8 h-8 md:w-10 md:h-10 cursor-pointer" title={tech.name}>
                 <img 
                   src={tech.url} 
-                  alt={tech.name} 
+                  alt={`${tech.name} logo`} 
                   className="w-full h-full object-contain saturate-0 opacity-40 group-hover:saturate-100 group-hover:opacity-100 transition-all duration-300 transform group-hover:-translate-y-1"
                 />
               </div>
@@ -93,7 +89,7 @@ export function Hero() {
           <div className="relative w-[65vw] h-[65vw] max-w-[420px] max-h-[420px] rounded-full overflow-hidden shadow-2xl bg-white border-4 border-gray-50 ring-1 ring-gray-100">
             <Image 
               src="/avatar.png" 
-              alt="Krishil Agrawal" 
+              alt="Krishil Agrawal ML Engineer" 
               fill
               sizes="(max-width: 768px) 65vw, 420px"
               className="object-cover object-top"

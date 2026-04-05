@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Clock, ExternalLink, Calendar, BrainCircuit } from "lucide-react";
+import { X, Clock, ExternalLink, Calendar, BrainCircuit, List, ChevronRight } from "lucide-react";
 import { BlogArticle } from "@/types/blog";
 
 interface BlogDetailModalProps {
@@ -8,27 +8,70 @@ interface BlogDetailModalProps {
   onClose: () => void;
 }
 
+interface TocItem {
+  id: string;
+  title: string;
+  level: number;
+}
+
 export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
+  const [activeId, setActiveId] = useState<string>("");
+  const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
+
   // Lock body scroll when modal is open
   useEffect(() => {
-    if (blog) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
+    if (blog) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "auto";
+    return () => { document.body.style.overflow = "auto"; };
   }, [blog]);
 
   // Handle Escape key
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
+
+  // Generate TOC items from markdown content
+  const headings = useMemo<TocItem[]>(() => {
+    if (!blog || typeof blog.content !== "string") return [];
+    const blocks = blog.content.split("\n\n");
+    const extracted: TocItem[] = [];
+    
+    blocks.forEach(block => {
+      const trimmedBlock = block.trim();
+      if (trimmedBlock.startsWith("## ") || trimmedBlock.startsWith("### ")) {
+        const firstLine = trimmedBlock.split("\n")[0];
+        const title = firstLine.replace(/#/g, "").trim();
+        const id = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        const level = firstLine.startsWith("### ") ? 3 : 2;
+        extracted.push({ id, title, level });
+      }
+    });
+    return extracted;
+  }, [blog]);
+
+  // Intersection Observer for Scroll Spy
+  useEffect(() => {
+    if (!blog) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-10% 0px -70% 0px" } // trigger when heading is in top 10-30% of screen
+    );
+
+    headings.forEach((heading) => {
+      const el = document.getElementById(heading.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [headings, blog]);
 
   if (!blog) return null;
 
@@ -37,17 +80,32 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   };
 
+  const scrollToHeading = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+      setActiveId(id);
+      setIsMobileTocOpen(false);
+    }
+  };
+
+  const formatText = (text: string) => {
+    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    return formattedText.replace(/\`(.*?)\`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-red-600 font-mono text-sm">$1</code>');
+  };
+
   // Simple custom renderer to style basic markdown structures
   const renderContent = (text: string) => {
     const blocks = text.trim().split("\n\n");
     return blocks.map((block, index) => {
-      // Code blocks
-      if (block.startsWith("\`\`\`")) {
-        const lines = block.split("\n");
+      const trimmedBlock = block.trim();
+      
+      if (trimmedBlock.startsWith("\`\`\`")) {
+        const lines = trimmedBlock.split("\n");
         const codeText = lines.slice(1, lines.length - 1).join("\n");
         return (
           <div key={index} className="my-8 rounded-2xl overflow-hidden bg-[#111] border border-white/10 shadow-2xl">
-            <div className="bg-[#1a1a1a] px-4 py-2 border-b border-white/5 flex gap-2">
+            <div className="bg-[#1a1a1a] px-4 py-3 border-b border-white/5 flex gap-2">
               <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
               <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
               <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
@@ -59,27 +117,44 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
         );
       }
       
-      // H2 Headers
-      if (block.startsWith("## ")) {
+      if (trimmedBlock.startsWith("## ")) {
+        const lines = trimmedBlock.split("\n");
+        const titleLine = lines[0].replace("## ", "").trim();
+        const id = titleLine.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        const restOfBlock = lines.slice(1).join("\n").trim();
+        
         return (
-          <h2 key={index} className="font-outfit text-3xl md:text-4xl font-bold mt-16 mb-6 text-black tracking-tight">
-            {block.replace("## ", "")}
-          </h2>
+          <React.Fragment key={index}>
+            <h2 id={id} className="font-outfit text-3xl md:text-4xl font-bold mt-16 mb-6 text-black tracking-tight scroll-mt-24">
+              {titleLine}
+            </h2>
+            {restOfBlock && (
+              <p className="text-lg md:text-xl text-gray-600 leading-relax mb-6" dangerouslySetInnerHTML={{ __html: formatText(restOfBlock) }} />
+            )}
+          </React.Fragment>
         );
       }
       
-      // H3 Headers
-      if (block.startsWith("### ")) {
+      if (trimmedBlock.startsWith("### ")) {
+        const lines = trimmedBlock.split("\n");
+        const titleLine = lines[0].replace("### ", "").trim();
+        const id = titleLine.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        const restOfBlock = lines.slice(1).join("\n").trim();
+        
         return (
-          <h3 key={index} className="font-outfit text-2xl font-bold mt-10 mb-4 text-gray-800">
-            {block.replace("### ", "")}
-          </h3>
+          <React.Fragment key={index}>
+            <h3 id={id} className="font-outfit text-2xl font-bold mt-10 mb-4 text-gray-800 scroll-mt-24">
+              {titleLine}
+            </h3>
+            {restOfBlock && (
+              <p className="text-lg md:text-xl text-gray-600 leading-relax mb-6" dangerouslySetInnerHTML={{ __html: formatText(restOfBlock) }} />
+            )}
+          </React.Fragment>
         );
       }
 
-      // Ordered Lists
-      if (block.match(/^\d+\.\s/)) {
-        const items = block.split("\n");
+      if (trimmedBlock.match(/^\d+\.\s/)) {
+        const items = trimmedBlock.split("\n");
         return (
           <ul key={index} className="my-6 space-y-4">
             {items.map((item, i) => (
@@ -92,12 +167,8 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
         );
       }
 
-      // Bold text replacement generic paragraph
-      let formattedText = block.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      formattedText = formattedText.replace(/\`(.*?)\`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-red-600 font-mono text-sm">$1</code>');
-
       return (
-        <p key={index} className="text-lg md:text-xl text-gray-600 leading-relax mb-6" dangerouslySetInnerHTML={{ __html: formattedText }} />
+        <p key={index} className="text-lg md:text-xl text-gray-600 leading-relax mb-6" dangerouslySetInnerHTML={{ __html: formatText(trimmedBlock) }} />
       );
     });
   };
@@ -123,62 +194,151 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
             />
           </div>
 
-          <div className="max-w-[800px] mx-auto px-6 py-24 md:py-32">
+          <div className="flex justify-center w-full min-h-screen relative">
             
-            {/* CLOSE BUTTON */}
-            <button 
-              onClick={onClose}
-              className="fixed top-8 right-8 z-[120] p-4 bg-gray-100 hover:bg-black text-black hover:text-white rounded-full transition-all group backdrop-blur-md"
-            >
-              <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
-            </button>
-
-            <motion.div variants={sectionVariants} initial="hidden" animate="visible" className="mb-16">
-              <div className="flex gap-3 mb-8 flex-wrap">
-                {blog.tags.map(tag => (
-                  <span key={tag} className="px-4 py-1.5 bg-red-50 text-red-600 font-bold text-xs uppercase tracking-widest rounded-full border border-red-100">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              <h1 className="font-outfit text-4xl md:text-6xl font-black mb-8 text-black tracking-tighter leading-tight">
-                {blog.title}
-              </h1>
-
-              <div className="flex items-center gap-6 pb-12 border-b border-gray-200 text-gray-500 font-medium">
-                <div className="flex items-center gap-2">
-                  <Calendar size={18} /> {blog.publishedAt}
+            {/* LEFT SIDEBAR: DESKTOP TOC */}
+            <div className="hidden xl:block w-[300px] shrink-0 sticky top-0 h-screen pt-32 pb-12 pl-12">
+              {headings.length > 0 && (
+                <div className="bg-[#111] rounded-3xl p-6 border border-white/10 shadow-2xl">
+                  <h4 className="text-white font-outfit text-sm font-bold tracking-widest uppercase mb-6 flex items-center gap-3">
+                    <List size={16} className="text-red-500" /> Table of Contents
+                  </h4>
+                  <ul className="space-y-3 relative">
+                    {/* Vertical Progress Line Background */}
+                    <div className="absolute left-[7px] top-2 bottom-2 w-px bg-white/10" />
+                    
+                    {headings.map((heading) => (
+                      <li key={heading.id} className="relative z-10 pl-5">
+                        <button
+                          onClick={() => scrollToHeading(heading.id)}
+                          className={`text-left text-sm font-medium transition-all duration-300 w-full flex items-center gap-3 group
+                            ${activeId === heading.id ? "text-white" : "text-gray-500"}
+                            ${heading.level === 3 ? "ml-4" : ""}
+                          `}
+                        >
+                          {/* Active Dot indicator */}
+                          <div className={`absolute left-[-5px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full transition-all duration-300
+                            ${activeId === heading.id ? "bg-red-500 scale-100" : "bg-transparent scale-0 group-hover:bg-white/20 group-hover:scale-100"}
+                          `} />
+                          
+                          <span className={`block hover:text-white transition-colors duration-300 ${activeId === heading.id ? "font-bold" : ""}`}>
+                            {heading.title}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock size={18} /> {blog.readTime}
-                </div>
-                <div className="flex items-center gap-2 text-red-500">
-                  <BrainCircuit size={18} /> Deep Dive
-                </div>
-              </div>
-            </motion.div>
+              )}
+            </div>
 
-            {/* CONTENT RENDERER */}
-            <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.2 }} className="prose prose-lg max-w-none">
-               {typeof blog.content === "string" ? renderContent(blog.content) : blog.content}
-            </motion.div>
+            {/* MAIN CONTENT AREA */}
+            <div className="w-full max-w-[800px] px-6 py-24 md:py-32 shrink-0">
+              
+              {/* CLOSE BUTTON */}
+              <button 
+                onClick={onClose}
+                className="fixed top-8 right-8 z-[120] p-4 bg-gray-100 hover:bg-black text-black hover:text-white rounded-full transition-all group backdrop-blur-md"
+              >
+                <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
+              </button>
+
+              <motion.div variants={sectionVariants} initial="hidden" animate="visible" className="mb-16">
+                <div className="flex gap-3 mb-8 flex-wrap">
+                  {blog.tags.map(tag => (
+                    <span key={tag} className="px-4 py-1.5 bg-red-50 text-red-600 font-bold text-xs uppercase tracking-widest rounded-full border border-red-100">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <h1 className="font-outfit text-4xl md:text-6xl font-black mb-8 text-black tracking-tighter leading-tight">
+                  {blog.title}
+                </h1>
+
+                <div className="flex items-center gap-6 pb-12 border-b border-gray-200 text-gray-500 font-medium">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={18} /> {blog.publishedAt}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock size={18} /> {blog.readTime}
+                  </div>
+                  <div className="flex items-center gap-2 text-red-500">
+                    <BrainCircuit size={18} /> Deep Dive
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* MOBILE TOC (Collapsible) */}
+              {headings.length > 0 && (
+                <div className="xl:hidden mb-12 sm:mb-16">
+                  <div className="bg-[#111] rounded-2xl border border-white/10 shadow-xl overflow-hidden">
+                    <button 
+                      onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
+                      className="w-full p-5 flex items-center justify-between text-white"
+                    >
+                      <h4 className="font-outfit text-sm font-bold tracking-widest uppercase flex items-center gap-3">
+                        <List size={16} className="text-red-500" /> Table of Contents
+                      </h4>
+                      <ChevronRight size={18} className={`transition-transform duration-300 text-gray-400 ${isMobileTocOpen ? "rotate-90" : ""}`} />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {isMobileTocOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="p-5 pt-0 border-t border-white/5">
+                            <ul className="space-y-4 relative mt-4">
+                              <div className="absolute left-[7px] top-2 bottom-2 w-px bg-white/10" />
+                              {headings.map((heading) => (
+                                <li key={heading.id} className="relative z-10 pl-5">
+                                  <button
+                                    onClick={() => scrollToHeading(heading.id)}
+                                    className={`text-left text-sm font-medium w-full flex items-center gap-3 ${activeId === heading.id ? "text-white font-bold" : "text-gray-400"} ${heading.level === 3 ? "ml-4" : ""}`}
+                                  >
+                                    <div className={`absolute left-[-5px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full transition-all duration-300 ${activeId === heading.id ? "bg-red-500 scale-100" : "bg-transparent scale-0"}`} />
+                                    <span>{heading.title}</span>
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              )}
+
+              {/* CONTENT RENDERER */}
+              <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.2 }} className="prose prose-lg max-w-none">
+                 {typeof blog.content === "string" ? renderContent(blog.content) : blog.content}
+              </motion.div>
+              
+              {/* FOOTER METRICS AND CTA */}
+              <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.4 }} className="mt-24 pt-12 border-t border-gray-200">
+                <div className="bg-gray-50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 border border-gray-100">
+                  <div>
+                    <h4 className="font-outfit text-2xl font-bold text-black mb-2">Want to see the code?</h4>
+                    <p className="text-gray-500">Dive into the repository to see this system running in production.</p>
+                  </div>
+                  
+                  {blog.githubLink && (
+                    <a href={blog.githubLink} className="px-8 py-4 bg-black text-white rounded-full font-bold hover:bg-red-600 transition-colors flex items-center gap-3 whitespace-nowrap shadow-xl">
+                      <ExternalLink size={20} /> View Repository
+                    </a>
+                  )}
+                </div>
+              </motion.div>
+
+            </div>
             
-            {/* FOOTER METRICS AND CTA */}
-            <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.4 }} className="mt-24 pt-12 border-t border-gray-200">
-              <div className="bg-gray-50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 border border-gray-100">
-                <div>
-                  <h4 className="font-outfit text-2xl font-bold text-black mb-2">Want to see the code?</h4>
-                  <p className="text-gray-500">Dive into the repository to see this system running in production.</p>
-                </div>
-                
-                {blog.githubLink && (
-                  <a href={blog.githubLink} className="px-8 py-4 bg-black text-white rounded-full font-bold hover:bg-red-600 transition-colors flex items-center gap-3 whitespace-nowrap shadow-xl">
-                    <ExternalLink size={20} /> View Repository
-                  </a>
-                )}
-              </div>
-            </motion.div>
+            {/* RIGHT SIDE EMPTY SPACE FOR BALANCE ON ULTRA-WIDE */}
+            <div className="hidden xl:block w-[300px] shrink-0" />
 
           </div>
         </motion.div>
