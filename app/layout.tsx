@@ -31,9 +31,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${outfit.variable} ${dmSans.variable} h-full antialiased selection:bg-black selection:text-white`}
     >
-      <body className="min-h-full flex flex-col font-sans overflow-x-hidden">
+      <body suppressHydrationWarning className="min-h-full flex flex-col font-sans overflow-x-hidden relative">
         <CustomCursor />
         <VerticalNav />
         <SmoothScroller>

@@ -27,7 +27,7 @@ export function Skills() {
   const x2 = useTransform(scrollYProgress, [0, 1], [-500, 0]);
 
   return (
-    <section id="skills" ref={containerRef} className="py-24 bg-white overflow-hidden">
+    <section id="skills" ref={containerRef} className="relative py-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 mb-16">
         <h2 className="font-outfit text-5xl font-extrabold tracking-tighter">Stack & Toolkit</h2>
       </div>
