@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     url: "https://krishil-agrawal.vercel.app",
     siteName: "Krishil Agrawal Portfolio",
     type: "website",
+  },
+  verification: {
+    google: "google4e9fce0ec60b4302.html",
   }
 };
 
