@@ -6,14 +6,17 @@ import { motion, useScroll, useTransform } from "framer-motion";
 const skills = [
   { name: "LangChain", url: "https://cdn.simpleicons.org/langchain" },
   { name: "PyTorch", url: "https://cdn.simpleicons.org/pytorch" },
+  { name: "TensorFlow", url: "https://cdn.simpleicons.org/tensorflow" },
+  { name: "HuggingFace", url: "https://cdn.simpleicons.org/huggingface" },
   { name: "n8n", url: "https://cdn.simpleicons.org/n8n" },
-  { name: "Supabase", url: "https://cdn.simpleicons.org/supabase" },
+  { name: "CrewAI", url: "https://cdn.simpleicons.org/auth0" }, // Generic substitute
   { name: "Next.js", url: "https://cdn.simpleicons.org/nextdotjs/white" },
-  { name: "React", url: "https://cdn.simpleicons.org/react" },
-  { name: "Tailwind CSS", url: "https://cdn.simpleicons.org/tailwindcss" },
+  { name: "PostgreSQL", url: "https://cdn.simpleicons.org/postgresql" },
+  { name: "MongoDB", url: "https://cdn.simpleicons.org/mongodb" },
+  { name: "Prisma", url: "https://cdn.simpleicons.org/prisma" },
+  { name: "Supabase", url: "https://cdn.simpleicons.org/supabase" },
   { name: "Docker", url: "https://cdn.simpleicons.org/docker" },
   { name: "Python", url: "https://cdn.simpleicons.org/python" },
-  { name: "Scikit-learn", url: "https://cdn.simpleicons.org/scikitlearn" },
 ];
 
 export function Skills() {
