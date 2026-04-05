@@ -4,6 +4,7 @@ import "./globals.css";
 import { SmoothScroller } from "@/components/layout/SmoothScroller";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { VerticalNav } from "@/components/navigation/VerticalNav";
+import { MobileNav } from "@/components/navigation/MobileNav";
 import { Analytics } from "@vercel/analytics/react";
 
 const outfit = Outfit({
@@ -37,6 +38,7 @@ export default function RootLayout({
       <body suppressHydrationWarning className="min-h-full flex flex-col font-sans overflow-x-hidden relative bg-[#fafafa]">
         <CustomCursor />
         <VerticalNav />
+        <MobileNav />
         <SmoothScroller>
           {children}
         </SmoothScroller>

@@ -52,10 +52,10 @@ export function VerticalNav() {
   };
 
   return (
-    <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-6 bg-white/80 backdrop-blur-md py-6 pl-6 pr-4 rounded-full border border-gray-100 shadow-sm hidden md:flex">
+    <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-6 bg-white/80 backdrop-blur-md py-6 px-4 rounded-full border border-gray-100 shadow-sm hidden md:flex">
       
       {/* Background Progress Line */}
-      <div className="absolute left-3 top-8 bottom-8 w-[2px] bg-gray-200/50 rounded-full z-0 overflow-hidden">
+      <div className="absolute left-[50%] -translate-x-[50%] top-6 bottom-6 w-[2px] bg-gray-200/50 rounded-full z-0 overflow-hidden">
          <motion.div 
            className="w-full h-full bg-red-500 origin-top"
            style={{ scaleY }}
@@ -73,7 +73,7 @@ export function VerticalNav() {
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
             className={`group relative flex items-center justify-center p-3 rounded-full transition-all duration-300 z-10 ${
-              isActive ? "bg-white shadow-md border border-gray-100 scale-110" : "hover:bg-gray-100 bg-transparent"
+              isActive ? "bg-white shadow-md border border-gray-100 scale-110" : "hover:bg-gray-50 bg-white"
             }`}
           >
             <Icon size={20} className={`${isActive ? "text-red-500" : "text-gray-400 group-hover:text-black"} transition-colors`} />

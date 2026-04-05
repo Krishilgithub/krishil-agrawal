@@ -24,9 +24,9 @@ export function Hero() {
 
   const techLogos = [
     { name: "LangChain", url: "https://cdn.simpleicons.org/langchain" },
-    { name: "Pinecone", url: "https://cdn.simpleicons.org/pinecone" },
+    { name: "Anthropic", url: "https://cdn.simpleicons.org/anthropic" },
+    { name: "HuggingFace", url: "https://cdn.simpleicons.org/huggingface" },
     { name: "n8n", url: "https://cdn.simpleicons.org/n8n" },
-    { name: "Supabase", url: "https://cdn.simpleicons.org/supabase" },
     { name: "Docker", url: "https://cdn.simpleicons.org/docker" },
   ];
 
@@ -47,12 +47,13 @@ export function Hero() {
             </p>
           </div>
 
-          <h1 className="hero-fade-up font-outfit text-5xl sm:text-6xl lg:text-[5.5rem] leading-[1.1] tracking-tight font-black text-[#111] mb-6 whitespace-nowrap">
-            ML Engineer<span className="text-red-500">.</span>
+          <h1 className="hero-fade-up font-outfit text-5xl sm:text-6xl xl:text-7xl leading-[1.1] tracking-tight font-black text-[#111] mb-6 flex flex-col">
+            <span>Agentic Systems</span>
+            <span>Developer<span className="text-red-500">.</span></span>
           </h1>
 
-          <p className="hero-fade-up text-lg md:text-xl xl:text-2xl font-light text-gray-600 mb-3 max-w-lg leading-relaxed">
-            Building intelligent systems with AI, ML & scalable backend technologies
+          <p className="hero-fade-up text-lg md:text-xl xl:text-2xl font-light text-gray-600 mb-3 max-w-xl leading-relaxed">
+            Building multi-agent architectures, RAG pipelines, and end-to-end ML systems using LangChain, LangGraph, and CrewAI.
           </p>
           
           <p className="hero-fade-up text-base text-gray-400 font-medium mb-10">
@@ -79,7 +80,7 @@ export function Hero() {
                 <img 
                   src={tech.url} 
                   alt={tech.name} 
-                  className="w-full h-full object-contain grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:-translate-y-1"
+                  className="w-full h-full object-contain saturate-0 opacity-40 group-hover:saturate-100 group-hover:opacity-100 transition-all duration-300 transform group-hover:-translate-y-1"
                 />
               </div>
             ))}
