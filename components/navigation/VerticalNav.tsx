@@ -1,15 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Briefcase, User, Wrench, Mail, BookOpen } from "lucide-react";
+import { Briefcase, User, Wrench, Mail, BookOpen, Clock, Quote } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 const navItems = [
-  { name: "Projects", icon: Briefcase, href: "#projects" },
-  { name: "Blogs", icon: BookOpen, href: "#blogs" },
   { name: "About", icon: User, href: "#about" },
+  { name: "Experience", icon: Clock, href: "#experience" },
+  { name: "Projects", icon: Briefcase, href: "#projects" },
   { name: "Skills", icon: Wrench, href: "#skills" },
+  { name: "Blogs", icon: BookOpen, href: "#blogs" },
+  { name: "Testimonials", icon: Quote, href: "#testimonials" },
   { name: "Contact", icon: Mail, href: "#contact" },
 ];
 

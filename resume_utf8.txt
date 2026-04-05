@@ -1,0 +1,114 @@
+KRISHIL AGRAWAL
+AI/ML Engineer & Agentic Systems Developer
+krishilagrawal026@gmail.com
+ 
++918320902499
+ 
+Portfolio
+ 
+GITHUB
+ 
+LINKEDIN
+ 
+SUMMARY
+AI/ ML Engineer & Agentic Systems Developer with hands-on experience building multi-agent architectures, 
+RAG pipelines, and end-to-end ML systems. Proficient in LangChain, LangGraph, CrewAI, and modern MLOps 
+practices. Passionate about building intelligent systems that solve real-world problems.
+EXPERIENCE
+AI Research Intern — Deep Learning & Medical Imaging, 
+CHARUSAT University, Gujarat
+•
+Selected for a university-level research internship focused on building an AI-
+based system for affordable eye disease screening in rural India using retinal 
+fundus image analysis
+•
+Designed and trained a deep learning classification model using 
+MobileNetV3Large with two-stage transfer learning — identifying 4 retinal 
+conditions (CNV, DME, Drusen, Normal) with mixed precision training.
+05/2025 – 06/2025
+•
+Engineered a comprehensive evaluation framework producing confusion 
+matrices, ROC/ AUC curves, per- class F1 scores, and training visualizations
+EDUCATION
+Current CGPA: 9.27, Com puter Science & Engineering | Charusat University, Gujarat          2023 – 2026
+Science Percentile: 98.02, Class XII | Shannen School, Gujarat                        2023 – 2023
+Percentile: 98.35, Class X | Shannen School, Gujarat                              2021 – 2021
+SKILLS
+AI and Agentic Systems
+LangChain, LangGraph, CrewAI, RAG Pipelines, 
+Vector Databases, Multi-Agent Architectures
+ML and DL
+Supervised & Unsupervised Learning, Neural 
+Networks, Feature Engineering, Model Evaluation, 
+Hyperparameter Tuning, MLOps
+Frameworks and Tools
+Python, scikit-learn, TensorFlow, HuggingFace, 
+Docker, Git, Postman, Langsmith, n8n, Docker
+Programming
+Python, C++, SQL (PostgreSQL)
+Backend and Database
+Next.js, Supabase, PostgreSQL, MongoDB, Prisma 
+ORM, REST APIs
+Core CS
+Data Structures & Algorithms, OOPS, DBMS, System 
+Design
+CERTIFICATES AND COURSES
+Agent Skills with Anthropic
+•
+Prompt engineering, tool use, and Claude-based agent development
+Gemini CLI: Code & Create with Open-Source Agents
+•
+Building agentic pipelines with open-source tooling
+----------------Page (0) Break----------------
+Design, Develop, and Deploy Multi-Agent Systems with CrewAI
+•
+End-to-end multi-agent architecture and deployment
+AWS Academy Cloud Developing Certifications, AWS Academ y
+ACADEMIC AND EXTRACURRICULAR ACHIEVEMENTS
+Semi-finalist in 4 hackathons
+Demonstrating strong problem-solving and rapid prototyping skills
+Consistently ranked among the top academic performers at CHARUSAT University
+Selected for a research internship at CHARUSAT
+PROJECTS
+AI-Canvas — Social Media Automation SaaS Platform
+•
+Built a production-grade AI SaaS platform that automates end-to-end LinkedIn content workflows — from 
+AI-assisted post generation and human-in-the-loop approval to automated scheduling and publishing
+•
+Designed a multi-layer AI orchestration pipeline using LangChain and LangGraph for intent-aware content 
+generation from user prompts, goals, and profile context
+•
+Implemented real-time event streaming via Socket.IO for live publish status updates, system logs, and 
+workflow notifications
+•
+Integrated LangSmith for end-to-end LLM observability, evaluation, and trace monitoring
+TalentoAI — AI-Powered Interview Preparation Platform
+•
+Engineered an end-to-end AI-driven platform for interview preparation, integrating assessment systems, 
+resume intelligence, and personalized feedback pipelines
+•
+Designed structured LLM workflows to evaluate candidate responses and generate actionable insights 
+across technical, aptitude, and communication domains
+•
+Built a resume analysis engine with ATS scoring and optimization using AI-driven parsing and evaluation
+•
+Developed real-time analytics dashboards to track user performance, skill progression, and assessment 
+history
+ICC T20 World Cup 2026 — AI Match Outcome Prediction System
+•
+Developed an end-to-end machine learning pipeline to predict match outcomes using historical & real-time 
+cricket data
+•
+Built robust data engineering workflows for ingestion, preprocessing, and feature generation from multiple 
+data sources
+•
+Designed predictive models for win probability estimation with continuous evaluation and performance 
+monitoring
+•
+Implemented MLOps pipeline including experiment tracking, model versioning, and automated retraining
+References
+Parth Goel, AI and ML Assistant Professor, Charusat University
+parthgoel.ce@charusat.ac.in, 9662123479
+Hardik Parmar, Assistant Professor, Charusat University
+hardikparmar.dcs@charusat.ac.in, 8128240572
+----------------Page (1) Break----------------

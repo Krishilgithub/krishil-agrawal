@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export function Contact() {
   return (
@@ -16,14 +17,16 @@ export function Contact() {
           Interested in AI solutions, ML pipelines, or agentic automation? Let&apos;s connect and discuss how we can work together.
         </p>
 
-        <a 
-          href="mailto:contact@krishil.dev" 
-          className="group relative px-10 py-5 bg-black text-white rounded-full font-bold text-lg md:text-xl overflow-hidden hover:scale-105 transition-all shadow-xl hover:shadow-2xl flex items-center gap-3"
-        >
-          <span className="relative z-10">Say Hello!</span>
-          <ArrowUpRight size={24} className="relative z-10 group-hover:rotate-45 transition-transform" />
-          <div className="absolute inset-0 bg-red-600 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300" />
-        </a>
+        <MagneticButton>
+          <a 
+            href="mailto:contact@krishil.dev" 
+            className="group relative px-10 py-5 bg-black text-white rounded-full font-bold text-lg md:text-xl overflow-hidden hover:scale-105 transition-all shadow-xl hover:shadow-2xl flex items-center justify-center gap-3 w-fit mx-auto"
+          >
+            <span className="relative z-10">Say Hello!</span>
+            <ArrowUpRight size={24} className="relative z-10 group-hover:rotate-45 transition-transform" />
+            <div className="absolute inset-0 bg-red-600 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300" />
+          </a>
+        </MagneticButton>
 
         <div className="mt-32 w-full flex flex-col md:flex-row justify-between items-center text-sm font-medium text-gray-400 border-t border-gray-100 pt-8 gap-4">
           <p>© {new Date().getFullYear()} Krishil Agrawal. All rights reserved.</p>

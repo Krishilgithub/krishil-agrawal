@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { gsap } from "gsap";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export function Hero() {
   useEffect(() => {
@@ -59,12 +60,16 @@ export function Hero() {
           </p>
 
           <div className="hero-fade-up flex flex-col sm:flex-row gap-4 mb-14 w-full sm:w-auto">
-            <a href="#contact" className="px-8 py-4 bg-black text-white rounded-full font-semibold hover:scale-105 transition-transform flex justify-center items-center gap-2 shadow-lg hover:shadow-xl w-full sm:w-auto">
-              Hire Me as AI Engineer <ArrowUpRight size={18} />
-            </a>
-            <a href="#projects" className="px-8 py-4 border border-gray-200 text-black shadow-sm rounded-full font-semibold hover:bg-gray-50 transition-all flex justify-center items-center gap-2 w-full sm:w-auto">
-              View My Projects
-            </a>
+            <MagneticButton>
+              <a href="#contact" className="px-8 py-4 bg-black text-white rounded-full font-semibold hover:scale-105 transition-transform flex justify-center items-center gap-2 shadow-lg hover:shadow-xl w-full sm:w-auto">
+                Hire Me as AI Engineer <ArrowUpRight size={18} />
+              </a>
+            </MagneticButton>
+            <MagneticButton>
+              <a href="#projects" className="px-8 py-4 border border-gray-200 text-black shadow-sm rounded-full font-semibold hover:bg-gray-50 transition-all flex justify-center items-center gap-2 w-full sm:w-auto">
+                View My Projects
+              </a>
+            </MagneticButton>
           </div>
 
           {/* Tech Stack Logos */}
