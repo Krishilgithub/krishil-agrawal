@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
-import { Code, ExternalLink } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { Code, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react";
 
 import { ProjectCaseStudyModal } from "./ProjectCaseStudyModal";
 import { ProjectCaseStudy } from "@/types/project";
@@ -50,19 +50,14 @@ function TiltCard({ project, onClick }: { project: ProjectCaseStudy, onClick: (p
       <motion.div
         ref={ref}
         onClick={() => {
-          // Only open modal if it has a problem statement (deep dive)
-          if(project.problemStatement.problem.length > 0) {
+          if (project.problemStatement?.problem?.length > 0) {
             onClick(project);
           }
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        style={{
-          rotateX,
-          rotateY,
-          transformStyle: "preserve-3d"
-        }}
-        className={`group relative bg-[#111] p-8 md:p-10 rounded-[2.5rem] border border-white/5 hover:border-red-500/30 overflow-hidden flex flex-col h-full ${project.problemStatement.problem.length > 0 ? "cursor-pointer" : "cursor-default"}`}
+        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        className={`group relative bg-[#111] p-8 md:p-10 rounded-[2.5rem] border border-white/5 hover:border-red-500/30 overflow-hidden flex flex-col h-full ${project.problemStatement?.problem?.length > 0 ? "cursor-pointer" : "cursor-default"}`}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
@@ -115,11 +110,30 @@ function TiltCard({ project, onClick }: { project: ProjectCaseStudy, onClick: (p
 export function Projects() {
   const [selectedProject, setSelectedProject] = useState<ProjectCaseStudy | null>(null);
   const [filterCategory, setFilterCategory] = useState<"All" | "AI" | "Web">("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const PROJECTS_PER_PAGE = 4;
 
   const filteredProjects = projectsData.filter((project) => {
     if (filterCategory === "All") return true;
     return project.category === filterCategory;
   });
+
+  const totalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
+
+  const currentProjects = filteredProjects.slice(
+    (currentPage - 1) * PROJECTS_PER_PAGE,
+    currentPage * PROJECTS_PER_PAGE
+  );
+
+  // Reset to page 1 when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterCategory]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <section id="projects" className="py-24 md:py-32 bg-[#0a0a0a] text-white">
@@ -166,11 +180,46 @@ export function Projects() {
         {/* 2x2 PROJECT GRID */}
         <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 w-full">
           <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, index) => (
+            {currentProjects.map((project, index) => (
               <TiltCard key={project.id || index} project={project} onClick={setSelectedProject} />
             ))}
           </AnimatePresence>
         </motion.div>
+
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div className="mt-16 flex justify-center items-center gap-2">
+            <button 
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-3 rounded-full bg-white/5 text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageChange(i + 1)}
+                className={`w-10 h-10 rounded-full font-bold text-sm transition-all ${
+                  currentPage === i + 1 
+                    ? "bg-red-600 text-white" 
+                    : "bg-transparent text-gray-400 hover:text-white"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button 
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-3 rounded-full bg-white/5 text-white disabled:opacity-30 hover:bg-white/10 transition-colors"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        )}
 
       </div>
 

@@ -46,7 +46,7 @@ export default function RootLayout({
     "name": "Krishil Agrawal",
     "jobTitle": "ML Engineer",
     "url": "https://krishil-agrawal.vercel.app",
-    "image": "https://krishil-agrawal.vercel.app/avatar.png",
+    "image": "https://krishil-agrawal.vercel.app/jpeg.png",
     "sameAs": [
       "https://www.linkedin.com/in/krishil-agrawal-49aaa9283",
       "https://github.com/Krishilgithub",

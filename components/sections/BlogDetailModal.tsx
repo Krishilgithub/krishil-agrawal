@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Clock, ExternalLink, Calendar, BrainCircuit, List, ChevronRight } from "lucide-react";
+import { X, Clock, ExternalLink, Calendar, BrainCircuit } from "lucide-react";
 import { BlogArticle } from "@/types/blog";
 
 interface BlogDetailModalProps {
@@ -17,6 +17,22 @@ interface TocItem {
 export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
   const [activeId, setActiveId] = useState<string>("");
   const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
+  const tocRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside to close TOC
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (tocRef.current && !tocRef.current.contains(event.target as Node)) {
+        setIsMobileTocOpen(false);
+      }
+    }
+    if (isMobileTocOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMobileTocOpen]);
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -91,17 +107,29 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
 
   const formatText = (text: string) => {
     let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    formattedText = formattedText.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
     return formattedText.replace(/\`(.*?)\`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-red-600 font-mono text-sm">$1</code>');
   };
 
   // Simple custom renderer to style basic markdown structures
   const renderContent = (text: string) => {
-    const blocks = text.trim().split("\n\n");
+    const codeBlocks: string[] = [];
+    // Extract code blocks first to prevent \n\n splitting from breaking them
+    const textWithoutCode = text.replace(/```[\s\S]*?```/g, (match) => {
+      codeBlocks.push(match);
+      return `__CODEBLOCK_${codeBlocks.length - 1}__`;
+    });
+
+    const blocks = textWithoutCode.trim().split("\n\n");
+    
     return blocks.map((block, index) => {
       const trimmedBlock = block.trim();
       
-      if (trimmedBlock.startsWith("\`\`\`")) {
-        const lines = trimmedBlock.split("\n");
+      const codeMatch = trimmedBlock.match(/^__CODEBLOCK_(\d+)__$/);
+      if (codeMatch) {
+        const codeIndex = parseInt(codeMatch[1], 10);
+        const actualCodeBlock = codeBlocks[codeIndex];
+        const lines = actualCodeBlock.split("\n");
         const codeText = lines.slice(1, lines.length - 1).join("\n");
         return (
           <div key={index} className="my-8 rounded-2xl overflow-hidden bg-[#111] border border-white/10 shadow-2xl">
@@ -153,6 +181,16 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
         );
       }
 
+      if (trimmedBlock.startsWith("> ")) {
+        // Handle blockquotes
+        const text = trimmedBlock.replace(/^>\s?/gm, "");
+        return (
+          <blockquote key={index} className="my-8 border-l-4 border-red-500 bg-red-50 p-6 rounded-r-2xl">
+            <p className="text-lg text-gray-700 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: formatText(text) }} />
+          </blockquote>
+        );
+      }
+
       if (trimmedBlock.match(/^\d+\.\s/)) {
         const items = trimmedBlock.split("\n");
         return (
@@ -160,7 +198,7 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
             {items.map((item, i) => (
               <li key={i} className="flex gap-4 items-start text-gray-600 text-lg leading-relaxed">
                 <span className="font-mono font-bold text-red-500 shrink-0 mt-1">{item.split(".")[0]}.</span>
-                <span>{item.replace(/^\d+\.\s/, "").replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</span>
+                <span dangerouslySetInnerHTML={{ __html: formatText(item.replace(/^\d+\.\s/, "")) }} />
               </li>
             ))}
           </ul>
@@ -194,153 +232,125 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
             />
           </div>
 
-          <div className="flex justify-center w-full min-h-screen relative">
+          <div className="w-full max-w-[800px] mx-auto px-6 py-24 md:py-32 relative min-h-screen pb-48">
             
-            {/* LEFT SIDEBAR: DESKTOP TOC */}
-            <div className="hidden xl:block w-[300px] shrink-0 sticky top-0 h-screen pt-32 pb-12 pl-12">
-              {headings.length > 0 && (
-                <div className="bg-[#111] rounded-3xl p-6 border border-white/10 shadow-2xl">
-                  <h4 className="text-white font-outfit text-sm font-bold tracking-widest uppercase mb-6 flex items-center gap-3">
-                    <List size={16} className="text-red-500" /> Table of Contents
-                  </h4>
-                  <ul className="space-y-3 relative">
-                    {/* Vertical Progress Line Background */}
-                    <div className="absolute left-[7px] top-2 bottom-2 w-px bg-white/10" />
-                    
-                    {headings.map((heading) => (
-                      <li key={heading.id} className="relative z-10 pl-5">
-                        <button
-                          onClick={() => scrollToHeading(heading.id)}
-                          className={`text-left text-sm font-medium transition-all duration-300 w-full flex items-center gap-3 group
-                            ${activeId === heading.id ? "text-white" : "text-gray-500"}
-                            ${heading.level === 3 ? "ml-4" : ""}
-                          `}
-                        >
-                          {/* Active Dot indicator */}
-                          <div className={`absolute left-[-5px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full transition-all duration-300
-                            ${activeId === heading.id ? "bg-red-500 scale-100" : "bg-transparent scale-0 group-hover:bg-white/20 group-hover:scale-100"}
-                          `} />
-                          
-                          <span className={`block hover:text-white transition-colors duration-300 ${activeId === heading.id ? "font-bold" : ""}`}>
-                            {heading.title}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+            {/* CLOSE BUTTON */}
+            <button 
+              onClick={onClose}
+              className="fixed top-6 right-6 md:top-8 md:right-8 z-[120] p-4 bg-gray-100 hover:bg-black text-black hover:text-white rounded-full transition-all group shadow-md"
+            >
+              <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
+            </button>
+
+            <motion.div variants={sectionVariants} initial="hidden" animate="visible" className="mb-16">
+              <div className="flex gap-3 mb-8 flex-wrap">
+                {blog.tags.map(tag => (
+                  <span key={tag} className="px-4 py-1.5 bg-red-50 text-red-600 font-bold text-xs uppercase tracking-widest rounded-full border border-red-100">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <h1 className="font-outfit text-4xl md:text-6xl font-black mb-8 text-black tracking-tighter leading-tight">
+                {blog.title}
+              </h1>
+
+              <div className="flex items-center gap-6 pb-12 border-b border-gray-200 text-gray-500 font-medium">
+                <div className="flex items-center gap-2">
+                  <Calendar size={18} /> {blog.publishedAt}
                 </div>
-              )}
-            </div>
-
-            {/* MAIN CONTENT AREA */}
-            <div className="w-full max-w-[800px] px-6 py-24 md:py-32 shrink-0">
-              
-              {/* CLOSE BUTTON */}
-              <button 
-                onClick={onClose}
-                className="fixed top-8 right-8 z-[120] p-4 bg-gray-100 hover:bg-black text-black hover:text-white rounded-full transition-all group backdrop-blur-md"
-              >
-                <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
-              </button>
-
-              <motion.div variants={sectionVariants} initial="hidden" animate="visible" className="mb-16">
-                <div className="flex gap-3 mb-8 flex-wrap">
-                  {blog.tags.map(tag => (
-                    <span key={tag} className="px-4 py-1.5 bg-red-50 text-red-600 font-bold text-xs uppercase tracking-widest rounded-full border border-red-100">
-                      {tag}
-                    </span>
-                  ))}
+                <div className="flex items-center gap-2">
+                  <Clock size={18} /> {blog.readTime}
                 </div>
-
-                <h1 className="font-outfit text-4xl md:text-6xl font-black mb-8 text-black tracking-tighter leading-tight">
-                  {blog.title}
-                </h1>
-
-                <div className="flex items-center gap-6 pb-12 border-b border-gray-200 text-gray-500 font-medium">
-                  <div className="flex items-center gap-2">
-                    <Calendar size={18} /> {blog.publishedAt}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock size={18} /> {blog.readTime}
-                  </div>
-                  <div className="flex items-center gap-2 text-red-500">
-                    <BrainCircuit size={18} /> Deep Dive
-                  </div>
+                <div className="flex items-center gap-2 text-red-500">
+                  <BrainCircuit size={18} /> Deep Dive
                 </div>
-              </motion.div>
+              </div>
+            </motion.div>
 
-              {/* MOBILE TOC (Collapsible) */}
-              {headings.length > 0 && (
-                <div className="xl:hidden mb-12 sm:mb-16">
-                  <div className="bg-[#111] rounded-2xl border border-white/10 shadow-xl overflow-hidden">
-                    <button 
-                      onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
-                      className="w-full p-5 flex items-center justify-between text-white"
-                    >
-                      <h4 className="font-outfit text-sm font-bold tracking-widest uppercase flex items-center gap-3">
-                        <List size={16} className="text-red-500" /> Table of Contents
-                      </h4>
-                      <ChevronRight size={18} className={`transition-transform duration-300 text-gray-400 ${isMobileTocOpen ? "rotate-90" : ""}`} />
-                    </button>
-                    
-                    <AnimatePresence>
-                      {isMobileTocOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="p-5 pt-0 border-t border-white/5">
-                            <ul className="space-y-4 relative mt-4">
-                              <div className="absolute left-[7px] top-2 bottom-2 w-px bg-white/10" />
-                              {headings.map((heading) => (
-                                <li key={heading.id} className="relative z-10 pl-5">
-                                  <button
-                                    onClick={() => scrollToHeading(heading.id)}
-                                    className={`text-left text-sm font-medium w-full flex items-center gap-3 ${activeId === heading.id ? "text-white font-bold" : "text-gray-400"} ${heading.level === 3 ? "ml-4" : ""}`}
-                                  >
-                                    <div className={`absolute left-[-5px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full transition-all duration-300 ${activeId === heading.id ? "bg-red-500 scale-100" : "bg-transparent scale-0"}`} />
-                                    <span>{heading.title}</span>
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-              )}
-
-              {/* CONTENT RENDERER */}
-              <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.2 }} className="prose prose-lg max-w-none">
-                 {typeof blog.content === "string" ? renderContent(blog.content) : blog.content}
-              </motion.div>
-              
-              {/* FOOTER METRICS AND CTA */}
-              <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.4 }} className="mt-24 pt-12 border-t border-gray-200">
-                <div className="bg-gray-50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 border border-gray-100">
-                  <div>
-                    <h4 className="font-outfit text-2xl font-bold text-black mb-2">Want to see the code?</h4>
-                    <p className="text-gray-500">Dive into the repository to see this system running in production.</p>
-                  </div>
-                  
-                  {blog.githubLink && (
-                    <a href={blog.githubLink} className="px-8 py-4 bg-black text-white rounded-full font-bold hover:bg-red-600 transition-colors flex items-center gap-3 whitespace-nowrap shadow-xl">
-                      <ExternalLink size={20} /> View Repository
-                    </a>
-                  )}
-                </div>
-              </motion.div>
-
-            </div>
+            {/* CONTENT RENDERER */}
+            <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.2 }} className="prose prose-lg max-w-none">
+               {typeof blog.content === "string" ? renderContent(blog.content) : blog.content}
+            </motion.div>
             
-            {/* RIGHT SIDE EMPTY SPACE FOR BALANCE ON ULTRA-WIDE */}
-            <div className="hidden xl:block w-[300px] shrink-0" />
-
+            {/* FOOTER METRICS AND CTA */}
+            <motion.div variants={sectionVariants} initial="hidden" animate="visible" transition={{ delay: 0.4 }} className="mt-24 pt-12 border-t border-gray-200">
+              <div className="bg-gray-50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 border border-gray-100">
+                <div>
+                  <h4 className="font-outfit text-2xl font-bold text-black mb-2">Want to see the code?</h4>
+                  <p className="text-gray-500">Dive into the repository to see this system running in production.</p>
+                </div>
+                
+                {blog.githubLink && (
+                  <a href={blog.githubLink} className="px-8 py-4 bg-black text-white rounded-full font-bold hover:bg-red-600 transition-colors flex items-center gap-3 whitespace-nowrap shadow-xl">
+                    <ExternalLink size={20} /> View Repository
+                  </a>
+                )}
+              </div>
+            </motion.div>
           </div>
+
+          {/* FLOATING BOTTOM TOC */}
+          {headings.length > 0 && (
+            <div ref={tocRef} className="fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-[150] flex flex-col items-center">
+              <AnimatePresence>
+                {isMobileTocOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-[320px] md:w-[360px] mb-3 bg-[#0a0a0a] text-gray-400 border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col max-h-[60vh] font-outfit"
+                  >
+                    <div className="px-6 py-4 text-[11px] font-bold tracking-widest text-[#777] uppercase border-b border-white/5">
+                      Table of Contents
+                    </div>
+                    <div className="overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-800 flex flex-col gap-1">
+                      {/* Optional default TL;DR jump to top */}
+                      <button
+                        onClick={() => scrollToHeading(headings[0]?.id)}
+                        className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm ${
+                          !activeId 
+                            ? "bg-[#222] text-white font-medium" 
+                            : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+                        }`}
+                      >
+                        TL;DR
+                      </button>
+
+                      {headings.map((heading) => (
+                        <button
+                          key={heading.id}
+                          onClick={() => scrollToHeading(heading.id)}
+                          className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm ${
+                            activeId === heading.id 
+                              ? "bg-[#22a222] bg-[#222] text-white font-medium" 
+                              : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+                          } ${heading.level === 3 ? "pl-8 text-xs" : ""}`}
+                        >
+                          {heading.title}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <button 
+                onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
+                className="bg-[#0a0a0a] hover:bg-black border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-white rounded-full h-12 px-5 flex items-center justify-between gap-6 transition-all duration-300 min-w-[280px] font-outfit group"
+              >
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="w-1.5 h-1.5 bg-white rounded-full shrink-0 shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>
+                  <span className="text-sm font-medium truncate max-w-[200px]">
+                    {activeId ? headings.find(h => h.id === activeId)?.title : "Table of Contents"}
+                  </span>
+                </div>
+                
+                <div className={`w-5 h-5 border-[2px] border-gray-600 border-t-white rounded-full flex-shrink-0 transition-transform duration-500 ${isMobileTocOpen ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

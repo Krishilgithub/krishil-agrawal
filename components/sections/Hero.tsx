@@ -88,7 +88,7 @@ export function Hero() {
         <div className="hero-image-reveal flex justify-center items-center order-2 md:order-2 mb-8 md:mb-0 mt-8 md:mt-0 relative">
           <div className="relative w-[65vw] h-[65vw] max-w-[420px] max-h-[420px] rounded-full overflow-hidden shadow-2xl bg-white border-4 border-gray-50 ring-1 ring-gray-100">
             <Image 
-              src="/avatar.png" 
+              src="/avatar.jpeg" 
               alt="Krishil Agrawal ML Engineer" 
               fill
               sizes="(max-width: 768px) 65vw, 420px"
