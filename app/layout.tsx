@@ -20,13 +20,19 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Krishil Agrawal | AI ML Engineer | Agentic AI Developer Portfolio",
-  description: "Portfolio of Krishil Agrawal. Specialized AI ML Engineer building Agentic AI systems, scalable ML pipelines, and AI projects. Dive into my research and work.",
+  metadataBase: new URL("https://krishil-agrawal.vercel.app"),
+  title: "Krishil Agrawal | AI ML Engineer | Agentic AI Developer",
+  description: "Portfolio of Krishil Agrawal. Specialized AI ML Engineer building Agentic AI systems, scalable ML pipelines, and AI projects.",
+  applicationName: "Krishil Agrawal",
+  authors: [{ name: "Krishil Agrawal", url: "https://krishil-agrawal.vercel.app" }],
+  keywords: ["Krishil Agrawal", "Machine Learning", "AI Engineer", "Agentic AI", "Portfolio"],
+  creator: "Krishil Agrawal",
+  publisher: "Krishil Agrawal",
   openGraph: {
     title: "Krishil Agrawal | AI ML Engineer",
     description: "Portfolio of Krishil Agrawal, an ML Engineer building Agentic workflows and scalable AI systems.",
     url: "https://krishil-agrawal.vercel.app",
-    siteName: "Krishil Agrawal Portfolio",
+    siteName: "Krishil Agrawal",
     type: "website",
   },
   verification: {

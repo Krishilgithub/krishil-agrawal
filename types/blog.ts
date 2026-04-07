@@ -4,7 +4,10 @@ export type BlogCategory =
   | "Deep Learning" 
   | "GenAI / LLMs" 
   | "System Design" 
-  | "Case Studies";
+  | "Case Studies"
+  | "Agentic AI"
+  | "Security"
+  | "Deep Dive";
 
 export interface BlogArticle {
   id: string;

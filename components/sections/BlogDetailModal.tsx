@@ -18,6 +18,7 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
   const [activeId, setActiveId] = useState<string>("");
   const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
   const tocRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to close TOC
   useEffect(() => {
@@ -78,7 +79,10 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
           }
         });
       },
-      { rootMargin: "-10% 0px -70% 0px" } // trigger when heading is in top 10-30% of screen
+      { 
+        root: scrollContainerRef.current,
+        rootMargin: "-10% 0px -70% 0px" 
+      }
     );
 
     headings.forEach((heading) => {
@@ -215,6 +219,7 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
     <AnimatePresence>
       {blog && (
         <motion.div
+           ref={scrollContainerRef}
            initial={{ opacity: 0 }}
            animate={{ opacity: 1 }}
            exit={{ opacity: 0 }}

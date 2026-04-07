@@ -327,7 +327,7 @@ export const projectsData: ProjectCaseStudy[] = [
     links: { github: "https://github.com/Krishilgithub/school-iq", demo: "https://school-iq.vercel.app/" },
     shortTech: "Next.js, TailwindCSS",
     shortDescription: "A full-scale educational portal managing student analytics, administrative duties, and class scheduling.",
-    shortMetrics: "Vercel Edge Deployed",
+    shortMetrics: "Global Edge Network",
     problemStatement: { problem: "Schools rely on legacy, slow software.", whyItMatters: "Modern UI increases teacher adoption.", affected: "Teachers and Admins" },
     architecture: { reasoning: "Next.js Edge network for extreme global low-latency.", alternatives: "Traditional PHP apps" },
     features: [{ name: "Student Roster", description: "Fast filtering" }],
