@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Outfit, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { SmoothScroller } from "@/components/layout/SmoothScroller";
-import { CustomCursor } from "@/components/ui/CustomCursor";
 import { VerticalNav } from "@/components/navigation/VerticalNav";
 import { MobileNav } from "@/components/navigation/MobileNav";
 import { Analytics } from "@vercel/analytics/react";
@@ -72,7 +71,6 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
-        <CustomCursor />
         <VerticalNav />
         <MobileNav />
         <SmoothScroller>
