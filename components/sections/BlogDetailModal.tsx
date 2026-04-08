@@ -366,7 +366,24 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
                   </span>
                 </div>
                 
-                <div className={`w-5 h-5 border-[2px] border-gray-600 border-t-white rounded-full flex-shrink-0 transition-transform duration-500 ${isMobileTocOpen ? 'rotate-180' : ''}`} />
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 20 20" 
+                  className={`flex-shrink-0 transition-transform duration-500 ${isMobileTocOpen ? 'rotate-90' : '-rotate-90'}`}
+                >
+                  <circle cx="10" cy="10" r="8" stroke="#4b5563" strokeWidth="2" fill="none" />
+                  <motion.circle
+                    cx="10"
+                    cy="10"
+                    r="8"
+                    stroke="white"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeLinecap="round"
+                    style={{ pathLength: scrollYProgress }}
+                  />
+                </svg>
               </button>
             </div>
           )}
