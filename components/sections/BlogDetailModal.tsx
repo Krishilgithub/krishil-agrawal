@@ -15,6 +15,28 @@ interface TocItem {
 }
 
 export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (blog) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "auto";
+    return () => { document.body.style.overflow = "auto"; };
+  }, [blog]);
+
+  // Handle Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <AnimatePresence>
+      {blog && <BlogDetailModalContent blog={blog} onClose={onClose} />}
+    </AnimatePresence>
+  );
+}
+
+function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose: () => void }) {
   const [activeId, setActiveId] = useState<string>("");
   const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
   const tocRef = useRef<HTMLDivElement>(null);
@@ -35,20 +57,6 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isMobileTocOpen]);
-
-  // Lock body scroll when modal is open
-  useEffect(() => {
-    if (blog) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "auto";
-    return () => { document.body.style.overflow = "auto"; };
-  }, [blog]);
-
-  // Handle Escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
 
   // Generate TOC items from markdown content
   const headings = useMemo<TocItem[]>(() => {
@@ -217,8 +225,6 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
   };
 
   return (
-    <AnimatePresence>
-      {blog && (
         <motion.div
            ref={scrollContainerRef}
            initial={{ opacity: 0 }}
@@ -356,7 +362,5 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
             </div>
           )}
         </motion.div>
-      )}
-    </AnimatePresence>
   );
 }
