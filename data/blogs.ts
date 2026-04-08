@@ -317,6 +317,8 @@ Most tutorials hand you a \`RecursiveCharacterTextSplitter\` with a chunk size o
 
 This post is about the full progression: from naive fixed-size chunking, through semantic and structural methods, up to agentic chunking where an AI agent decides how your documents should be split. You will get benchmarks, working Python code for each approach, and a clear framework for deciding which strategy fits your actual problem.
 
+__STAT_BAR__
+
 > 💡 **TL;DR**
 > - Chunking quality constrains retrieval accuracy more than embedding model choice. The difference between strategies is not marginal — it is the difference between systems that work and ones that don't.
 > - Recursive character splitting (400–512 tokens, 10–20% overlap) is still the right default for most production systems. Start there.
@@ -342,17 +344,7 @@ Agentic RAG is the current frontier. The retrieval process itself becomes autono
 
 Think of chunking strategies as a ladder. Each rung costs more but handles more complex documents and queries. Most production systems live somewhere in the middle. Almost no one should start at the top.
 
-**Level 1: Fixed-Size / Recursive Splitting**
-Split by token count. The default in LangChain. Add 10–20% overlap to preserve cross-boundary context. Use when: Homogeneous content — news articles, support tickets, FAQ entries. Getting a baseline running fast.
-
-**Level 2: Semantic Chunking**
-Embed every sentence and split on cosine distance drops. Groups by meaning, not character count. Use when: Technical docs, knowledge bases, research papers where topic shifts matter.
-
-**Level 3: Structural / Propositional**
-Split on document structure (headers, sections) or use an LLM to extract atomic propositions from each paragraph. Use when: Markdown docs, PDFs with logical sections, legal / policy documents.
-
-**Level 4: Agentic Chunking**
-An LLM agent inspects the full document, decides the optimal strategy, executes it, and enriches chunks with metadata. Use when: Heterogeneous corpora, high-stakes retrieval, enterprise knowledge management.
+__STRATEGY_GRID__
 
 ## Level 1 — Recursive Splitting: Still the Right Default
 
@@ -544,11 +536,15 @@ The agent does three things: it inspects the document, it selects a strategy, an
 
 Here is every strategy compared on dimensions that matter for engineering decisions. Numbers draw from the February 2026 Vecta benchmark (50 academic papers), MDPI Bioengineering November 2025, and Chroma's July 2025 context research.
 
-1. **Fixed-size recursive:** 69% Accuracy. Very low indexing cost. High chunk consistency. Best for homogeneous text.
-2. **Semantic chunking:** Up to ~70% lift vs naive. Medium indexing cost. Variable chunk size. Best for tech docs.
-3. **Structural / header-based:** High precision. Very low indexing cost. High consistency. Best for Markdown/HTML.
-4. **Propositional:** Highest precision. High LLM cost. Very consistent ideas. Best for medical/legal.
-5. **Agentic chunking:** 87% adaptive accuracy. Highest LLM cost. Best for heterogeneous corpora.
+__BENCHMARK_TABLE__
+
+## The Full Pipeline — Where Chunking Lives
+
+Chunking is one step in a larger pipeline. Here is where it sits relative to the other moving parts — and which layer to fix first when retrieval breaks.
+
+__PIPELINE_SVG__
+
+The pipeline has two phases: ingestion (chunking → embedding → indexing) and retrieval (query → rewrite → retrieve → rerank → generate). Fix chunking and you improve every downstream step. A chunk that is semantically coherent embeds better, retrieves more precisely, and gives the LLM cleaner context to reason over.
 
 ## The Context Cliff — Why Smaller Often Wins
 
@@ -557,6 +553,8 @@ Here is a counterintuitive finding from Chroma's July 2025 research across 18 mo
 This is the "lost in the middle" effect. LLMs pay more attention to the beginning and end of their context window. Information buried in the middle of 50K tokens of retrieved text gets under-weighted. The model does not know it is missing something — it just produces a confident answer that misses the most relevant passage.
 
 The practical rule: keep assembled context under 8K tokens per query. If you consistently hit that limit, your reranking threshold is too loose. Reduce the number of retrieved chunks or tighten the relevance score cutoff before generating. Fewer, better chunks beats more chunks every time.
+
+__OPINION_BOX__
 
 ## Three Things to Take Away
 

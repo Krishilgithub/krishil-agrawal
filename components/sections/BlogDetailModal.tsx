@@ -166,6 +166,227 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
         );
       }
       
+      if (trimmedBlock === "__STAT_BAR__") {
+        return (
+          <div key={index} className="bg-[#1a1916] text-white p-8 rounded-2xl flex flex-col md:flex-row gap-8 overflow-x-auto my-12">
+            <div className="flex-1 min-w-[160px] md:border-r border-white/10 md:pr-8">
+              <div className="font-outfit text-4xl md:text-5xl font-bold text-red-500 mb-2">80%</div>
+              <div className="text-sm text-white/50 leading-relaxed tracking-wide">RAG failures trace back to ingestion & chunking, not the LLM</div>
+            </div>
+            <div className="flex-1 min-w-[160px] md:border-r border-white/10 md:pr-8">
+              <div className="font-outfit text-4xl md:text-5xl font-bold text-red-500 mb-2">87%</div>
+              <div className="text-sm text-white/50 leading-relaxed tracking-wide">Accuracy from adaptive chunking vs 13% for fixed-size baselines (MDPI, 2025)</div>
+            </div>
+            <div className="flex-1 min-w-[160px] md:border-r border-white/10 md:pr-8">
+              <div className="font-outfit text-4xl md:text-5xl font-bold text-red-500 mb-2">70%</div>
+              <div className="text-sm text-white/50 leading-relaxed tracking-wide">Retrieval lift from semantic chunking over naive baselines</div>
+            </div>
+            <div className="flex-1 min-w-[160px]">
+              <div className="font-outfit text-4xl md:text-5xl font-bold text-red-500 mb-2">2,500</div>
+              <div className="text-sm text-white/50 leading-relaxed tracking-wide">Token &quot;context cliff&quot; where response quality drops sharply (Chroma, 2025)</div>
+            </div>
+          </div>
+        );
+      }
+
+      if (trimmedBlock === "__STRATEGY_GRID__") {
+        return (
+          <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gray-400" />
+              <div className="bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mb-3">Level 1</div>
+              <h4 className="font-outfit text-lg font-bold text-black mb-2">Fixed-Size / Recursive</h4>
+              <p className="text-sm text-gray-500 mb-3">Split by token count. The default in LangChain. Add 10-20% overlap to preserve cross-boundary context.</p>
+              <div className="text-xs text-gray-400"><strong className="uppercase tracking-widest text-[#9e9b93] font-bold">Use when:</strong> Homogeneous content — news articles, support tickets, FAQ entries.</div>
+            </div>
+            <div className="bg-white border border-gray-200 rounded-xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-blue-500" />
+              <div className="bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mb-3">Level 2</div>
+              <h4 className="font-outfit text-lg font-bold text-black mb-2">Semantic Chunking</h4>
+              <p className="text-sm text-gray-500 mb-3">Embed every sentence and split on cosine distance drops. Groups by meaning, not character count.</p>
+              <div className="text-xs text-gray-400"><strong className="uppercase tracking-widest text-[#9e9b93] font-bold">Use when:</strong> Technical docs, knowledge bases, research papers.</div>
+            </div>
+            <div className="bg-white border border-gray-200 rounded-xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-green-500" />
+              <div className="bg-green-50 text-green-600 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mb-3">Level 3</div>
+              <h4 className="font-outfit text-lg font-bold text-black mb-2">Structural / Propositional</h4>
+              <p className="text-sm text-gray-500 mb-3">Split on document structure (headers, sections) or use an LLM to extract atomic propositions.</p>
+              <div className="text-xs text-gray-400"><strong className="uppercase tracking-widest text-[#9e9b93] font-bold">Use when:</strong> Markdown docs, PDFs with logical sections, legal documents.</div>
+            </div>
+            <div className="bg-white border border-gray-200 rounded-xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-red-500" />
+              <div className="bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mb-3">Level 4</div>
+              <h4 className="font-outfit text-lg font-bold text-black mb-2">Agentic Chunking</h4>
+              <p className="text-sm text-gray-500 mb-3">An LLM agent inspects the full document, decides the optimal strategy, executes it, and enriches chunks.</p>
+              <div className="text-xs text-gray-400"><strong className="uppercase tracking-widest text-[#9e9b93] font-bold">Use when:</strong> Heterogeneous corpora, high-stakes retrieval, enterprise knowledge management.</div>
+            </div>
+          </div>
+        );
+      }
+
+      if (trimmedBlock === "__BENCHMARK_TABLE__") {
+        return (
+          <div key={index} className="overflow-x-auto my-8 border border-gray-200 rounded-xl bg-white shadow-sm">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+              <thead>
+                <tr className="bg-[#1a1916] text-white">
+                  <th className="px-6 py-4 font-semibold tracking-wider uppercase text-xs">Strategy</th>
+                  <th className="px-6 py-4 font-semibold tracking-wider uppercase text-xs">Retrieval Accuracy</th>
+                  <th className="px-6 py-4 font-semibold tracking-wider uppercase text-xs">Indexing Cost</th>
+                  <th className="px-6 py-4 font-semibold tracking-wider uppercase text-xs">Chunk Consistency</th>
+                  <th className="px-6 py-4 font-semibold tracking-wider uppercase text-xs">Best Document Type</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                <tr>
+                  <td className="px-6 py-4 font-bold text-black">Fixed-size recursive</td>
+                  <td className="px-6 py-4 text-blue-600">69% (Vecta)</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Very low</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">High — predictable</td>
+                  <td className="px-6 py-4 text-gray-500">Homogeneous text</td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="px-6 py-4 font-bold text-black">Semantic chunking</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Up to ~70% lift vs naive</td>
+                  <td className="px-6 py-4 text-blue-600">Medium (embed per sentence)</td>
+                  <td className="px-6 py-4 text-blue-600">Variable chunk size</td>
+                  <td className="px-6 py-4 text-gray-500">Knowledge bases, tech docs</td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 font-bold text-black">Structural / header-based</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">High for structured docs</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Very low</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">High — inherits doc structure</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Markdown, HTML, PDFs with headers</td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="px-6 py-4 font-bold text-black">Propositional</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Highest precision</td>
+                  <td className="px-6 py-4 text-gray-400">High (LLM per paragraph)</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Very consistent (1 idea/chunk)</td>
+                  <td className="px-6 py-4 text-gray-500">Legal, medical, research</td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 font-bold text-black">Agentic chunking</td>
+                  <td className="px-6 py-4 text-red-600 font-bold">87% adaptive (MDPI, 2025)</td>
+                  <td className="px-6 py-4 text-gray-400">Highest (LLM per document)</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Optimal per doc type</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Heterogeneous corpora</td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="px-6 py-4 font-bold text-black">Page-level</td>
+                  <td className="px-6 py-4 text-gray-500">0.648 accuracy — NVIDIA 2024</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Very low</td>
+                  <td className="px-6 py-4 text-green-600 font-medium">Consistent</td>
+                  <td className="px-6 py-4 text-gray-500">Paginated PDFs only</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+
+      if (trimmedBlock === "__PIPELINE_SVG__") {
+        return (
+          <div key={index} className="bg-white border border-gray-200 rounded-xl p-8 my-10 overflow-x-auto shadow-sm">
+            <div className="font-outfit text-[11px] font-bold tracking-[0.1em] text-gray-400 uppercase mb-5">Agentic RAG Pipeline — Ingestion and Retrieval Flow</div>
+            <div className="min-w-[650px]">
+              <svg width="100%" viewBox="0 0 680 310" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M2 1L8 5L2 9" fill="none" stroke="#9e9b93" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </marker>
+                  <marker id="arr-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M2 1L8 5L2 9" fill="none" stroke="#c44b2b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </marker>
+                  <marker id="arr-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M2 1L8 5L2 9" fill="none" stroke="#1a6b4a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </marker>
+                  <marker id="arr-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                     <path d="M2 1L8 5L2 9" fill="none" stroke="#7a3b8c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </marker>
+                </defs>
+
+                {/* INGESTION ROW */}
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" letterSpacing="0.1" x="40" y="30" fontWeight="600">INGESTION PIPELINE</text>
+
+                <rect x="40" y="42" width="100" height="48" rx="4" fill="#fcfcfc" stroke="#e5e5e5" strokeWidth="1"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="12" fill="#1a1916" font-weight="600" x="90" y="62" textAnchor="middle">Raw Docs</text>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" x="90" y="79" textAnchor="middle">PDF, MD, HTML</text>
+
+                <line x1="140" y1="66" x2="158" y2="66" stroke="#c44b2b" strokeWidth="1.5" markerEnd="url(#arr-red)"/>
+
+                <rect x="160" y="36" width="108" height="60" rx="4" fill="#c44b2b" stroke="#c44b2b" strokeWidth="0"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="12" fill="#fff" fontWeight="700" x="214" y="60" textAnchor="middle">Chunking</text>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="rgba(255,255,255,0.7)" x="214" y="77" textAnchor="middle">← You are here</text>
+
+                <line x1="268" y1="66" x2="286" y2="66" stroke="#c44b2b" strokeWidth="1.5" markerEnd="url(#arr-red)"/>
+
+                <rect x="288" y="42" width="100" height="48" rx="4" fill="#fcfcfc" stroke="#e5e5e5" strokeWidth="1"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="12" fill="#1a1916" fontWeight="600" x="338" y="62" textAnchor="middle">Embedding</text>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" x="338" y="79" textAnchor="middle">text-emb-3</text>
+
+                <line x1="388" y1="66" x2="406" y2="66" stroke="#9e9b93" strokeWidth="1.5" markerEnd="url(#arr2)"/>
+
+                <rect x="408" y="42" width="100" height="48" rx="4" fill="#fcfcfc" stroke="#e5e5e5" strokeWidth="1"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="12" fill="#1a1916" fontWeight="600" x="458" y="62" textAnchor="middle">Vector Store</text>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" x="458" y="79" textAnchor="middle">Pinecone/Qdrant</text>
+
+                {/* RETRIEVAL ROW */}
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" letterSpacing="0.1" x="40" y="150" fontWeight="600">QUERY / RETRIEVAL PIPELINE</text>
+
+                <rect x="40" y="162" width="100" height="48" rx="4" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="12" fill="#1a1916" fontWeight="600" x="90" y="182" textAnchor="middle">User Query</text>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" x="90" y="199" textAnchor="middle">natural language</text>
+
+                <line x1="140" y1="186" x2="158" y2="186" stroke="#16a34a" strokeWidth="1.5" markerEnd="url(#arr-green)"/>
+
+                <rect x="160" y="162" width="100" height="48" rx="4" fill="#fcfcfc" stroke="#e5e5e5" strokeWidth="1"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="12" fill="#1a1916" fontWeight="600" x="210" y="182" textAnchor="middle">Rewrite</text>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" x="210" y="199" textAnchor="middle">HyDE / expand</text>
+
+                <line x1="260" y1="186" x2="278" y2="186" stroke="#9e9b93" strokeWidth="1.5" markerEnd="url(#arr2)"/>
+
+                <rect x="280" y="162" width="100" height="48" rx="4" fill="#fcfcfc" stroke="#e5e5e5" strokeWidth="1"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="12" fill="#1a1916" font-weight="600" x="330" y="182" textAnchor="middle">Retrieval</text>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" x="330" y="199" textAnchor="middle">hybrid search</text>
+
+                <line x1="380" y1="186" x2="398" y2="186" stroke="#9e9b93" strokeWidth="1.5" markerEnd="url(#arr2)"/>
+
+                <rect x="400" y="162" width="100" height="48" rx="4" fill="#fcfcfc" stroke="#e5e5e5" strokeWidth="1"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="12" fill="#1a1916" fontWeight="600" x="450" y="182" textAnchor="middle">Rerank</text>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" x="450" y="199" textAnchor="middle">cross-encoder</text>
+
+                <line x1="500" y1="186" x2="518" y2="186" stroke="#9e9b93" strokeWidth="1.5" markerEnd="url(#arr2)"/>
+
+                <rect x="520" y="162" width="100" height="48" rx="4" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="12" fill="#1a1916" fontWeight="600" x="570" y="182" textAnchor="middle">Generate</text>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fill="#9e9b93" x="570" y="199" textAnchor="middle">LLM + context</text>
+
+                {/* Agentic loop arrow */}
+                <path d="M570 210 Q570 260 330 260 Q200 260 130 230" fill="none" stroke="#7a3b8c" strokeWidth="1.5" strokeDasharray="4 3" markerEnd="url(#arr-purple)" opacity="0.7"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="10" fontStyle="italic" fill="#7a3b8c" x="340" y="278" textAnchor="middle">Agentic loop — re-retrieve if answer quality fails</text>
+
+                {/* Context limit note */}
+                <rect x="40" y="248" width="175" height="28" rx="3" fill="#fffbeb" stroke="#f59e0b" strokeWidth="1"/>
+                <text fontFamily="'Outfit',sans-serif" fontSize="11" fill="#b45309" x="128" y="266" textAnchor="middle">Keep context &lt; 8K tokens</text>
+              </svg>
+            </div>
+          </div>
+        );
+      }
+
+      if (trimmedBlock === "__OPINION_BOX__") {
+        return (
+          <div key={index} className="border-t-[3px] border-b-[3px] border-[#1a1916] py-10 my-16">
+            <p className="font-outfit text-2xl font-light text-[#1a1916] leading-relaxed italic mb-4">
+              &quot;The chunking question is actually a product question disguised as an infrastructure question. The right chunk size is not 512 tokens — it is whatever preserves the atomic unit of meaning your users are querying for. In a legal knowledge base, that unit is a clause. In an API docs site, it is a function signature plus its parameter table. The developers who figure this out build systems that actually work in production.&quot;
+            </p>
+            <div className="font-outfit text-sm text-gray-500 font-medium">— Personal take · Based on production RAG architecture patterns seen across 2024–2026</div>
+          </div>
+        );
+      }
+
       if (trimmedBlock.startsWith("## ")) {
         const lines = trimmedBlock.split("\n");
         const titleLine = lines[0].replace("## ", "").trim();
