@@ -34,8 +34,8 @@ export function Blogs() {
   const isDefaultView = activeCategory === "All" && searchQuery === "";
 
   // The grid gets everything EXCEPT the featured blog if we are in default view.
-  const gridBlogs = isDefaultView 
-    ? filteredBlogs.filter(b => !b.isFeatured) 
+  const gridBlogs = isDefaultView && featuredBlog
+    ? filteredBlogs.filter(b => b.id !== featuredBlog.id) 
     : filteredBlogs;
 
   return (

@@ -308,7 +308,7 @@ The forward-looking bet: the next 18 months will produce either a major public a
     readTime: "14 min read",
     publishedAt: "April 2026",
     popularityScore: 98,
-    isFeatured: true,
+    isFeatured: false,
     githubLink: "",
     content: `
 Here is the uncomfortable truth about most RAG systems in production: the bottleneck is not your embedding model. It is not your vector database. It is not your prompt template. It is the 10 lines of code that run first — the part where you split a PDF into chunks and hope for the best.
