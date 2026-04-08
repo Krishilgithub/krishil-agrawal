@@ -2,6 +2,9 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { X, Clock, ExternalLink, Calendar, BrainCircuit } from "lucide-react";
 import { BlogArticle } from "@/types/blog";
+import { GraphRagDiagram1 } from "../blogs/GraphRagDiagram1";
+import { GraphRagDiagram2 } from "../blogs/GraphRagDiagram2";
+import { GraphRagDiagram3 } from "../blogs/GraphRagDiagram3";
 
 interface BlogDetailModalProps {
   blog: BlogArticle | null;
@@ -376,13 +379,97 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
         );
       }
 
-      if (trimmedBlock === "__OPINION_BOX__") {
+      if (trimmedBlock === "__GRAPHRAG_DIAGRAM_1__") return <GraphRagDiagram1 key={index} />;
+      if (trimmedBlock === "__GRAPHRAG_DIAGRAM_2__") return <GraphRagDiagram2 key={index} />;
+      if (trimmedBlock === "__GRAPHRAG_DIAGRAM_3__") return <GraphRagDiagram3 key={index} />;
+      
+      if (trimmedBlock === "__GRAPHRAG_TABLE__") {
         return (
-          <div key={index} className="border-t-[3px] border-b-[3px] border-[#1a1916] py-10 my-16">
-            <p className="font-outfit text-2xl font-light text-[#1a1916] leading-relaxed italic mb-4">
-              &quot;The chunking question is actually a product question disguised as an infrastructure question. The right chunk size is not 512 tokens — it is whatever preserves the atomic unit of meaning your users are querying for. In a legal knowledge base, that unit is a clause. In an API docs site, it is a function signature plus its parameter table. The developers who figure this out build systems that actually work in production.&quot;
+          <div key={index} className="overflow-x-auto my-8 border border-gray-200 rounded-xl bg-white shadow-sm">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+              <thead>
+                <tr className="bg-[#1a1e2a] text-[#4fffb0]">
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-xs border-b-2 border-[#252a38]">Dimension</th>
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-xs border-b-2 border-[#252a38]">Vector RAG</th>
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-xs border-b-2 border-[#252a38]">GraphRAG</th>
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-xs border-b-2 border-[#252a38]">Winner</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 bg-[#0d0f14]">
+                <tr className="hover:bg-white/5">
+                  <td className="px-6 py-4 font-semibold text-white">Setup Complexity</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Low — embed and store</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">High — LLM extraction needed</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#4fffb0]/15 text-[#4fffb0]">Vector</span></td>
+                </tr>
+                <tr className="hover:bg-white/5 bg-[#13161e]/50">
+                  <td className="px-6 py-4 font-semibold text-white">Index Cost</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">~$0.002 / 1K tokens</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">~$2–$8 / 1M tokens (GPT-4o)</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#4fffb0]/15 text-[#4fffb0]">Vector</span></td>
+                </tr>
+                <tr className="hover:bg-white/5">
+                  <td className="px-6 py-4 font-semibold text-white">Query Latency</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">20–80ms (ANN search)</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">100–600ms (graph traverse)</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#4fffb0]/15 text-[#4fffb0]">Vector</span></td>
+                </tr>
+                <tr className="hover:bg-white/5 bg-[#13161e]/50">
+                  <td className="px-6 py-4 font-semibold text-white">Multi-hop Reasoning</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Poor — loses chain logic</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Excellent — native traversal</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#ffd66b]/15 text-[#ffd66b]">Graph</span></td>
+                </tr>
+                <tr className="hover:bg-white/5">
+                  <td className="px-6 py-4 font-semibold text-white">Relationship Queries</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Fails on implicit links</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">First-class citizen</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#ffd66b]/15 text-[#ffd66b]">Graph</span></td>
+                </tr>
+                <tr className="hover:bg-white/5 bg-[#13161e]/50">
+                  <td className="px-6 py-4 font-semibold text-white">Answer Traceability</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Chunk references only</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Full entity path</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#ffd66b]/15 text-[#ffd66b]">Graph</span></td>
+                </tr>
+                <tr className="hover:bg-white/5">
+                  <td className="px-6 py-4 font-semibold text-white">Open-Domain QA</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Excellent</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Moderate</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#4fffb0]/15 text-[#4fffb0]">Vector</span></td>
+                </tr>
+                <tr className="hover:bg-white/5 bg-[#13161e]/50">
+                  <td className="px-6 py-4 font-semibold text-white">Hallucination Risk</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Moderate</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Lower (entity-grounded)</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#ffd66b]/15 text-[#ffd66b]">Graph</span></td>
+                </tr>
+                <tr className="hover:bg-white/5">
+                  <td className="px-6 py-4 font-semibold text-white">Incremental Updates</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Easy — add chunks</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Requires re-extraction</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#4fffb0]/15 text-[#4fffb0]">Vector</span></td>
+                </tr>
+                <tr className="hover:bg-white/5 bg-[#13161e]/50">
+                  <td className="px-6 py-4 font-semibold text-white">Best For</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">FAQ, summarization, general QA</td>
+                  <td className="px-6 py-4 text-[#c8ccda]">Legal, medical, financial, org data</td>
+                  <td className="px-6 py-4"><span className="inline-block px-2 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-[#ffd66b]/15 text-[#ffd66b]">Depends</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+
+      if (trimmedBlock === "__GRAPHRAG_OPINION__") {
+        return (
+          <div key={index} className="bg-[#13161e] border border-[#252a38] rounded-xl p-8 md:p-10 my-16 relative shadow-lg">
+            <div className="absolute -top-[35px] left-8 font-outfit text-8xl text-[#7c6fff] opacity-40 leading-none">&quot;</div>
+            <p className="font-outfit text-xl font-light text-[#e8eaf0] leading-relaxed italic mb-4">
+              GraphRAG will become the default architecture for enterprise RAG within 18 months — but not because it&apos;s always better. It&apos;ll win because the questions enterprises actually care about are almost all relationship questions. &quot;Which regulations apply to which products in which markets?&quot; &quot;Which employees have access to which systems?&quot; &quot;Which clients share risk exposure through shared counterparties?&quot; Vector RAG was built for the internet. GraphRAG is built for the enterprise.
             </p>
-            <div className="font-outfit text-sm text-gray-500 font-medium">— Personal take · Based on production RAG architecture patterns seen across 2024–2026</div>
+            <div className="font-outfit text-sm text-[#7a8099] font-bold tracking-wide mt-6">— Author&apos;s Take · April 2026</div>
           </div>
         );
       }

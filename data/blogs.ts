@@ -1,4 +1,3 @@
-import React from "react";
 import { BlogArticle } from "../types/blog";
 
 export const blogsData: BlogArticle[] = [
@@ -563,6 +562,206 @@ First: chunking quality sets the ceiling for your entire RAG system. You can tun
 Second: the ladder is real, but start at the bottom. Recursive splitting at 400–512 tokens with overlap is not a compromise — it is a production-proven default that wins benchmarks. Upgrade when you have retrieval metrics that show you need to.
 
 Third: the context cliff is real. Keep your assembled context under 8K tokens. Smaller, more precise context beats larger, noisier context for every model currently in production. The goal of chunking is not to preserve information — it is to surface exactly the right information at query time.
+    `
+  },
+  {
+    id: "graphrag-vs-vector-rag-when-relationships-matter",
+    title: "GraphRAG vs Vector RAG — When Relationships Beat Similarity",
+    description: "GraphRAG beats Vector RAG in 4 specific scenarios. Learn when entity relationships outperform semantic similarity — with diagrams, examples, and code.",
+    tags: ["GenAI / LLMs", "System Design", "Agentic AI"],
+    readTime: "12 min read",
+    publishedAt: "April 2026",
+    popularityScore: 96,
+    isFeatured: false,
+    githubLink: "",
+    content: `
+You embed your documents. You build a vector store. Your RAG pipeline works great — until a user asks, "Which of our clients share a vendor with a competitor?" And your system hands back a paragraph about supply chains from a 2019 whitepaper.
+
+Vector RAG is not broken. It's just not designed for that question. Semantic similarity finds text that sounds related. It cannot trace a chain of named entities across five documents. That's a graph problem — and GraphRAG is built to solve it.
+
+The debate isn't "which one is better." It's about knowing when to deploy which weapon. Get this wrong and you'll spend months optimizing the wrong retrieval architecture. Get it right and your AI system answers questions other RAG pipelines can't even parse.
+
+In this post you'll learn exactly how GraphRAG works under the hood, how it compares to Vector RAG on 5 dimensions, and the 4 question types where GraphRAG wins every time — with real code examples for both approaches.
+
+> ⚡ **TL;DR — Key Takeaways**
+> - Vector RAG retrieves by semantic similarity; GraphRAG retrieves by entity relationships.
+> - GraphRAG shines on multi-hop reasoning, relationship queries, and structured knowledge domains.
+> - Microsoft's GraphRAG library (released 2024) makes knowledge graph extraction production-ready.
+> - The real-world sweet spot: combine both — use Vector RAG for unstructured text, GraphRAG for entity-heavy domains.
+> - GraphRAG costs more to build but returns dramatically better results on 4 specific query types.
+
+## The Mental Model: Two Different Libraries
+
+Think of Vector RAG as a **librarian who reads every book and remembers feelings.** Ask "something about conflict in the Middle East" and they'll hand you related texts — fast, fuzzy, and surprisingly good for open-ended questions.
+
+GraphRAG is a **librarian who built a relationship map.** They know that *Company A* acquired *Startup B*, which was co-founded by *Person C*, who also sits on the board of *Competitor D*. Ask a relationship question and they trace the graph — not the text.
+
+This distinction matters enormously in 2025-2026. Enterprise AI deployments are moving from generic chatbots to domain-specific agents that operate over private knowledge: legal contracts, financial filings, drug interaction databases, and internal org charts. These domains are *relationship-dense*. Vector RAG alone simply cannot serve them.
+
+__GRAPHRAG_DIAGRAM_1__
+
+## How Vector RAG Actually Works Under the Hood
+
+Vector RAG has 3 stages: index, embed, retrieve.
+
+**Indexing:** You split your documents into chunks — usually 512 tokens with some overlap. Each chunk becomes a unit of retrieval. The chunk size is a critical design decision. Too small and you lose context. Too big and you dilute the signal.
+
+**Embedding:** Each chunk gets passed through an embedding model (OpenAI's \`text-embedding-3-large\`, Cohere Embed v3, or a local model via Ollama). The model outputs a dense vector — typically 1536 dimensions — that encodes semantic meaning.
+
+**Retrieval:** At query time, you embed the user question with the same model. Then you run an Approximate Nearest Neighbor (ANN) search against your vector store (Pinecone, Qdrant, Weaviate, pgvector). The top-K most similar chunks get stuffed into the LLM prompt as context.
+
+> 💡 **Key Insight:** The entire power of Vector RAG lives in one assumption — *semantically similar text contains the answer*. When that assumption breaks (relationship questions, multi-hop reasoning), retrieval quality collapses fast.
+
+Here's the core retrieval logic in Python using LangChain:
+
+\`\`\`python
+# Vector RAG retrieval — simple but powerful for semantic queries
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Qdrant
+from langchain_core.prompts import ChatPromptTemplate
+
+embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+
+# Load your pre-built vector store
+vectorstore = Qdrant.from_existing_collection(
+    embeddings=embeddings,
+    collection_name="company_docs",
+    url="http://localhost:6333"
+)
+
+# Retrieve top-5 semantically similar chunks
+retriever = vectorstore.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 5}
+)
+
+# This works great for: "What is our refund policy?"
+# This fails badly for: "Which vendors appear in both Client A and Client B contracts?"
+results = retriever.invoke("What is our refund policy?")
+\`\`\`
+
+The comment on the last line tells the whole story. The moment your query requires structured cross-document reasoning, vector similarity becomes the wrong tool.
+
+## How GraphRAG Builds and Traverses a Knowledge Graph
+
+GraphRAG has 5 stages: extract, map, store, translate, traverse.
+
+**Entity Extraction:** An LLM reads your documents and pulls out named entities — people, organizations, products, locations, dates, concepts. This step is expensive but only runs once during indexing.
+
+**Relationship Mapping:** The same LLM identifies relationships between entities and stores them as triplets: \`(Subject, Relationship, Object)\`. Example: \`(OpenAI, acquired, Rockset)\`, \`(Sam Altman, CEO_of, OpenAI)\`.
+
+**Graph Storage:** Triplets load into a graph database — Neo4j is the most common choice. Microsoft's GraphRAG library also supports a lightweight local option using NetworkX for smaller datasets.
+
+**Query Translation:** At inference time, the user's natural language question gets translated into a Cypher query (Neo4j's query language) or a graph traversal plan.
+
+**Subgraph Retrieval:** The graph returns a subgraph — the relevant entities and relationships. This subgraph gets serialized as text and passed to the LLM as context.
+
+> 💡 **Key Insight:** Microsoft open-sourced their GraphRAG library in July 2024. It handles entity extraction and community detection automatically using GPT-4. The indexing pipeline is the hardest part — their library makes it production-usable for the first time.
+
+Here's what entity extraction looks like using Microsoft's GraphRAG:
+
+\`\`\`python
+# GraphRAG indexing with Microsoft's library
+# Install: pip install graphrag
+
+import asyncio
+from graphrag.index import run_pipeline_with_config
+from graphrag.config import create_graphrag_config
+
+# Config points to your docs folder and OpenAI key
+config = create_graphrag_config(
+    root_dir="./input",
+    llm_model="gpt-4o",
+    embedding_model="text-embedding-3-small"
+)
+
+# This runs entity extraction + relationship mapping + community detection
+# Expensive at index time. Cheap at query time.
+asyncio.run(run_pipeline_with_config(config))
+
+# After indexing, query with global or local search
+from graphrag.query.cli import run_global_search
+
+result = asyncio.run(
+    run_global_search(
+        root_dir="./input",
+        query="Which organizations have a shared leadership relationship?"
+    )
+)
+print(result.response)
+# Returns entity-grounded answer with relationship chain as evidence
+\`\`\`
+
+The key architectural difference: GraphRAG's answer comes with a **traceable path** through the knowledge graph. You can audit exactly which entity relationships drove the response. Vector RAG gives you chunks — GraphRAG gives you reasoning chains.
+
+__GRAPHRAG_DIAGRAM_2__
+
+## 4 Query Types Where GraphRAG Wins Every Time
+
+These are the 4 situations where Vector RAG breaks down and GraphRAG delivers. Recognize them early — choosing the wrong architecture wastes months.
+
+1. **Multi-Hop Reasoning Queries**: *"Who are all the suppliers of companies that received funding from Investor X in the last 2 years?"* This needs 3 hops: Investor → Companies → Suppliers → Timeframe filter. Vector RAG will find documents that mention investing and suppliers. It won't trace the chain. GraphRAG traverses \`FUNDED_BY → SUPPLIES → date filter\` in one Cypher query.
+
+2. **Relationship Existence Queries**: *"Is there a shared vendor between Company A and Company B?"* No text chunk contains this answer explicitly. The relationship emerges from the graph structure. Vector retrieval cannot assemble cross-document entity relationships from chunk similarities.
+
+3. **Aggregation Over Entities**: *"How many contracts mention Vendor X and what is the total value?"* Vector RAG might retrieve some relevant chunks. It won't sum across all contracts reliably. GraphRAG can: the graph stores contract-vendor relationships with metadata, and Cypher handles aggregation natively.
+
+4. **Community / Cluster Detection**: *"Which group of researchers in our corpus most often co-author papers together?"* This is a network analysis problem. Microsoft's GraphRAG runs the Leiden community detection algorithm on your entity graph. It identifies clusters automatically during indexing. No equivalent exists in Vector RAG.
+
+> ⚠️ **Warning:** Don't assume GraphRAG is always better. For open-domain QA on unstructured content ("Summarize our customer feedback from Q3"), Vector RAG is faster, cheaper, and more accurate. Use the query type to pick the tool.
+
+## GraphRAG vs Vector RAG: Head-to-Head Comparison
+
+__GRAPHRAG_TABLE__
+
+## The Hybrid Approach: When to Combine Both
+
+The most powerful production systems don't choose one. They route.
+
+A query classifier — a simple LLM call or a fine-tuned classifier — detects the query type and routes it to the right retrieval engine. Relationship and multi-hop queries go to GraphRAG. Open-ended semantic queries go to Vector RAG. The results merge before the final LLM prompt.
+
+LlamaIndex calls this a "Router Query Engine." LangGraph makes it trivial to implement as a conditional node in your agent graph. Here's the routing logic in pseudocode:
+
+\`\`\`python
+# Hybrid RAG router — simplified logic
+def route_query(query: str) -> str:
+    classifier_prompt = f"""
+    Classify this query as one of:
+    - 'relationship': asks about connections between entities
+    - 'semantic': asks for information or summaries
+    
+    Query: {query}
+    Answer with just the label.
+    """
+    label = llm.invoke(classifier_prompt).strip()
+    return label
+
+def retrieve(query: str) -> str:
+    route = route_query(query)
+    
+    if route == "relationship":
+        return graphrag_retriever.invoke(query)  # Neo4j traversal
+    else:
+        return vector_retriever.invoke(query)    # Qdrant ANN search
+\`\`\`
+
+> 💡 **Pro Tip:** Start with Vector RAG. Only add GraphRAG when users hit a class of questions your vector system consistently fails. Building GraphRAG indexing upfront on speculative use cases is an expensive mistake.
+
+__GRAPHRAG_DIAGRAM_3__
+
+__GRAPHRAG_OPINION__
+
+## Conclusion: Pick Your Weapon Based on the Question Type
+
+The 3 things to take away from this post:
+
+**1. Similarity ≠ Structure.** Vector RAG finds semantically related text. It cannot traverse entity relationships. The moment your user's question requires tracing a chain of named entities across documents, you need a graph.
+
+**2. GraphRAG has a real cost.** The indexing pipeline requires LLM calls per document. Microsoft's GraphRAG library costs roughly $2–$8 per million tokens to index with GPT-4o. Budget this before committing to the architecture.
+
+**3. The hybrid is the endgame.** Production systems route queries to the right engine. Build Vector RAG first. Add GraphRAG when your failure mode analysis shows consistent breakdowns on relationship queries. The router is cheap; the wrong architecture is not.
+
+The next wave of enterprise AI agents won't just search your documents — they'll navigate your organizational knowledge graph. The teams that build the graph now will have a 12-month head start on the ones who don't.
     `
   }
 ];
