@@ -77,57 +77,37 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
     return extracted;
   }, [blog]);
 
-  // Bulletproof Scroll Spy using getBoundingClientRect
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container || headings.length === 0) return;
+  const handleScroll = () => {
+    // We don't need requestAnimationFrame for synthetic onScroll in React 18, it applies batching natively
+    const threshold = window.innerHeight * 0.35; // 35% from top
+    let currentActiveId = "";
 
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const threshold = window.innerHeight * 0.35; // 35% from top
-          let currentActiveId = "";
-
-          // Headings are in order. The last one whose top is above the threshold is our active section.
-          for (const heading of headings) {
-            const el = document.getElementById(heading.id);
-            if (el) {
-              const rect = el.getBoundingClientRect();
-              if (rect.top <= threshold) {
-                currentActiveId = heading.id;
-              }
-            }
-          }
-
-          // Fallback to the first heading if we're at the very top above the first section
-          if (!currentActiveId && headings.length > 0) {
-            const firstEl = document.getElementById(headings[0].id);
-            if (firstEl && firstEl.getBoundingClientRect().top > threshold) {
-              currentActiveId = headings[0].id;
-            }
-          }
-
-          if (currentActiveId) {
-            setActiveId((prev) => (prev !== currentActiveId ? currentActiveId : prev));
-          }
-          ticking = false;
-        });
-        ticking = true;
+    for (const heading of headings) {
+      const el = document.getElementById(heading.id);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= threshold + 50) { // Slight padding to ensure smooth handover
+          currentActiveId = heading.id;
+        }
       }
-    };
+    }
 
-    // Give the DOM a tiny moment to render the content natively before attaching
-    const timeout = setTimeout(() => {
-      container.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll(); // Check once initially
-    }, 100);
+    if (!currentActiveId && headings.length > 0) {
+      const firstEl = document.getElementById(headings[0].id);
+      if (firstEl && firstEl.getBoundingClientRect().top > threshold) {
+        currentActiveId = headings[0].id;
+      }
+    }
 
-    return () => {
-      clearTimeout(timeout);
-      container.removeEventListener("scroll", handleScroll);
-    };
+    if (currentActiveId && currentActiveId !== activeId) {
+      setActiveId(currentActiveId);
+    }
+  };
+
+  // Run once on mount to establish initial active state
+  useEffect(() => {
+    const tm = setTimeout(() => handleScroll(), 150);
+    return () => clearTimeout(tm);
   }, [headings]);
 
   if (!blog) return null;
@@ -255,6 +235,7 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
   return (
         <motion.div
            ref={scrollContainerRef}
+           onScroll={handleScroll}
            initial={{ opacity: 0 }}
            animate={{ opacity: 1 }}
            exit={{ opacity: 0 }}
@@ -362,7 +343,7 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
                           onClick={() => scrollToHeading(heading.id)}
                           className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm ${
                             activeId === heading.id 
-                              ? "bg-[#22a222] bg-[#222] text-white font-medium" 
+                              ? "bg-red-600 text-white font-bold shadow-lg" 
                               : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
                           } ${heading.level === 3 ? "pl-8 text-xs" : ""}`}
                         >
