@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { X, Clock, ExternalLink, Calendar, BrainCircuit } from "lucide-react";
 import { BlogArticle } from "@/types/blog";
 
@@ -19,6 +19,7 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
   const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
   const tocRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ container: scrollContainerRef });
 
   // Handle click outside to close TOC
   useEffect(() => {
@@ -230,10 +231,8 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
           {/* Progress / Reading Status line */}
           <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-[110]">
             <motion.div 
-               className="h-full bg-red-600"
-               initial={{ width: "0%" }}
-               animate={{ width: "100%" }}
-               transition={{ duration: 1.5, ease: "easeOut" }}
+               className="h-full bg-red-600 origin-left"
+               style={{ scaleX: scrollYProgress }}
             />
           </div>
 
