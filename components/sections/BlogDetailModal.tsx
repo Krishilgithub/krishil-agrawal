@@ -5,6 +5,7 @@ import { BlogArticle } from "@/types/blog";
 import { GraphRagDiagram1 } from "../blogs/GraphRagDiagram1";
 import { GraphRagDiagram2 } from "../blogs/GraphRagDiagram2";
 import { GraphRagDiagram3 } from "../blogs/GraphRagDiagram3";
+import { LlmMemoryDiagram } from "../blogs/LlmMemoryDiagram";
 
 interface BlogDetailModalProps {
   blog: BlogArticle | null;
@@ -470,6 +471,77 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
               GraphRAG will become the default architecture for enterprise RAG within 18 months — but not because it&apos;s always better. It&apos;ll win because the questions enterprises actually care about are almost all relationship questions. &quot;Which regulations apply to which products in which markets?&quot; &quot;Which employees have access to which systems?&quot; &quot;Which clients share risk exposure through shared counterparties?&quot; Vector RAG was built for the internet. GraphRAG is built for the enterprise.
             </p>
             <div className="font-outfit text-sm text-[#7a8099] font-bold tracking-wide mt-6">— Author&apos;s Take · April 2026</div>
+          </div>
+        );
+      }
+
+      if (trimmedBlock === "__LLM_MEMORY_DIAGRAM__") return <LlmMemoryDiagram key={index} />;
+
+      if (trimmedBlock === "__LLM_LETTA_LAYERS__") {
+        return (
+          <div key={index} className="border border-[#d4d4d8] rounded-xl overflow-hidden my-8 shadow-sm">
+            {[
+              { tier: "Hot / RAM", tierColor: "#ef4444", name: "Message Buffer", desc: "Most recent messages from the current conversation. In-context, instant access. Like CPU cache.", size: "~last 10–20 msgs", active: false },
+              { tier: "Warm / Core", tierColor: "#6366f1", name: "Core Memory", desc: "Key persistent facts the agent manages itself — user name, preferences, ongoing task state. In-context but explicitly managed.", size: "~2,000 tokens", active: true },
+              { tier: "Cool / SSD", tierColor: "#0ea5e9", name: "Recall Memory", desc: "Full raw conversation history stored externally. Retrieved on demand. Like fast disk — searchable but not always in-context.", size: "Unlimited", active: false },
+              { tier: "Cold / HDD", tierColor: "#10b981", name: "Archival Memory", desc: "Explicitly stored knowledge — facts, summaries, documents the agent has decided to remember permanently. Vector-indexed for semantic retrieval.", size: "Unlimited", active: false },
+            ].map((layer, i) => (
+              <div key={i} className={`flex flex-wrap md:flex-nowrap items-start gap-4 md:gap-6 px-6 py-4 border-b last:border-b-0 border-[#e4e4e7] ${layer.active ? "bg-indigo-50/60" : "bg-white"}`}>
+                <span className="font-mono text-[11px] font-medium tracking-wide w-28 shrink-0 mt-0.5" style={{ color: layer.tierColor }}>{layer.tier}</span>
+                <span className="font-semibold text-[#18181b] w-40 shrink-0 text-sm">{layer.name}</span>
+                <span className="text-[#71717a] text-sm leading-relaxed flex-1">{layer.desc}</span>
+                <span className="font-mono text-[11px] text-[#a1a1aa] shrink-0 self-center">{layer.size}</span>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      if (trimmedBlock === "__LLM_MEMORY_TABLE__") {
+        const rows = [
+          { approach: "Full history injection", persists: "Session only", cross: "No", cost: "Linear growth", scales: "Short sessions", bestFor: "Prototypes, demos", good: [false,false,false], },
+          { approach: "Summarization + window", persists: "Session only", cross: "No", cost: "Bounded", scales: "Long single sessions", bestFor: "Long chatbot sessions", good: [false,false,null], },
+          { approach: "External vector store", persists: "Permanent", cross: "Yes", cost: "Low + bounded", scales: "Millions of memories", bestFor: "Production assistants", good: [true,true,true], },
+          { approach: "Letta tiered OS model", persists: "Permanent", cross: "Yes", cost: "Medium", scales: "Long-horizon agents", bestFor: "Persistent AI agents", good: [true,true,null], },
+          { approach: "Agentic memory (A-MEM)", persists: "Permanent + evolving", cross: "Yes", cost: "High (LLM per memory)", scales: "Complex knowledge work", bestFor: "Research, enterprise AI", good: [true,true,false], },
+          { approach: "Long context window only", persists: "Session only", cross: "No", cost: "Very high at scale", scales: "Single large docs", bestFor: "One-shot deep analysis", good: [false,false,false], },
+        ];
+        const cellCls = (val: boolean | null) => val === true ? "text-[#10b981] font-medium" : val === false ? "text-[#ef4444]" : "text-[#f59e0b]";
+        return (
+          <div key={index} className="overflow-x-auto my-8 border border-[#d4d4d8] rounded-xl shadow-sm">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="bg-[#18181b] text-white">
+                  {["Approach","Persists?","Cross-session?","Cost","Scales to?","Best For"].map(h => (
+                    <th key={h} className="px-5 py-3.5 font-bold tracking-wider uppercase text-xs border-b-2 border-[#27272a] whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r, i) => (
+                  <tr key={i} className={i % 2 === 1 ? "bg-[#fafaf9]" : "bg-white"}>
+                    <td className="px-5 py-3 font-semibold text-[#18181b] whitespace-nowrap">{r.approach}</td>
+                    <td className={`px-5 py-3 whitespace-nowrap ${cellCls(r.good[0])}`}>{r.persists}</td>
+                    <td className={`px-5 py-3 whitespace-nowrap ${cellCls(r.good[1])}`}>{r.cross}</td>
+                    <td className={`px-5 py-3 whitespace-nowrap ${cellCls(r.good[2])}`}>{r.cost}</td>
+                    <td className="px-5 py-3 text-[#3f3f46] whitespace-nowrap">{r.scales}</td>
+                    <td className="px-5 py-3 text-[#3f3f46] whitespace-nowrap">{r.bestFor}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+
+      if (trimmedBlock === "__LLM_MEMORY_OPINION__") {
+        return (
+          <div key={index} className="relative my-14 p-8 md:p-10 bg-white border border-[#d4d4d8] rounded-xl shadow-sm">
+            <div className="absolute top-3 left-6 font-serif text-8xl text-[#6366f1] opacity-20 leading-none select-none">&quot;</div>
+            <p className="font-serif text-xl italic text-[#18181b] leading-relaxed mb-4 pt-4">
+              The entire memory industry around LLMs exists because of one architectural fact: the context window is the model&apos;s only sense organ. Every framework — LangChain, LlamaIndex, Letta, Mem0 — is fundamentally in the business of deciding what 1% of the available information to put in front of the model&apos;s face. The teams that win at production AI are not the ones with the smartest models. They are the ones with the most disciplined context engineering. Memory architecture is competitive advantage disguised as plumbing.
+            </p>
+            <div className="text-[13px] text-[#a1a1aa] font-medium">— Personal take · Based on production AI system patterns through Q1 2026</div>
           </div>
         );
       }
