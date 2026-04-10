@@ -10,7 +10,7 @@ const navItems = [
   { name: "Experience", icon: Clock, href: "#experience" },
   { name: "Projects", icon: Briefcase, href: "#projects" },
   { name: "Skills", icon: Wrench, href: "#skills" },
-  { name: "Blogs", icon: BookOpen, href: "#blogs" },
+  { name: "Blogs", icon: BookOpen, href: "/blogs", isExternal: true },
   { name: "Contact", icon: Mail, href: "#contact" },
 ];
 
@@ -26,7 +26,11 @@ export function MobileNav() {
     }
   }, [isOpen]);
 
-  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isExternal?: boolean) => {
+    if (isExternal) {
+      setIsOpen(false);
+      return; // let Next.js route normally
+    }
     e.preventDefault();
     setIsOpen(false);
     const section = document.querySelector(href);
@@ -70,7 +74,7 @@ export function MobileNav() {
                   >
                     <Link
                       href={item.href}
-                      onClick={(e) => handleScroll(e, item.href)}
+                      onClick={(e) => handleScroll(e, item.href, item.isExternal)}
                       className="flex items-center gap-6 text-2xl font-outfit font-bold text-gray-800 hover:text-red-500 transition-colors"
                     >
                       <span className="p-4 bg-gray-50 rounded-full border border-gray-100">

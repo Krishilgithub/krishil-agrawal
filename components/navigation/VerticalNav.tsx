@@ -9,8 +9,8 @@ const navItems = [
   { name: "About", icon: User, href: "#about" },
   { name: "Experience", icon: Clock, href: "#experience" },
   { name: "Projects", icon: Briefcase, href: "#projects" },
-  { name: "Blogs", icon: BookOpen, href: "#blogs" },
-  { name: "Skills", icon: Wrench, href: "#skills" },  
+  { name: "Blogs", icon: BookOpen, href: "/blogs", isExternal: true },
+  { name: "Skills", icon: Wrench, href: "#skills" },
   // { name: "Testimonials", icon: Quote, href: "#testimonials" },
   { name: "Contact", icon: Mail, href: "#contact" },
 ];
@@ -57,7 +57,9 @@ export function VerticalNav() {
           <Link
             key={item.name}
             href={item.href}
-            onClick={(e) => handleScroll(e, item.href)}
+            onClick={(e) => {
+              if (!item.isExternal) handleScroll(e, item.href);
+            }}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
             className={`group relative flex items-center justify-center p-3 rounded-full transition-all duration-300 z-10 ${
