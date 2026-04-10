@@ -4,41 +4,41 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Briefcase, User, Wrench, Mail, BookOpen, Clock, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 const navItems = [
-  { name: "About", icon: User, href: "#about" },
-  { name: "Experience", icon: Clock, href: "#experience" },
-  { name: "Projects", icon: Briefcase, href: "/projects", isExternal: true },
-  { name: "Skills", icon: Wrench, href: "#skills" },
-  { name: "Blogs", icon: BookOpen, href: "/blogs", isExternal: true },
-  { name: "Contact", icon: Mail, href: "#contact" },
+  { name: "About",      icon: User,      anchor: "about" },
+  { name: "Experience", icon: Clock,     anchor: "experience" },
+  { name: "Projects",   icon: Briefcase, route: "/projects" },
+  { name: "Skills",     icon: Wrench,    anchor: "skills" },
+  { name: "Blogs",      icon: BookOpen,  route: "/blogs" },
+  { name: "Contact",    icon: Mail,      anchor: "contact" },
 ];
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
-  // Lock body scroll when overlay is open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
 
-  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isExternal?: boolean) => {
-    if (isExternal) {
-      setIsOpen(false);
-      return; // let Next.js route normally
-    }
-    e.preventDefault();
-    // Only scroll for anchor selectors, not route paths
-    if (!href.startsWith("#")) { setIsOpen(false); return; }
+  const resolveHref = (item: typeof navItems[number]) => {
+    if (item.route) return item.route;
+    return isHome ? `#${item.anchor}` : `/#${item.anchor}`;
+  };
+
+  const handleClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    item: typeof navItems[number]
+  ) => {
     setIsOpen(false);
-    const section = document.querySelector(href);
-    if (section) {
-      setTimeout(() => section.scrollIntoView({ behavior: "smooth" }), 300);
-    }
+    if (item.route) return; // Next.js handles routing
+    if (!isHome) return;    // allow full navigation to /#anchor
+    e.preventDefault();
+    const el = document.querySelector(`#${item.anchor}`);
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 300);
   };
 
   return (
@@ -75,12 +75,12 @@ export function MobileNav() {
                     transition={{ delay: 0.1 + index * 0.1 }}
                   >
                     <Link
-                      href={item.href}
-                      onClick={(e) => handleScroll(e, item.href, item.isExternal)}
+                      href={resolveHref(item)}
+                      onClick={(e) => handleClick(e, item)}
                       className="flex items-center gap-6 text-2xl font-outfit font-bold text-gray-800 hover:text-red-500 transition-colors"
                     >
                       <span className="p-4 bg-gray-50 rounded-full border border-gray-100">
-                         <Icon size={24} className="text-gray-600" />
+                        <Icon size={24} className="text-gray-600" />
                       </span>
                       {item.name}
                     </Link>

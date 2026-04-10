@@ -213,7 +213,7 @@ export function Blogs() {
                 </div>
 
                 <div className="shrink-0">
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
                     <ArrowUpRight size={28} />
                   </div>
                 </div>

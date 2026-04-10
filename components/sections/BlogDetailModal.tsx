@@ -6,6 +6,14 @@ import { GraphRagDiagram1 } from "../blogs/GraphRagDiagram1";
 import { GraphRagDiagram2 } from "../blogs/GraphRagDiagram2";
 import { GraphRagDiagram3 } from "../blogs/GraphRagDiagram3";
 import { LlmMemoryDiagram } from "../blogs/LlmMemoryDiagram";
+import {
+  OneHotDiagram,
+  EmbeddingSpaceDiagram,
+  DecisionFlowchart,
+  VecEmbTable,
+  EvoTimeline,
+  VecEmbOpinion,
+} from "../blog/VecEmbDiagrams";
 
 interface BlogDetailModalProps {
   blog: BlogArticle | null;
@@ -544,6 +552,25 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
             <div className="text-[13px] text-[#a1a1aa] font-medium">— Personal take · Based on production AI system patterns through Q1 2026</div>
           </div>
         );
+      }
+
+      if (trimmedBlock === "__VEC_EMB_ONEHOT__") {
+        return <OneHotDiagram key={index} />;
+      }
+      if (trimmedBlock === "__VEC_EMB_SPACE__") {
+        return <EmbeddingSpaceDiagram key={index} />;
+      }
+      if (trimmedBlock === "__VEC_EMB_TIMELINE__") {
+        return <EvoTimeline key={index} />;
+      }
+      if (trimmedBlock === "__VEC_EMB_TABLE__") {
+        return <VecEmbTable key={index} />;
+      }
+      if (trimmedBlock === "__VEC_EMB_FLOWCHART__") {
+        return <DecisionFlowchart key={index} />;
+      }
+      if (trimmedBlock === "__VEC_EMB_OPINION__") {
+        return <VecEmbOpinion key={index} />;
       }
 
       if (trimmedBlock.startsWith("## ")) {

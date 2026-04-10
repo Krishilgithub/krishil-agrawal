@@ -1007,5 +1007,201 @@ What creates the appearance of memory is a system built around the model: a cont
 
 **In 2026, the frontier is agentic memory** — systems where the agent autonomously manages its own memory hierarchy, decides what is worth storing, how memories should be linked, and when outdated memories should be revised. A-MEM showed this works at NeurIPS 2025. Letta showed the OS-inspired architecture is production-viable. The gap between a stateless chatbot and a genuinely persistent AI assistant is now primarily an engineering gap, not a model capability gap. That is good news for builders.
     `
+  },
+  {
+    id: "vectorization-vs-embeddings",
+    title: "Vectorization vs Embeddings — The Difference Every ML Engineer Must Understand",
+    description: "Both convert text to numbers. Both produce vectors. And yet they solve fundamentally different problems — and using them interchangeably will break your models in ways that are very hard to debug.",
+    tags: ["Machine Learning", "GenAI / LLMs", "Deep Dive"],
+    readTime: "14 min read",
+    publishedAt: "April 2026",
+    popularityScore: 88,
+    isFeatured: false,
+    githubLink: "https://github.com/Krishilgithub",
+    content: `Ask a hundred ML developers to define the difference between vectorization and embeddings and you will get a hundred slightly different answers — many of them partially wrong. You will hear "vectorization is just embeddings but older" or "embeddings are dense vectors and vectorization is sparse vectors" or the worst one: "they are basically the same thing." None of these are quite right.
+
+Here is the precise version: **vectorization is any process that converts data into numerical vectors.** It is a broad category. It includes one-hot encoding, Bag of Words, TF-IDF, and yes, also embeddings. **Embeddings are a specific kind of vectorization** — one where the resulting vector is learned by a model and is designed to capture semantic meaning, not just frequency or presence.
+
+Every embedding is a vector. Not every vector is an embedding. That asymmetry is the key. Everything else in this post flows from it.
+
+## TL;DR — The 5 Things to Know
+
+- Vectorization is the broad parent category: any conversion of data to numerical vectors. Bag of Words, TF-IDF, one-hot encoding, and embeddings are all types of vectorization.
+- Embeddings are a specific subset of vectorization — learned, dense, low-dimensional vectors that encode semantic meaning. Similar concepts end up near each other in embedding space.
+- Traditional vectorization (BoW, TF-IDF) produces sparse, high-dimensional vectors. The word "bank" gets the same vector whether it means a financial institution or a riverbank. No context, no semantics.
+- Embeddings (Word2Vec, GloVe, BERT, text-embedding-3) produce dense, low-dimensional vectors. The word "bank" gets a different vector depending on context — and "king − man + woman ≈ queen" is a real mathematical relationship.
+- Use vectorization for fast, interpretable baselines. Use embeddings for semantic search, RAG, LLMs, recommendation systems, and any task where meaning matters more than word count.
+
+## Traditional Vectorization: What It Is, How It Works
+
+Before neural networks made embeddings practical, every NLP pipeline used classical vectorization techniques. They are still used today in production — not because they are inferior in every way, but because they are fast, cheap, and fully interpretable. Let us look at the 3 core techniques.
+
+### 1 — One-Hot Encoding
+
+The simplest possible vectorization. Build a vocabulary of every unique word in your dataset. For each word, create a vector of length equal to the vocabulary size. Set a 1 at the word's position. Set 0 everywhere else. The word "cat" in a 5-word vocabulary becomes \`[1, 0, 0, 0, 0]\`. "Dog" becomes \`[0, 1, 0, 0, 0]\`.
+
+__VEC_EMB_ONEHOT__
+
+The problem is obvious when you look at it: "cat" and "dog" are as mathematically unrelated as "cat" and "sat." The vectors are orthogonal — cosine similarity of zero. One-hot encoding captures presence but destroys all semantic relationship. Every word is equidistant from every other word.
+
+### 2 — Bag of Words (BoW)
+
+BoW counts how many times each word appears in a document. Instead of one vector per word, you get one vector per document — where each position holds the frequency of that vocabulary word. "The cat sat on the mat" becomes a vector that says: the=2, cat=1, sat=1, on=1, mat=1, dog=0.
+
+\`\`\`python
+from sklearn.feature_extraction.text import CountVectorizer
+
+docs = [
+    "The cat sat on the mat",
+    "The dog sat on the log",
+]
+
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(docs)
+
+# X.toarray() →
+# [[1, 1, 0, 1, 1, 1, 0, 2]   ← "cat sat on the mat"
+#  [1, 0, 1, 1, 0, 1, 1, 2]]  ← "dog sat on the log"
+#   cat dog log mat on sat the (each column = one vocab word)
+
+# Problem: word ORDER is lost completely.
+# "The cat bit the dog" and "The dog bit the cat" have identical BoW vectors.
+
+print(vectorizer.get_feature_names_out())
+print(X.toarray())
+\`\`\`
+
+### 3 — TF-IDF (Term Frequency–Inverse Document Frequency)
+
+TF-IDF fixes one of BoW's biggest problems: common words like "the" and "is" get high counts but carry almost no information. TF-IDF weights each word by how frequently it appears in this document AND how rarely it appears across all documents. A word that appears in every document gets a low score. A word that appears in just one document gets a high score.
+
+\`\`\`python
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+docs = [
+    "The cat sat on the mat",
+    "The dog sat on the log",
+    "The quick brown fox jumped over the lazy dog",
+]
+
+tfidf = TfidfVectorizer()
+X = tfidf.fit_transform(docs)
+
+# "sat" appears in 2/3 docs → medium score
+# "mat" appears in 1/3 docs → higher score (more discriminative)
+# "the" appears in all 3 docs → lowest score (least informative)
+# Still: "bank" (financial) and "bank" (river) have identical scores
+
+# TF-IDF score formula:
+# TF(t, d) = count of term t in doc d / total terms in d
+# IDF(t) = log(N / number of docs containing t)
+# TF-IDF(t, d) = TF × IDF
+\`\`\`
+
+> **The ceiling of traditional vectorization:** All three methods above share one fatal limitation — they treat each word as an isolated token with no relationship to any other word. "King" and "Queen" are as unrelated as "King" and "pancake." The mathematics cannot express that mammals are more similar to each other than to furniture. Embeddings exist specifically to solve this.
+
+## Embeddings: Where Meaning Lives in Space
+
+An embedding is a dense, low-dimensional vector that is learned by a neural network during training. The key word is **learned**. Nobody writes rules that say "cat and dog should have similar vectors." The model discovers, from the statistical patterns in billions of words of text, that words appearing in similar contexts tend to have similar meanings — and encodes that discovery as geometric proximity in vector space.
+
+The result is something almost magical. Words with similar meanings cluster near each other. \`king − man + woman ≈ queen\` is a real, demonstrable arithmetic relationship in Word2Vec's embedding space. "Paris is to France as Berlin is to Germany" can be verified mathematically. The vector space becomes a map of meaning.
+
+__VEC_EMB_SPACE__
+
+In a BoW vector, "cat" and "dog" have zero relationship. In an embedding space, they live close together in the "animal" cluster — neighbors of "wolf," "tiger," and "fox," but distant from "Paris" and "Python." No one programmed that. The model inferred it from billions of sentences where these words appeared in similar contexts.
+
+## The Evolution of Text Representations — A Timeline
+
+__VEC_EMB_TIMELINE__
+
+## The "Bank" Problem — Why Context Changed Everything
+
+The most concrete example of why static vectorization fails is the word "bank." In traditional BoW or TF-IDF, "bank" has one vector — period. The system cannot distinguish whether you mean a financial institution or the side of a river.
+
+\`\`\`python
+# Static embedding (Word2Vec / GloVe)
+# "bank" gets ONE vector regardless of context
+
+sentence_1 = "I deposited money at the bank"
+sentence_2 = "We picnicked on the river bank"
+# Both sentences → "bank" has identical embedding vector
+# cosine_similarity(bank_in_s1, bank_in_s2) = 1.0  ← wrong
+
+# Contextual embedding (BERT / modern models)
+# "bank" gets DIFFERENT vectors based on surrounding words
+
+from transformers import AutoTokenizer, AutoModel
+import torch
+
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+model = AutoModel.from_pretrained("bert-base-uncased")
+
+def get_word_embedding(sentence: str, target_word: str) -> torch.Tensor:
+    inputs = tokenizer(sentence, return_tensors="pt")
+    outputs = model(**inputs)
+    hidden_states = outputs.last_hidden_state[0]
+    tokens = tokenizer.tokenize(sentence)
+    target_idx = tokens.index(target_word) + 1  # +1 for [CLS]
+    return hidden_states[target_idx].detach()
+
+emb_financial = get_word_embedding("I deposited money at the bank", "bank")
+emb_river = get_word_embedding("We picnicked on the river bank", "bank")
+
+similarity = torch.nn.functional.cosine_similarity(
+    emb_financial.unsqueeze(0),
+    emb_river.unsqueeze(0)
+)
+print(f"Cosine similarity: {similarity.item():.4f}")
+# Contextual: ~0.72 (different meaning, not 1.0 and not 0.0)
+# BERT knows they are both "bank" but different senses
+\`\`\`
+
+> **Key Insight:** Static embeddings (Word2Vec, GloVe) give every word one fixed vector regardless of context — "bank" is always "bank." Contextual embeddings (BERT, GPT, modern sentence transformers) generate a different vector for each occurrence based on the surrounding sentence. This is the difference between a dictionary definition and genuine language understanding.
+
+## Full Comparison — Every Dimension That Matters
+
+__VEC_EMB_TABLE__
+
+## Two Analogies That Make This Click
+
+**Vectorization is like a Word Frequency Report.** Imagine you have a book and you count how many times every word appears. You know "the" appears 432 times and "magnificent" appears 3 times. You know nothing about what the book is about. You cannot tell if it is a thriller or a romance. The counts are real data — but they are not understanding.
+
+**Embeddings are like a Map of Meaning.** Imagine you could place every word as a pin on a map where proximity means similarity. "Cat" and "dog" would be neighbors. "Paris" and "London" would be neighbors. "King" and "queen" would be neighbors. The map was drawn by a model that read every book ever written — and the distances encode everything it learned.
+
+## When to Use Which — The Decision Framework
+
+The choice between traditional vectorization and embeddings is not about which is "better." It is about which fits your specific constraints: compute budget, data size, semantic requirements, and interpretability needs.
+
+**Use traditional vectorization when:**
+- You need explainability — legal, medical, regulated contexts
+- Data is small and domain-specific vocabulary is fixed
+- Speed matters more than semantic accuracy — real-time filtering, spam detection
+- You are building a simple baseline to measure improvement from
+- Your team has no GPU budget for embedding inference
+
+**Use embeddings when:**
+- Building semantic search or vector database applications
+- RAG pipelines — chunks must be retrieved by meaning, not keyword
+- Recommendation systems — similar items should be near each other
+- Multilingual applications — BERT-family embeddings transfer across languages
+- Zero-shot classification — classify without training data
+
+> **The hybrid approach:** Many production systems use both. TF-IDF for initial candidate retrieval (fast, cheap) followed by embedding-based reranking (accurate, semantic). This is the BM25 + dense retrieval pattern used in hybrid search — you get the speed of vectorization and the accuracy of embeddings.
+
+__VEC_EMB_FLOWCHART__
+
+## Three Things to Take Away
+
+First: **embeddings are vectorization, but not all vectorization is embeddings.** One-hot encoding, Bag of Words, and TF-IDF are all forms of vectorization. Embeddings are the subset where the vectors are learned by a neural network and are designed to encode semantic meaning. The parent-child relationship is the key conceptual unlock.
+
+Second: **the right choice depends on what you need to express.** If your task requires counting or frequency analysis, traditional vectorization is faster, cheaper, and more interpretable. If your task requires understanding meaning, detecting similarity, or working with the kind of language where context determines sense — use embeddings. Most production systems use both.
+
+Third: **the evolution from static to contextual embeddings is the most important shift.** Word2Vec was revolutionary but still gave "bank" one fixed vector. BERT and its descendants made embeddings context-sensitive — the same word gets a different vector in a different sentence. That is what makes modern NLP systems actually understand language rather than just pattern-match it.
+
+As multimodal embeddings mature — where text, images, and audio share the same vector space — the scope of what "embedding" means is expanding rapidly. Understanding the foundations now will make every future capability much easier to reason about.
+
+__VEC_EMB_OPINION__
+    `
   }
 ];
+
