@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 const navItems = [
   { name: "About", icon: User, href: "#about" },
   { name: "Experience", icon: Clock, href: "#experience" },
-  { name: "Projects", icon: Briefcase, href: "#projects" },
+  { name: "Projects", icon: Briefcase, href: "/projects", isExternal: true },
   { name: "Skills", icon: Wrench, href: "#skills" },
   { name: "Blogs", icon: BookOpen, href: "/blogs", isExternal: true },
   { name: "Contact", icon: Mail, href: "#contact" },
@@ -32,6 +32,8 @@ export function MobileNav() {
       return; // let Next.js route normally
     }
     e.preventDefault();
+    // Only scroll for anchor selectors, not route paths
+    if (!href.startsWith("#")) { setIsOpen(false); return; }
     setIsOpen(false);
     const section = document.querySelector(href);
     if (section) {

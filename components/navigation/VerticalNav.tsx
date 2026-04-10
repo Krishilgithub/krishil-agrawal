@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 const navItems = [
   { name: "About", icon: User, href: "#about" },
   { name: "Experience", icon: Clock, href: "#experience" },
-  { name: "Projects", icon: Briefcase, href: "#projects" },
+  { name: "Projects", icon: Briefcase, href: "/projects", isExternal: true },
   { name: "Blogs", icon: BookOpen, href: "/blogs", isExternal: true },
   { name: "Skills", icon: Wrench, href: "#skills" },
   // { name: "Testimonials", icon: Quote, href: "#testimonials" },
@@ -33,6 +33,8 @@ export function VerticalNav() {
     );
 
     navItems.forEach((item) => {
+      // Skip route links — they are not CSS selectors
+      if (item.isExternal) return;
       const el = document.querySelector(item.href);
       if (el) observer.observe(el);
     });
@@ -42,6 +44,8 @@ export function VerticalNav() {
 
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
+    // Only try to scroll if it's an anchor selector, not a route path
+    if (!href.startsWith("#")) return;
     const section = document.querySelector(href);
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
