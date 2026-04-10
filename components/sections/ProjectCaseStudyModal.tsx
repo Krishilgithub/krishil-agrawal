@@ -54,20 +54,27 @@ export function ProjectCaseStudyModal({ project, onClose }: Props) {
           exit={{ y: "100%", opacity: 0, scale: 0.95 }}
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-6xl max-h-[95vh] sm:rounded-t-[3rem] sm:rounded-b-[3rem] overflow-y-auto bg-[#fafafa] border border-gray-200 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] custom-scrollbar"
+          className="relative w-[95vw] max-w-[1600px] max-h-[95vh] sm:rounded-[3rem] overflow-y-auto bg-[#fafafa] border border-gray-200 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] custom-scrollbar"
         >
           
+          {project.heroImage && (
+            <div className="absolute top-0 left-0 w-full h-[50vh] md:h-[60vh] z-0 pointer-events-none overflow-hidden sm:rounded-t-[3rem]">
+              <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover object-top opacity-80 mix-blend-multiply" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#fafafa]/80 to-[#fafafa] pointer-events-none" />
+            </div>
+          )}
+
           {/* STICKY CLOSE BUTTON */}
           <div className="sticky top-6 right-6 z-50 flex justify-end px-6 pointer-events-none">
             <button 
               onClick={onClose}
-              className="p-4 bg-white backdrop-blur-md border border-gray-200 text-gray-500 hover:text-black hover:bg-gray-50 rounded-full transition-all duration-300 group pointer-events-auto shadow-lg"
+              className="p-4 bg-white/80 backdrop-blur-md border border-gray-200 text-gray-500 hover:text-black hover:bg-white rounded-full transition-all duration-300 group pointer-events-auto shadow-lg"
             >
               <X size={24} className="group-hover:scale-110 transition-transform" />
             </button>
           </div>
 
-          <div className="px-6 py-12 md:px-16 md:py-20 lg:px-24">
+          <div className="relative z-10 px-6 py-12 md:px-16 md:py-20 lg:px-24">
             
             {/* SECTION 1: HERO */}
             <motion.div 

@@ -28,6 +28,7 @@ export interface ProjectCaseStudy {
   type: string;
   status: string;
   category: "AI" | "Web";
+  heroImage?: string;
   links: {
     demo?: string;
     github?: string;
