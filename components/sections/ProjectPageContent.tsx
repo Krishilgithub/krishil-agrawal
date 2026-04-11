@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import {
   ArrowLeft, ExternalLink, Target, Zap, LayoutDashboard,
   ShieldCheck, BrainCircuit, BarChart, Server, Database,
@@ -15,8 +15,64 @@ const sectionVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
+interface TocItem { id: string; title: string; }
+
 export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
   const [copied, setCopied] = useState(false);
+  const [activeId, setActiveId] = useState("");
+  const [isTocOpen, setIsTocOpen] = useState(false);
+  const tocRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll();
+
+  const headings = useMemo<TocItem[]>(() => {
+    const arr = [
+      { id: "problem", title: "The Problem" },
+      { id: "architecture", title: "Architecture" },
+    ];
+    if (project.mlDeepDive) arr.push({ id: "ml-deep-dive", title: "ML Deep Dive" });
+    arr.push({ id: "features", title: "Core Features" });
+    arr.push({ id: "results", title: "Results & Impact" });
+    arr.push({ id: "learnings", title: "Learnings" });
+    arr.push({ id: "tech-stack", title: "Tech Stack" });
+    return arr;
+  }, [project]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const threshold = window.innerHeight * 0.35;
+      let cur = "";
+      for (const h of headings) {
+        const el = document.getElementById(h.id);
+        if (el && el.getBoundingClientRect().top <= threshold + 50) cur = h.id;
+      }
+      if (!cur && headings[0]) {
+        const el = document.getElementById(headings[0].id);
+        if (el && el.getBoundingClientRect().top > threshold) cur = headings[0].id;
+      }
+      if (cur && cur !== activeId) setActiveId(cur);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    const tm = setTimeout(() => handleScroll(), 150);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(tm);
+    };
+  }, [headings, activeId]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (tocRef.current && !tocRef.current.contains(e.target as Node)) setIsTocOpen(false);
+    };
+    if (isTocOpen) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [isTocOpen]);
+
+  const scrollToHeading = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setActiveId(id);
+    setIsTocOpen(false);
+  };
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -102,7 +158,7 @@ export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
           </motion.div>
 
           {/* SECTION 2: PROBLEM STATEMENT */}
-          <motion.div variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200">
+          <motion.div id="problem" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200 scroll-mt-24">
             <h3 className="text-red-500 font-mono tracking-widest uppercase text-xs font-bold mb-8 flex items-center gap-3">
               <Target size={16} /> The Problem
             </h3>
@@ -124,7 +180,7 @@ export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
           </motion.div>
 
           {/* SECTION 3: ARCHITECTURE */}
-          <motion.div variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200">
+          <motion.div id="architecture" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200 scroll-mt-24">
             <h3 className="text-blue-600 font-mono tracking-widest uppercase text-xs font-bold mb-8 flex items-center gap-3">
               <Server size={16} /> Architecture & System Design
             </h3>
@@ -167,7 +223,7 @@ export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
 
           {/* SECTION 4: ML DEEP DIVE */}
           {project.mlDeepDive && (
-            <motion.div variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200">
+            <motion.div id="ml-deep-dive" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200 scroll-mt-24">
               <h3 className="text-violet-600 font-mono tracking-widest uppercase text-xs font-bold mb-8 flex items-center gap-3">
                 <Database size={16} /> ML & Technical Deep Dive
               </h3>
@@ -231,7 +287,7 @@ export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
           )}
 
           {/* SECTION 5: FEATURES */}
-          <motion.div variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200">
+          <motion.div id="features" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200 scroll-mt-24">
             <h3 className="text-gray-400 font-mono tracking-widest uppercase text-xs font-bold mb-8 flex items-center gap-3">
               <LayoutDashboard size={16} /> Core Features
             </h3>
@@ -246,7 +302,7 @@ export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
           </motion.div>
 
           {/* SECTION 6: RESULTS */}
-          <motion.div variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200">
+          <motion.div id="results" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200 scroll-mt-24">
             <h3 className="text-emerald-600 font-mono tracking-widest uppercase text-xs font-bold mb-8 flex items-center gap-3">
               <BarChart size={16} /> Results & Impact
             </h3>
@@ -268,7 +324,7 @@ export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
           </motion.div>
 
           {/* SECTION 7: LEARNINGS */}
-          <motion.div variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200">
+          <motion.div id="learnings" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200 scroll-mt-24">
             <h3 className="text-amber-600 font-mono tracking-widest uppercase text-xs font-bold mb-8 flex items-center gap-3">
               <ShieldCheck size={16} /> Takeaways & Learnings
             </h3>
@@ -289,7 +345,7 @@ export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
           </motion.div>
 
           {/* SECTION 8: TECH STACK */}
-          <motion.div variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200">
+          <motion.div id="tech-stack" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-10%" }} className="mb-16 pt-16 border-t border-gray-200 scroll-mt-24">
             <h3 className="text-gray-400 font-mono tracking-widest uppercase text-xs font-bold mb-8 flex items-center gap-3">
               <Database size={16} /> Tech Stack Foundation
             </h3>
@@ -325,8 +381,65 @@ export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
               </Link>
             </div>
           </motion.div>
-
         </div>
+      </div>
+
+      {/* Floating Bottom Navigator */}
+      <div ref={tocRef} className="fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-[150] flex flex-col items-center">
+        <AnimatePresence>
+          {isTocOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="w-[320px] md:w-[360px] mb-3 bg-[#0a0a0a] text-gray-400 border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col font-outfit"
+            >
+              <div className="px-6 py-4 text-[11px] font-bold tracking-widest text-[#777] uppercase border-b border-white/5">
+                Navigate Section
+              </div>
+              <div className="overflow-y-auto p-2 flex flex-col gap-1 max-h-[50vh]">
+                <button
+                  onClick={() => scrollToHeading(headings[0]?.id)}
+                  className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm ${
+                    !activeId ? "bg-[#222] text-white font-medium" : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+                  }`}
+                >
+                  Top
+                </button>
+                {headings.map((h) => (
+                  <button
+                    key={h.id}
+                    onClick={() => scrollToHeading(h.id)}
+                    className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm ${
+                      activeId === h.id
+                        ? "bg-red-600 text-white font-bold shadow-lg"
+                        : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+                    }`}
+                  >
+                    {h.title}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <button
+          onClick={() => setIsTocOpen(!isTocOpen)}
+          className="bg-[#0a0a0a] hover:bg-black border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-white rounded-full h-12 px-5 flex items-center justify-between gap-6 transition-all duration-300 min-w-[280px] font-outfit"
+        >
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-1.5 h-1.5 bg-white rounded-full shrink-0 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+            <span className="text-sm font-medium truncate max-w-[200px]">
+              {activeId ? headings.find(h => h.id === activeId)?.title : "Sections"}
+            </span>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 20 20" className={`shrink-0 transition-transform duration-500 ${isTocOpen ? "rotate-90" : "-rotate-90"}`}>
+            <circle cx="10" cy="10" r="8" stroke="#4b5563" strokeWidth="2" fill="none" />
+            <motion.circle cx="10" cy="10" r="8" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" style={{ pathLength: scrollYProgress }} />
+          </svg>
+        </button>
       </div>
     </div>
   );
