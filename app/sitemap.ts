@@ -1,6 +1,14 @@
 import { MetadataRoute } from 'next'
- 
+import { blogsData } from '@/data/blogs'
+
 export default function sitemap(): MetadataRoute.Sitemap {
+  const blogRoutes: MetadataRoute.Sitemap = blogsData.map((blog) => ({
+    url: `https://krishil-agrawal.vercel.app/blogs/${blog.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }));
+
   return [
     {
       url: 'https://krishil-agrawal.vercel.app',
@@ -20,5 +28,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
+    ...blogRoutes,
   ]
 }

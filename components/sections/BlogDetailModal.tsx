@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { X, Clock, ExternalLink, Calendar, BrainCircuit } from "lucide-react";
+import { X, Clock, ExternalLink, Calendar, BrainCircuit, Share2, Check, ArrowUpRight } from "lucide-react";
 import { BlogArticle } from "@/types/blog";
 import { GraphRagDiagram1 } from "../blogs/GraphRagDiagram1";
 import { GraphRagDiagram2 } from "../blogs/GraphRagDiagram2";
@@ -51,9 +52,26 @@ export function BlogDetailModal({ blog, onClose }: BlogDetailModalProps) {
 function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose: () => void }) {
   const [activeId, setActiveId] = useState<string>("");
   const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const tocRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ container: scrollContainerRef });
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}/blogs/${blog.id}`;
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(url);
+    } else {
+      const el = document.createElement("input");
+      el.value = url;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
 
   // Handle click outside to close TOC
   useEffect(() => {
@@ -660,13 +678,32 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
 
           <div className="w-full max-w-[800px] mx-auto px-6 py-24 md:py-32 relative min-h-screen pb-48">
             
-            {/* CLOSE BUTTON */}
-            <button 
-              onClick={onClose}
-              className="fixed top-6 right-6 md:top-8 md:right-8 z-[120] p-4 bg-gray-100 hover:bg-black text-black hover:text-white rounded-full transition-all group shadow-md"
-            >
-              <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
-            </button>
+            {/* TOP ACTIONS: CLOSE + SHARE + OPEN PAGE */}
+            <div className="fixed top-6 right-6 md:top-8 md:right-8 z-[120] flex items-center gap-2">
+              <Link
+                href={`/blogs/${blog.id}`}
+                onClick={onClose}
+                className="flex items-center gap-1.5 px-4 py-2.5 bg-white border border-gray-200 hover:border-gray-400 text-sm font-semibold text-gray-700 hover:text-black rounded-full transition-all shadow-md"
+              >
+                Open page <ArrowUpRight size={14} />
+              </Link>
+              <button
+                onClick={handleShare}
+                className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-full transition-all shadow-md border ${
+                  copied
+                    ? "bg-green-50 border-green-200 text-green-700"
+                    : "bg-white border-gray-200 hover:border-gray-400 text-gray-700 hover:text-black"
+                }`}
+              >
+                {copied ? <><Check size={14} /> Copied!</> : <><Share2 size={14} /> Share</>}
+              </button>
+              <button
+                onClick={onClose}
+                className="p-3 bg-gray-100 hover:bg-black text-black hover:text-white rounded-full transition-all group shadow-md"
+              >
+                <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+              </button>
+            </div>
 
             <motion.div variants={sectionVariants} initial="hidden" animate="visible" className="mb-16">
               <div className="flex gap-3 mb-8 flex-wrap">
