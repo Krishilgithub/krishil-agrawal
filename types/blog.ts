@@ -21,4 +21,6 @@ export interface BlogArticle {
   content: React.ReactNode | string;
   coverImage?: string;
   githubLink?: string;
+  substackLink?: string;
+  mediumLink?: string;
 }

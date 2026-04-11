@@ -574,6 +574,8 @@ Third: the context cliff is real. Keep your assembled context under 8K tokens. S
     popularityScore: 96,
     isFeatured: false,
     githubLink: "",
+    substackLink: "https://open.substack.com/pub/krishilagrawal/p/graphrag-vs-vector-rag?r=3cmmxs&utm_campaign=post&utm_medium=web&showWelcomeOnShare=true",
+    mediumLink: "https://medium.com/@krishilagrawal026/graphrag-vs-vector-rag-when-relationships-beat-similarity-5028b3547b4b",
     content: `
 You embed your documents. You build a vector store. Your RAG pipeline works great — until a user asks, "Which of our clients share a vendor with a competitor?" And your system hands back a paragraph about supply chains from a 2019 whitepaper.
 

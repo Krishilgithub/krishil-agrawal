@@ -8,6 +8,7 @@ import { BlogArticle } from "@/types/blog";
 import { GraphRagDiagram1 } from "@/components/blogs/GraphRagDiagram1";
 import { GraphRagDiagram2 } from "@/components/blogs/GraphRagDiagram2";
 import { GraphRagDiagram3 } from "@/components/blogs/GraphRagDiagram3";
+import { GraphRagTable } from "@/components/blogs/GraphRagTable";
 import { LlmMemoryDiagram } from "@/components/blogs/LlmMemoryDiagram";
 import {
   OneHotDiagram,
@@ -176,6 +177,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__GRAPHRAG_DIAGRAM_1__") return <GraphRagDiagram1 key={index} />;
       if (trimmedBlock === "__GRAPHRAG_DIAGRAM_2__") return <GraphRagDiagram2 key={index} />;
       if (trimmedBlock === "__GRAPHRAG_DIAGRAM_3__") return <GraphRagDiagram3 key={index} />;
+      if (trimmedBlock === "__GRAPHRAG_TABLE__") return <GraphRagTable key={index} />;
 
       if (trimmedBlock === "__LLM_MEMORY_DIAGRAM__") return <LlmMemoryDiagram key={index} />;
 
@@ -335,6 +337,25 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 0.5 }} className="prose prose-lg max-w-none">
           {typeof blog.content === "string" ? renderContent(blog.content) : blog.content}
         </motion.div>
+
+        {/* Cross-Platform Links */}
+        {(blog.substackLink || blog.mediumLink) && (
+          <div className="mt-16 pt-10 border-t border-gray-200">
+            <h4 className="font-outfit text-xl font-bold text-black mb-4">Read on other platforms</h4>
+            <div className="flex flex-wrap gap-4">
+              {blog.substackLink && (
+                <a href={blog.substackLink} target="_blank" rel="noreferrer" className="px-6 py-3 bg-[#ff6719] text-white rounded-full font-semibold hover:bg-[#e05b16] transition-colors flex items-center gap-2 shadow-sm">
+                  <ExternalLink size={16} /> Read on Substack
+                </a>
+              )}
+              {blog.mediumLink && (
+                <a href={blog.mediumLink} target="_blank" rel="noreferrer" className="px-6 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-sm">
+                  <ExternalLink size={16} /> Read on Medium
+                </a>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Footer CTA */}
         {blog.githubLink && (
