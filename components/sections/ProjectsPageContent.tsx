@@ -6,7 +6,6 @@ import {
   Briefcase, ArrowLeft, Search, X, Layers, Zap, Globe,
 } from "lucide-react";
 import Link from "next/link";
-import { ProjectCaseStudyModal } from "./ProjectCaseStudyModal";
 import { TiltCard } from "./Projects";
 import { ProjectCaseStudy } from "@/types/project";
 import { projectsData } from "@/data/projects";
@@ -27,7 +26,6 @@ const stats = [
 ];
 
 export function ProjectsPageContent() {
-  const [selectedProject, setSelectedProject] = useState<ProjectCaseStudy | null>(null);
   const [filterCat, setFilterCat]   = useState<FilterCat>("All");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -213,7 +211,6 @@ export function ProjectsPageContent() {
               <TiltCard
                 key={project.id}
                 project={project}
-                onClick={setSelectedProject}
                 dark={false}
               />
             ))}
@@ -278,10 +275,6 @@ export function ProjectsPageContent() {
         </div>
       </div>
 
-      <ProjectCaseStudyModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
     </div>
   );
 }

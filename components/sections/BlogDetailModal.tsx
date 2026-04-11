@@ -678,15 +678,8 @@ function BlogDetailModalContent({ blog, onClose }: { blog: BlogArticle, onClose:
 
           <div className="w-full max-w-[800px] mx-auto px-6 py-24 md:py-32 relative min-h-screen pb-48">
             
-            {/* TOP ACTIONS: CLOSE + SHARE + OPEN PAGE */}
+            {/* TOP ACTIONS: SHARE + CLOSE */}
             <div className="fixed top-6 right-6 md:top-8 md:right-8 z-[120] flex items-center gap-2">
-              <Link
-                href={`/blogs/${blog.id}`}
-                onClick={onClose}
-                className="flex items-center gap-1.5 px-4 py-2.5 bg-white border border-gray-200 hover:border-gray-400 text-sm font-semibold text-gray-700 hover:text-black rounded-full transition-all shadow-md"
-              >
-                Open page <ArrowUpRight size={14} />
-              </Link>
               <button
                 onClick={handleShare}
                 className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold rounded-full transition-all shadow-md border ${

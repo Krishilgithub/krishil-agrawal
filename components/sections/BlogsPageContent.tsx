@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import {
   Search, Clock, ArrowUpRight, BookOpen, Zap, Target,
@@ -9,7 +10,6 @@ import {
 import Link from "next/link";
 import { blogsData } from "@/data/blogs";
 import { BlogCategory, BlogArticle } from "@/types/blog";
-import { BlogDetailModal } from "./BlogDetailModal";
 
 /* ── Categories ─────────────────────────────────────────────────── */
 const categories: BlogCategory[] = [
@@ -71,12 +71,11 @@ const pillars = [
 function BlogCard({
   blog,
   index,
-  onClick,
 }: {
   blog: BlogArticle;
   index: number;
-  onClick: () => void;
 }) {
+  const router = useRouter();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
 
@@ -87,7 +86,7 @@ function BlogCard({
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.4, delay: Math.min(index, 5) * 0.07 }}
       layout
-      onClick={onClick}
+      onClick={() => router.push(`/blogs/${blog.id}`)}
       className="group cursor-pointer bg-white border border-gray-200 rounded-3xl flex flex-col h-full overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
     >
       {/* Hover accent bar */}
@@ -137,17 +136,16 @@ function BlogCard({
 /* ── Featured Card ───────────────────────────────────────────────── */
 function FeaturedCard({
   blog,
-  onClick,
 }: {
   blog: BlogArticle;
-  onClick: () => void;
 }) {
+  const router = useRouter();
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      onClick={onClick}
+      onClick={() => router.push(`/blogs/${blog.id}`)}
       className="group cursor-pointer mb-12"
     >
       <div className="relative bg-[#0a0a0a] rounded-[2rem] p-8 md:p-12 border border-white/5 overflow-hidden">
@@ -205,7 +203,6 @@ function FeaturedCard({
 export function BlogsPageContent() {
   const [activeCategory, setActiveCategory] = useState<BlogCategory>("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBlog, setSelectedBlog] = useState<BlogArticle | null>(null);
 
   const pillarsRef = useRef(null);
   const pillarsInView = useInView(pillarsRef, { once: true });
@@ -420,7 +417,6 @@ export function BlogsPageContent() {
           {isDefaultView && featuredBlog && (
             <FeaturedCard
               blog={featuredBlog}
-              onClick={() => setSelectedBlog(featuredBlog)}
             />
           )}
         </AnimatePresence>
@@ -449,7 +445,6 @@ export function BlogsPageContent() {
                 key={blog.id}
                 blog={blog}
                 index={i}
-                onClick={() => setSelectedBlog(blog)}
               />
             ))}
           </AnimatePresence>
@@ -570,10 +565,6 @@ export function BlogsPageContent() {
         </div>
       </div>
 
-      <BlogDetailModal
-        blog={selectedBlog}
-        onClose={() => setSelectedBlog(null)}
-      />
     </div>
   );
 }

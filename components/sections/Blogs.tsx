@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
+import { motion, useInView } from "framer-motion";
 import { Clock, ArrowUpRight, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { blogsData } from "@/data/blogs";
 import { BlogArticle } from "@/types/blog";
-import { BlogDetailModal } from "./BlogDetailModal";
 
 /* ── Tag colour map ─────────────────────────────────────────── */
 const tagColorMap: Record<string, string> = {
@@ -26,12 +26,11 @@ const tagCls = (tag: string) =>
 function BlogCard({
   blog,
   index,
-  onClick,
 }: {
   blog: BlogArticle;
   index: number;
-  onClick: () => void;
 }) {
+  const router = useRouter();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
@@ -41,7 +40,7 @@ function BlogCard({
       initial={{ opacity: 0, y: 28 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: index * 0.07 }}
-      onClick={onClick}
+      onClick={() => router.push(`/blogs/${blog.id}`)}
       className="group cursor-pointer bg-white border border-gray-200 rounded-3xl flex flex-col h-full overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative"
     >
       {/* Hover accent bar */}
@@ -92,10 +91,8 @@ function BlogCard({
    LANDING PAGE TEASER — shows 1 featured + 3 grid + CTA
 ════════════════════════════════════════════════════════════ */
 export function Blogs() {
-  const [selectedBlog, setSelectedBlog] = useState<BlogArticle | null>(null);
-
+  const router = useRouter();
   const featuredBlog = blogsData.find((b) => b.isFeatured);
-  // 3 non-featured blogs sorted by popularity
   const gridBlogs = blogsData
     .filter((b) => !b.isFeatured)
     .sort((a, b) => b.popularityScore - a.popularityScore)
@@ -170,7 +167,7 @@ export function Blogs() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            onClick={() => setSelectedBlog(featuredBlog)}
+            onClick={() => router.push(`/blogs/${featuredBlog.id}`)}
             className="group cursor-pointer mb-10"
           >
             <div className="relative bg-[#0a0a0a] rounded-[2rem] p-8 md:p-12 border border-white/5 overflow-hidden">
@@ -240,7 +237,6 @@ export function Blogs() {
               key={blog.id}
               blog={blog}
               index={i}
-              onClick={() => setSelectedBlog(blog)}
             />
           ))}
         </div>
@@ -268,10 +264,6 @@ export function Blogs() {
         </motion.div>
       </div>
 
-      <BlogDetailModal
-        blog={selectedBlog}
-        onClose={() => setSelectedBlog(null)}
-      />
     </section>
   );
 }

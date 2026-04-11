@@ -2,9 +2,9 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Code, ExternalLink, ArrowUpRight, Briefcase } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import Link from "next/link";
-import { ProjectCaseStudyModal } from "./ProjectCaseStudyModal";
+import { useRouter } from "next/navigation";
 import { ProjectCaseStudy } from "@/types/project";
 import { projectsData } from "@/data/projects";
 
@@ -23,13 +23,12 @@ const catClsLight: Record<string, string> = {
 ════════════════════════════════════════════════════════════════ */
 export function TiltCard({
   project,
-  onClick,
   dark = true,
 }: {
   project: ProjectCaseStudy;
-  onClick: (p: ProjectCaseStudy) => void;
   dark?: boolean;
 }) {
+  const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -89,11 +88,11 @@ export function TiltCard({
     >
       <motion.div
         ref={ref}
-        onClick={() => hasModal && onClick(project)}
+        onClick={() => router.push(`/projects/${project.id}`)}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className={`group relative p-8 md:p-10 rounded-[2.5rem] border overflow-hidden flex flex-col h-full transition-all duration-300 ${t.card} ${hasModal ? "cursor-pointer" : "cursor-default"}`}
+        className={`group relative p-8 md:p-10 rounded-[2.5rem] border overflow-hidden flex flex-col h-full transition-all duration-300 cursor-pointer ${t.card}`}
       >
         {/* top accent bar on hover */}
         <div className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-red-500 via-red-400 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
@@ -154,11 +153,9 @@ export function TiltCard({
               <span className="text-red-500 mr-2">✦</span>
               {project.shortMetrics}
             </p>
-            {hasModal && (
-              <span className={`text-xs font-semibold flex items-center gap-1 transition-colors ${t.arrow}`}>
-                Case Study <ArrowUpRight size={12} />
-              </span>
-            )}
+            <span className={`text-xs font-semibold flex items-center gap-1 transition-colors ${t.arrow}`}>
+              Case Study <ArrowUpRight size={12} />
+            </span>
           </div>
         </div>
       </motion.div>
@@ -171,7 +168,6 @@ export function TiltCard({
    Top 3 projects + "View all X" CTA
 ════════════════════════════════════════════════════════════════ */
 export function Projects() {
-  const [selectedProject, setSelectedProject] = useState<ProjectCaseStudy | null>(null);
   const teaserProjects = projectsData.slice(0, 3);
 
   return (
@@ -238,7 +234,6 @@ export function Projects() {
             <TiltCard
               key={project.id}
               project={project}
-              onClick={setSelectedProject}
               dark={false}
             />
           ))}
@@ -267,10 +262,6 @@ export function Projects() {
         </motion.div>
       </div>
 
-      <ProjectCaseStudyModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
     </section>
   );
 }

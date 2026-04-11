@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { ArrowLeft, Clock, Calendar, BrainCircuit, Share2, Check, ExternalLink } from "lucide-react";
 import { BlogArticle } from "@/types/blog";
 import { GraphRagDiagram1 } from "@/components/blogs/GraphRagDiagram1";
@@ -18,8 +18,72 @@ import {
   VecEmbOpinion,
 } from "@/components/blog/VecEmbDiagrams";
 
+interface TocItem { id: string; title: string; level: number; }
+
 export function BlogPageContent({ blog }: { blog: BlogArticle }) {
   const [copied, setCopied] = useState(false);
+  const [activeId, setActiveId] = useState("");
+  const [isTocOpen, setIsTocOpen] = useState(false);
+  const tocRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll();
+
+  // Extract headings from content
+  const headings = useMemo<TocItem[]>(() => {
+    if (typeof blog.content !== "string") return [];
+    const blocks = blog.content.split("\n\n");
+    const out: TocItem[] = [];
+    blocks.forEach(block => {
+      const t = block.trim();
+      if (t.startsWith("## ") || t.startsWith("### ")) {
+        const first = t.split("\n")[0];
+        const title = first.replace(/#/g, "").trim();
+        const id = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        out.push({ id, title, level: first.startsWith("### ") ? 3 : 2 });
+      }
+    });
+    return out;
+  }, [blog]);
+
+  // Track active heading on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const threshold = window.innerHeight * 0.35;
+      let cur = "";
+      for (const h of headings) {
+        const el = document.getElementById(h.id);
+        if (el && el.getBoundingClientRect().top <= threshold + 50) cur = h.id;
+      }
+      if (!cur && headings[0]) {
+        const el = document.getElementById(headings[0].id);
+        if (el && el.getBoundingClientRect().top > threshold) cur = headings[0].id;
+      }
+      if (cur && cur !== activeId) setActiveId(cur);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Run once on mount to establish initial
+    const tm = setTimeout(() => handleScroll(), 150);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(tm);
+    };
+  }, [headings, activeId]);
+
+  // Close TOC on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (tocRef.current && !tocRef.current.contains(e.target as Node)) setIsTocOpen(false);
+    };
+    if (isTocOpen) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [isTocOpen]);
+
+  const scrollToHeading = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setActiveId(id);
+    setIsTocOpen(false);
+  };
 
   const handleShare = async () => {
     const url = `${window.location.origin}/blogs/${blog.id}`;
@@ -218,32 +282,32 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
     <div className="min-h-screen bg-white">
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 z-50">
-        <div className="h-full bg-red-600 origin-left" id="reading-progress" />
+        <motion.div className="h-full bg-red-600 origin-left" style={{ scaleX: scrollYProgress }} />
       </div>
 
-      {/* Top Nav */}
-      <div className="sticky top-1 z-40 px-6 py-4">
-        <div className="max-w-[800px] mx-auto flex items-center justify-between">
-          <Link href="/blogs" className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-black hover:text-white text-black rounded-full transition-all font-medium text-sm group">
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            Back to Blogs
-          </Link>
+      {/* Back to Blogs — white pill, hover black */}
+      <Link
+        href="/blogs"
+        className="fixed top-5 left-8 z-40 flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 hover:bg-black hover:text-white hover:border-black text-gray-800 text-sm font-semibold rounded-full shadow-sm transition-all"
+      >
+        <ArrowLeft size={14} />
+        Back to Blogs
+      </Link>
 
-          <button
-            onClick={handleShare}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all border ${
-              copied
-                ? "bg-green-50 border-green-200 text-green-700"
-                : "bg-white border-gray-200 hover:border-gray-400 text-gray-700 hover:text-black"
-            }`}
-          >
-            {copied ? <><Check size={14} /> Copied link!</> : <><Share2 size={14} /> Share</>}
-          </button>
-        </div>
-      </div>
+      {/* Share — white pill, hover black */}
+      <button
+        onClick={handleShare}
+        className={`fixed top-5 right-8 z-40 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full shadow-sm border transition-all ${
+          copied
+            ? "bg-green-50 border-green-200 text-green-700"
+            : "bg-white border-gray-200 text-gray-700 hover:bg-black hover:text-white hover:border-black"
+        }`}
+      >
+        {copied ? <><Check size={14} /> Copied!</> : <><Share2 size={14} /> Share</>}
+      </button>
 
       {/* Article Content */}
-      <article className="w-full max-w-[800px] mx-auto px-6 py-12 md:py-16 pb-32">
+      <article className="w-full max-w-[800px] mx-auto px-6 pt-20 pb-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           {/* Tags */}
           <div className="flex gap-3 mb-8 flex-wrap">
@@ -287,6 +351,66 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
           </div>
         )}
       </article>
+
+      {/* Floating Bottom TOC */}
+      {headings.length > 0 && (
+        <div ref={tocRef} className="fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-[150] flex flex-col items-center">
+          <AnimatePresence>
+            {isTocOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="w-[320px] md:w-[360px] mb-3 bg-[#0a0a0a] text-gray-400 border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col max-h-[60vh] font-outfit"
+              >
+                <div className="px-6 py-4 text-[11px] font-bold tracking-widest text-[#777] uppercase border-b border-white/5">
+                  Table of Contents
+                </div>
+                <div className="overflow-y-auto p-2 flex flex-col gap-1">
+                  <button
+                    onClick={() => scrollToHeading(headings[0]?.id)}
+                    className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm ${
+                      !activeId ? "bg-[#222] text-white font-medium" : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+                    }`}
+                  >
+                    TL;DR
+                  </button>
+                  {headings.map((h) => (
+                    <button
+                      key={h.id}
+                      onClick={() => scrollToHeading(h.id)}
+                      className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm ${
+                        activeId === h.id
+                          ? "bg-red-600 text-white font-bold shadow-lg"
+                          : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+                      } ${h.level === 3 ? "pl-8 text-xs" : ""}`}
+                    >
+                      {h.title}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <button
+            onClick={() => setIsTocOpen(!isTocOpen)}
+            className="bg-[#0a0a0a] hover:bg-black border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-white rounded-full h-12 px-5 flex items-center justify-between gap-6 transition-all duration-300 min-w-[280px] font-outfit"
+          >
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-1.5 h-1.5 bg-white rounded-full shrink-0 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+              <span className="text-sm font-medium truncate max-w-[200px]">
+                {activeId ? headings.find(h => h.id === activeId)?.title : "Table of Contents"}
+              </span>
+            </div>
+            <svg width="20" height="20" viewBox="0 0 20 20" className={`shrink-0 transition-transform duration-500 ${isTocOpen ? "rotate-90" : "-rotate-90"}`}>
+              <circle cx="10" cy="10" r="8" stroke="#4b5563" strokeWidth="2" fill="none" />
+              <motion.circle cx="10" cy="10" r="8" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" style={{ pathLength: scrollYProgress }} />
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
