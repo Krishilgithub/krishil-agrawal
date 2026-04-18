@@ -10,6 +10,11 @@ import { GraphRagDiagram2 } from "@/components/blogs/GraphRagDiagram2";
 import { GraphRagDiagram3 } from "@/components/blogs/GraphRagDiagram3";
 import { GraphRagTable } from "@/components/blogs/GraphRagTable";
 import { LlmMemoryDiagram } from "@/components/blogs/LlmMemoryDiagram";
+import { EmbeddingPipelineDiagram } from "@/components/blogs/EmbeddingPipelineDiagram";
+import { EmbeddingLookupDiagram } from "@/components/blogs/EmbeddingLookupDiagram";
+import { PoolingComparisonTable } from "@/components/blogs/PoolingComparisonTable";
+import { Bm25SaturationChart } from "@/components/blogs/Bm25SaturationChart";
+import { VectorlessComparisonTable } from "@/components/blogs/VectorlessComparisonTable";
 import {
   OneHotDiagram,
   EmbeddingSpaceDiagram,
@@ -178,6 +183,11 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__GRAPHRAG_DIAGRAM_2__") return <GraphRagDiagram2 key={index} />;
       if (trimmedBlock === "__GRAPHRAG_DIAGRAM_3__") return <GraphRagDiagram3 key={index} />;
       if (trimmedBlock === "__GRAPHRAG_TABLE__") return <GraphRagTable key={index} />;
+      if (trimmedBlock === "__EMB_PIPELINE__") return <EmbeddingPipelineDiagram key={index} />;
+      if (trimmedBlock === "__EMB_LOOKUP__") return <EmbeddingLookupDiagram key={index} />;
+      if (trimmedBlock === "__POOLING_TABLE__") return <PoolingComparisonTable key={index} />;
+      if (trimmedBlock === "__BM25_CHART__") return <Bm25SaturationChart key={index} />;
+      if (trimmedBlock === "__VECTORLESS_TABLE__") return <VectorlessComparisonTable key={index} />;
 
       if (trimmedBlock === "__LLM_MEMORY_DIAGRAM__") return <LlmMemoryDiagram key={index} />;
 
