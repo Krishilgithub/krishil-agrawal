@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
+import { Wrench } from "lucide-react";
 
 /* ─── Data ──────────────────────────────────────────────────────────── */
 
@@ -394,7 +395,7 @@ export function Skills() {
   }, []);
 
   return (
-    <section id="skills" className="relative py-28 overflow-hidden" style={{
+    <section id="skills" className="relative py-28 px-6 md:px-12 overflow-hidden" style={{
       background: "#fafafa",
       backgroundImage: "radial-gradient(circle, #d4d4d8 0.8px, transparent 0.8px)",
       backgroundSize: "26px 26px",
@@ -417,19 +418,45 @@ export function Skills() {
         style={{ background: "#14b8a608" }} />
 
       {/* ─── Heading ─── */}
-      <div className="relative max-w-7xl mx-auto px-6 mb-20 z-10">
-        <h2 className="font-outfit text-5xl font-extrabold tracking-tighter text-black">
-          Stack & <span className="text-red-500">Toolkit</span><span className="text-red-500">.</span>
-        </h2>
-        <p className="text-gray-400 text-base mt-2 font-medium">
-          Tools I use to build scalable intelligent systems
-        </p>
+      <div className="relative max-w-7xl mx-auto mb-20 z-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-5"
+            >
+              <Wrench size={12} /> Tech Stack
+            </motion.div>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05 }}
+              className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+            >
+              Stack &amp; Toolkit<span className="text-red-500">.</span>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="mt-5 text-gray-500 text-lg max-w-xl leading-relaxed"
+            >
+              Tools I use to build scalable intelligent systems.
+            </motion.p>
+          </div>
+        </div>
       </div>
 
       {/* ─── Diagram ─── */}
       <div
         ref={containerRef}
-        className="relative max-w-7xl mx-auto px-6 overflow-x-auto"
+        className="relative max-w-7xl mx-auto overflow-x-auto"
       >
         {/* SVG layer */}
         <Lines lines={lines} hovered={hovered} />

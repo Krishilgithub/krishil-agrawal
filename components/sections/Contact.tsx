@@ -52,27 +52,38 @@ export function Contact() {
         
         {/* LEFT COLUMN: TEXT & TRUST SIGNALS */}
         <div className="lg:col-span-7 flex flex-col justify-center">
-          
-          <div className="flex items-center gap-2 mb-8 w-fit px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            <span className="text-xs font-mono tracking-widest uppercase text-green-700 font-semibold">
-              Available for Opportunities
-            </span>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-5"
+              >
+                <Mail size={12} /> Contact
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.05 }}
+                className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+              >
+                Contact Me<span className="text-red-500">.</span>
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="mt-5 text-gray-500 text-lg max-w-xl leading-relaxed"
+              >
+                Open to ML/AI internships, collaborations, and real-world projects. I enjoy working on real-world AI problems and building systems that actually make an impact.
+              </motion.p>
+            </div>
           </div>
-
-          <h2 className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-tight mb-6 text-black">
-            Let&apos;s Build Something <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-black">
-              Meaningful.
-            </span>
-          </h2>
-
-          <p className="text-xl text-gray-500 font-light mb-4 leading-relaxed max-w-xl">
-            Open to ML/AI internships, collaborations, and real-world projects. I enjoy working on real-world AI problems and building systems that actually make an impact.
-          </p>
 
           <div className="w-16 h-1 bg-black/10 rounded-full mb-10" />
 

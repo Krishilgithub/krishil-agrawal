@@ -101,9 +101,9 @@ export function Blogs() {
   return (
     <section
       id="blogs"
-      className="bg-[#fafafa] py-28 md:py-36 relative"
+      className="bg-[#fafafa] py-28 md:py-36 px-6 md:px-12 relative"
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <div className="max-w-7xl mx-auto">
 
         {/* ── HEADER ─────────────────────────────────────────── */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
@@ -118,14 +118,13 @@ export function Blogs() {
             </motion.div>
 
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-outfit text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+              className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
             >
-              Insights &{" "}
-              <span className="text-red-500">Writings</span>.
+              Blogs<span className="text-red-500">.</span>
             </motion.h2>
 
             <motion.p

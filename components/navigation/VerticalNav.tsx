@@ -9,8 +9,8 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { name: "About",      icon: User,      anchor: "about" },
   { name: "Experience", icon: Clock,     anchor: "experience" },
-  { name: "Projects",   icon: Briefcase, route: "/projects" },
-  { name: "Blogs",      icon: BookOpen,  route: "/blogs" },
+  { name: "Projects",   icon: Briefcase, route: "/projects", anchor: "projects" },
+  { name: "Blogs",      icon: BookOpen,  route: "/blogs",    anchor: "blogs" },
   { name: "Skills",     icon: Wrench,    anchor: "skills" },
   { name: "Contact",    icon: Mail,      anchor: "contact" },
 ];

@@ -1,17 +1,44 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MapPin, Briefcase, GraduationCap, ArrowUpRight } from "lucide-react";
+import { MapPin, Briefcase, GraduationCap, ArrowUpRight, User } from "lucide-react";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export function About() {
   return (
     <section id="about" className="py-24 px-6 md:px-12 bg-white relative">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-12">
-          <h2 className="font-outfit text-5xl font-extrabold tracking-tighter">
-            About Me<span className="text-red-500">.</span>
-          </h2>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-5"
+            >
+              <User size={12} /> About Me
+            </motion.div>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05 }}
+              className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+            >
+              About Me<span className="text-red-500">.</span>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="mt-5 text-gray-500 text-lg max-w-xl leading-relaxed"
+            >
+              A glimpse into my background, core expertise, and current availability.
+            </motion.p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(200px,auto)]">

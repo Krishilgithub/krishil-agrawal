@@ -1794,6 +1794,69 @@ __VECTORLESS_TABLE__
 **Third: Hybrid retrieval is the production answer in 2026.** Reciprocal Rank Fusion is parameter-free, scale-agnostic, and robust to individual retriever failures. Running BM25 and vector search in parallel with RRF fusion gives you the precision of keyword matching and the recall of semantic search simultaneously. The companies shipping reliable enterprise RAG systems are almost all using this pattern.
 
 The next optimization layer after hybrid retrieval is cross-encoder reranking — taking the top-N candidates from RRF and scoring them with a more accurate but slower model. The LiveRAG 2025 data showed 52% MAP improvement from this step. Whether that latency cost (84s vs 1.74s) is worth it depends entirely on your application's latency budget.`
+  },
+  {
+    id: "hidden-complexity-of-rag-production-guide",
+    title: "The Hidden Complexity of RAG — From Beginner Surface to Builder Depth",
+    description: "The RAG iceberg: above the waterline is a basic pipeline. Below it are reranking, query reformulation, hallucination detection, PII masking, latency vs accuracy tradeoffs, and much more. Here's the full map.",
+    tags: ["GenAI / LLMs", "Machine Learning", "Deep Dive"],
+    readTime: "18 min read",
+    publishedAt: "April 2026",
+    popularityScore: 96,
+    isFeatured: false,
+    content: `There is a version of RAG that takes two hours to build. Embed your documents. Store them in Chroma. Embed the query. Retrieve top-5 chunks. Pass to the LLM. Ship it. You will get a demo that impresses everyone in the room.
+
+Then you put it in production. Users ask slightly different questions than you expected. The retrieval returns irrelevant chunks. The LLM hallucinates because it got noisy context. Sensitive customer data leaks into wrong responses. Latency spikes because you are embedding every query cold. Nobody told you any of this was coming, because every tutorial stopped at the demo.
+
+This post is the complete iceberg map — above the waterline and below it.
+
+__RAG_TLDR__
+
+__RAG_ICEBERG_DIVIDER__
+
+## Above the Waterline: RAG for Beginners
+
+These are the 7 concepts every RAG tutorial covers. They are the foundation. Without them, nothing else works. The mistake is not learning them — the mistake is thinking they are enough.
+
+__RAG_BEGINNER_CARDS__
+
+__RAG_BASIC_PIPELINE__
+
+> **The demo problem:** This pipeline works well on the documents you indexed and the queries you tested. It breaks on edge cases, domain-specific vocabulary, PII-containing documents, ambiguous queries, and any user behavior you did not anticipate. The above is not wrong — it is just incomplete without everything below the waterline.
+
+## Below the Waterline: RAG for Builders
+
+This is where production systems diverge from demos. Each concept below exists because something broke — in someone's production system — before they added it. These are not optional improvements. They are the lessons of shipping RAG at scale.
+
+### Tier 1 — Pre-Retrieval: Before You Even Search
+
+__RAG_TIER1_CARDS__
+__RAG_HYDE_CODE__
+### Tier 2 — Post-Retrieval: After You Find Candidates
+
+__RAG_TIER2_CARDS__
+__RAG_RERANK_CODE__
+### Tier 3 — Generation: Quality, Safety, and Control
+
+__RAG_TIER3_CARDS__
+__RAG_RAGAS_CODE__
+## The Deepest Layer — Rarely in Tutorials
+
+__RAG_DEEP_CARDS__
+
+### The 5 Evaluation Metrics That Define Production Quality
+
+Every metric below is measurable, automatable, and tells you a different thing about where your system is failing. You need all five — they are complementary, not redundant.
+
+__RAG_EVAL_TABLE__
+
+__RAG_OPINION__
+
+## Three Things to Take Away
+
+__RAG_CONCLUSION__
+
+__RAG_CTA__`
   }
 ];
 

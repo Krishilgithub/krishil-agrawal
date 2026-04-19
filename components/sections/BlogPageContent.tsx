@@ -23,6 +23,23 @@ import {
   EvoTimeline,
   VecEmbOpinion,
 } from "@/components/blog/VecEmbDiagrams";
+import {
+  RagBasicPipeline,
+  RagIcebergDivider,
+  RagBeginnerCards,
+  RagTldr,
+  RagTier1Cards,
+  RagTier2Cards,
+  RagTier3Cards,
+  RagDeepLayerCards,
+  RagEvalMetricsTable,
+  RagOpinion,
+  RagConclusion,
+  RagCta,
+  RagHydeCode,
+  RagRerankCode,
+  RagRagasCode,
+} from "@/components/blogs/RagIcebergComponents";
 
 interface TocItem { id: string; title: string; level: number; }
 
@@ -197,6 +214,23 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__VEC_EMB_TABLE__") return <VecEmbTable key={index} />;
       if (trimmedBlock === "__VEC_EMB_FLOWCHART__") return <DecisionFlowchart key={index} />;
       if (trimmedBlock === "__VEC_EMB_OPINION__") return <VecEmbOpinion key={index} />;
+
+      if (trimmedBlock === "__RAG_BASIC_PIPELINE__")   return <RagBasicPipeline key={index} />;
+      if (trimmedBlock === "__RAG_ICEBERG_DIVIDER__")  return <RagIcebergDivider key={index} />;
+      if (trimmedBlock === "__RAG_BEGINNER_CARDS__")   return <RagBeginnerCards key={index} />;
+      if (trimmedBlock === "__RAG_TLDR__")             return <RagTldr key={index} />;
+      if (trimmedBlock === "__RAG_TIER1_CARDS__")      return <RagTier1Cards key={index} />;
+      if (trimmedBlock === "__RAG_TIER2_CARDS__")      return <RagTier2Cards key={index} />;
+      if (trimmedBlock === "__RAG_TIER3_CARDS__")      return <RagTier3Cards key={index} />;
+      if (trimmedBlock === "__RAG_DEEP_CARDS__")       return <RagDeepLayerCards key={index} />;
+      if (trimmedBlock === "__RAG_EVAL_TABLE__")       return <RagEvalMetricsTable key={index} />;
+      if (trimmedBlock === "__RAG_OPINION__")          return <RagOpinion key={index} />;
+      if (trimmedBlock === "__RAG_CONCLUSION__")       return <RagConclusion key={index} />;
+      if (trimmedBlock === "__RAG_CTA__")              return <RagCta key={index} />;
+
+      if (trimmedBlock === "__RAG_HYDE_CODE__")        return <RagHydeCode key={index} />;
+      if (trimmedBlock === "__RAG_RERANK_CODE__")      return <RagRerankCode key={index} />;
+      if (trimmedBlock === "__RAG_RAGAS_CODE__")       return <RagRagasCode key={index} />;
 
       if (trimmedBlock === "__GRAPHRAG_OPINION__") return (
         <div key={index} className="bg-[#13161e] border border-[#252a38] rounded-xl p-8 md:p-10 my-16 relative shadow-lg">

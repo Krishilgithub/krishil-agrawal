@@ -7,10 +7,38 @@ export function Experience() {
   return (
     <section id="experience" className="py-24 px-6 md:px-12 bg-[#fafafa]">
       <div className="max-w-7xl mx-auto">
-        <h2 className="font-outfit text-5xl font-extrabold tracking-tighter mb-16">
-          Experience & <br className="md:hidden" /> Timeline<span className="text-red-500">.</span>
-        </h2>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-5"
+            >
+              <Briefcase size={12} /> Experience
+            </motion.div>
 
+            <motion.h2
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05 }}
+              className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+            >
+              Experience &amp; Timeline<span className="text-red-500">.</span>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="mt-5 text-gray-500 text-lg max-w-xl leading-relaxed"
+            >
+              My professional journey, academic background, and notable achievements.
+            </motion.p>
+          </div>
+        </div>
         <div className="relative border-l border-gray-200 ml-4 md:ml-8 pl-8 md:pl-12 space-y-16">
           
           {/* Timeline Item 1: Internship */}
