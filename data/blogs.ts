@@ -1204,6 +1204,596 @@ As multimodal embeddings mature — where text, images, and audio share the same
 
 __VEC_EMB_OPINION__
     `
+  },
+  {
+    id: "how-embedding-models-work-under-the-hood",
+    title: "How Embedding Models Work Under the Hood",
+    description: "What actually happens inside an embedding model? Tokenization, lookup tables, positional encoding, multi-head attention, pooling, contrastive training — every layer explained with diagrams and code.",
+    tags: ["embeddings", "transformer", "bert", "attention", "nlp", "ml-internals", "contrastive-learning", "rag", "ai-engineering"],
+    readTime: "16 min read",
+    publishedAt: "April 2026",
+    popularityScore: 98,
+    isFeatured: false,
+    githubLink: "",
+    content: `Every RAG system, every semantic search engine, every vector database starts with the same black box: \`embedding = model.encode(text)\`. A sentence goes in. A list of floating-point numbers comes out. And somehow those numbers encode meaning precisely enough that "cat" and "feline" land closer together than "cat" and "skyscraper."
+
+Most engineers treat that black box exactly as a black box. They tune chunk sizes, try different models, measure recall — but never look inside. That is a problem. When retrieval breaks, when embeddings are unexpectedly similar or dissimilar, when your model performs badly on domain-specific text, the cause is almost always inside the model — and you cannot fix what you cannot see.
+
+This post opens the box. Every stage of the embedding pipeline, explained with working code and diagrams.
+
+__EMB_PIPELINE__
+
+## TL;DR — 6 stages, precisely explained
+
+- **Tokenization:** Text is split into sub-word tokens using BPE or WordPiece. Each token gets a unique integer ID from the vocabulary. "unhappy" might become ["un", "##happy"] — two tokens, not one word.
+- **Embedding lookup:** Each token ID is used to retrieve a dense vector row from the model's embedding matrix. This is a simple table lookup — no computation yet. GPT-3's embedding table alone holds ~51 million parameters.
+- **Positional encoding:** Since transformers process all tokens in parallel, they have no inherent sense of order. Sinusoidal signals (or learned RoPE rotations) are added to each token vector to encode its position.
+- **Multi-head self-attention:** Each token vector is split into Query, Key, and Value. Attention scores (Q·Kᵀ / √d) determine how much each token should "look at" every other token. Multiple heads capture different linguistic relationships in parallel.
+- **Feed-forward network:** After attention, each token passes through a two-layer MLP independently. This is where most of the model's "knowledge" is stored — attention finds relationships, FFN processes them.
+- **Pooling:** The transformer produces one vector per token. For a single sentence embedding, these are compressed into one vector — via [CLS] token, mean pooling, or max pooling.
+
+## Stage 1: Tokenization — Text Becomes Token IDs
+
+The first thing an embedding model does has nothing to do with embeddings. It splits your raw text into sub-word units called tokens, then converts each token to an integer ID from its vocabulary. This is tokenization, and it runs entirely before any neural network computation begins.
+
+Modern models use **Byte Pair Encoding (BPE)** or **WordPiece** — not simple word splitting. The key insight: splitting by words wastes vocabulary on rare forms. "running," "runs," "runner" would each need a separate entry. Sub-word tokenization represents them as shared sub-units, making the vocabulary dramatically more efficient.
+
+\`\`\`python
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+text = "The cat sat unhappily"
+tokens = tokenizer.tokenize(text)
+token_ids = tokenizer.encode(text)
+
+print("Tokens:", tokens)
+# ['the', 'cat', 'sat', 'un', '##happily']
+# Notice: "unhappily" → ["un", "##happily"]  (## = continuation of word)
+# "the" stays as one token — common words get their own entry
+
+print("IDs:", token_ids)
+# [101, 1996, 4937, 2938, 4895, 26510, 8512, 102]
+# 101 = [CLS] (start), 102 = [SEP] (end) — BERT adds these automatically
+# Each ID = row index in the embedding matrix (lookup table)
+\`\`\`
+
+> ⚠️ **Why this matters for RAG:** Most embedding models cap at 512 tokens (BERT) or 128–512 tokens (all-MiniLM-L6-v2). Not words — tokens. A 400-word technical document might produce 600+ tokens after sub-word tokenization. If it exceeds the model's max sequence length, tokens get silently truncated. This is a silent failure mode in RAG chunking that affects many production systems.
+
+## Stage 2: Embedding Lookup — A Trained Dictionary
+
+After tokenization, each integer ID is converted to a dense vector by looking up a row in a matrix called the **embedding table** (or weight matrix). This is not computation — it is a literal table lookup. Token ID 4937 maps to row 4937 of the matrix. That row is a vector of 768 numbers (for BERT-base), all learned during training.
+
+__EMB_LOOKUP__
+
+This lookup table is enormous. For a model with 50,000-token vocabulary and 1,024 dimensions per token, the embedding table holds 51.2 million parameters — just for this one table. Every one of those numbers was optimized during training. **The embedding table is where much of the model's "knowledge" starts.**
+
+## Stage 3: Positional Encoding — Teaching the Model Word Order
+
+Here is the fundamental problem with transformers: they process all tokens simultaneously, in parallel. There is no inherent concept of "this token came before that token." Without intervention, "The cat bit the dog" and "The dog bit the cat" would produce identical representations — because they have the same tokens, just reordered.
+
+Positional encoding solves this by adding a position signal to each token's vector before it enters the transformer layers. The original 2017 "Attention is All You Need" paper used sinusoidal functions of different frequencies. Modern models like Llama and Mistral use RoPE (Rotary Position Embeddings), which encodes position by rotating the token vectors by an angle proportional to their position.
+
+\`\`\`python
+import numpy as np
+
+def sinusoidal_positional_encoding(seq_len: int, d_model: int) -> np.ndarray:
+    """
+    Classic Vaswani et al. positional encoding.
+    Returns shape: (seq_len, d_model)
+    """
+    pos = np.arange(seq_len)[:, np.newaxis]   # (seq_len, 1)
+    i   = np.arange(d_model)[np.newaxis, :]     # (1, d_model)
+
+    # Even indices: sine; odd indices: cosine
+    angle_rates = 1 / np.power(10000, (2 * (i // 2)) / d_model)
+    angle_rads  = pos * angle_rates
+
+    PE = np.zeros((seq_len, d_model))
+    PE[:, 0::2] = np.sin(angle_rads[:, 0::2])  # Even → sin
+    PE[:, 1::2] = np.cos(angle_rads[:, 1::2])  # Odd  → cos
+    return PE
+
+# Then: token_embedding += positional_encoding[position]
+# The model can now distinguish position 0 from position 5 from position 50
+# Each position produces a unique pattern of sine waves across all dimensions
+\`\`\`
+
+> 💡 **RoPE vs Sinusoidal:** Newer models (Llama, Mistral, Falcon) use Rotary Position Embeddings instead of additive sinusoidal encoding. RoPE encodes position by rotating each token vector by an angle proportional to its position. The key advantage: relative positions are encoded by the angle difference between vectors, which dot-products naturally compute. This makes RoPE better at handling variable-length sequences and generalizing to longer contexts than seen during training.
+
+## Stage 4: Multi-Head Self-Attention — Every Token Looks at Every Other
+
+This is the core of the transformer. Self-attention allows each token to incorporate information from all other tokens in the sequence simultaneously. It is how "bank" learns from "river" nearby, or how a pronoun learns what noun it refers to.
+
+For each token, three vectors are computed by multiplying the token's embedding by three learned weight matrices:
+- **Q (Query):** What am I looking for? Represents what information this token is seeking from others.
+- **K (Key):** What do I contain? Represents what information this token offers to other tokens' queries.
+- **V (Value):** What do I actually pass on? The actual content transferred when attention selects this token.
+
+The formula: \`Attention(Q, K, V) = softmax( Q · Kᵀ / √d_k ) · V\` computes a score for every (query, key) pair by taking their dot product. Divide by √d_k to prevent vanishing gradients in high dimensions. Apply softmax to convert scores to probabilities. Multiply by V to get the weighted sum of values. The result: each token's output is a blend of all other token values, weighted by how much it "paid attention" to each one.
+
+\`\`\`python
+import torch
+import torch.nn as nn
+import math
+
+class SingleHeadAttention(nn.Module):
+    def __init__(self, d_model: int, d_k: int):
+        super().__init__()
+        self.d_k = d_k
+        # Three learned projection matrices
+        self.W_q = nn.Linear(d_model, d_k, bias=False)
+        self.W_k = nn.Linear(d_model, d_k, bias=False)
+        self.W_v = nn.Linear(d_model, d_k, bias=False)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x shape: (batch, seq_len, d_model)
+        Q = self.W_q(x)    # (batch, seq_len, d_k)
+        K = self.W_k(x)    # (batch, seq_len, d_k)
+        V = self.W_v(x)    # (batch, seq_len, d_k)
+
+        # Attention scores: every token attends to every other token
+        scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
+        # scores shape: (batch, seq_len, seq_len) ← the full attention matrix
+
+        weights = torch.nn.functional.softmax(scores, dim=-1)
+        # Each row sums to 1.0: how much does token i attend to each other token?
+
+        output = torch.matmul(weights, V)
+        # Each token's output is now context-aware: a weighted blend of all values
+        return output
+\`\`\`
+
+### Multi-Head Attention: Running Many Perspectives in Parallel
+
+One attention head captures one type of relationship — maybe syntactic dependencies. Another might capture semantic similarity. A third might track coreference. **Multi-head attention runs H independent attention heads in parallel**, each with its own Q/K/V matrices, then concatenates their outputs.
+
+\`\`\`python
+class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model: int, num_heads: int):
+        super().__init__()
+        self.num_heads = num_heads
+        self.d_k = d_model // num_heads  # Split model dim across heads
+
+        # All heads' Q, K, V computed together for efficiency
+        self.W_q = nn.Linear(d_model, d_model)
+        self.W_k = nn.Linear(d_model, d_model)
+        self.W_v = nn.Linear(d_model, d_model)
+        self.W_o = nn.Linear(d_model, d_model)  # Output projection
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        B, T, C = x.shape   # batch, seq_len, d_model
+
+        Q = self.W_q(x).view(B, T, self.num_heads, self.d_k).transpose(1, 2)
+        K = self.W_k(x).view(B, T, self.num_heads, self.d_k).transpose(1, 2)
+        V = self.W_v(x).view(B, T, self.num_heads, self.d_k).transpose(1, 2)
+        # Shape after reshape: (batch, num_heads, seq_len, d_k)
+        # Each head sees a different projection of the same token
+
+        scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
+        weights = scores.softmax(dim=-1)
+        attn = torch.matmul(weights, V)   # (B, num_heads, T, d_k)
+
+        # Concatenate all heads back together
+        attn = attn.transpose(1, 2).contiguous().view(B, T, C)
+        return self.W_o(attn)  # Final linear projection → (B, T, d_model)
+
+# BERT-base: 12 heads, d_model=768, d_k=64 per head
+# GPT-2 small: 12 heads, d_model=768, 12 transformer blocks
+\`\`\`
+
+## Stage 5: Feed-Forward Network — Where Knowledge Gets Processed
+
+After attention, each token's vector passes through a small, independent 2-layer MLP — the Feed-Forward Network (FFN). Critically, this network runs independently on each token: no cross-token communication happens here. It is applied position-wise.
+
+The FFN expands the embedding to 4× its dimension, applies a non-linearity (GELU or ReLU), then projects it back. Research suggests this is where much of the model's factual knowledge is stored — attention identifies relationships, FFN processes and transforms the information based on those relationships.
+
+\`\`\`python
+class FeedForward(nn.Module):
+    def __init__(self, d_model: int, expansion: int = 4):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(d_model, d_model * expansion),  # 768 → 3072
+            nn.GELU(),                                # non-linearity
+            nn.Linear(d_model * expansion, d_model),  # 3072 → 768
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.net(x)  # Applied independently to each token position
+
+# Full transformer block = MultiHeadAttention + FFN + LayerNorm + Residuals
+class TransformerBlock(nn.Module):
+    def __init__(self, d_model, num_heads):
+        super().__init__()
+        self.attn = MultiHeadAttention(d_model, num_heads)
+        self.ffn  = FeedForward(d_model)
+        self.ln1  = nn.LayerNorm(d_model)  # Stabilizes training
+        self.ln2  = nn.LayerNorm(d_model)
+
+    def forward(self, x):
+        # Residual connections: add input directly to output
+        # Prevents vanishing gradients in deep networks
+        x = x + self.attn(self.ln1(x))   # Attention sub-layer
+        x = x + self.ffn(self.ln2(x))    # FFN sub-layer
+        return x
+# Stack N of these blocks: BERT-base = 12, BERT-large = 24
+\`\`\`
+
+## Stage 6: Pooling — Compressing N Token Vectors Into One
+
+After N transformer blocks, you have one 768-dimensional vector per token. A 10-word sentence becomes 10 vectors. But semantic search needs exactly one vector per document. Pooling collapses the sequence into a single embedding. There are three main strategies, each with different tradeoffs.
+
+\`\`\`python
+import torch
+from transformers import AutoTokenizer, AutoModel
+
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+model = AutoModel.from_pretrained("bert-base-uncased")
+text = "The cat sat on the mat"
+
+encoded = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+with torch.no_grad():
+    output = model(**encoded)
+
+last_hidden = output.last_hidden_state  # (1, seq_len, 768)
+
+# ── STRATEGY 1: [CLS] Token Pooling ──────────────────────────────────────
+# BERT's special [CLS] token is prepended to every sequence.
+# It is designed to aggregate sequence-level information.
+# Simple and fast. Works best for tasks BERT was fine-tuned on.
+cls_embedding = last_hidden[:, 0, :]         # (1, 768) — take first token
+
+# ── STRATEGY 2: Mean Pooling (recommended for sentence transformers) ──────
+# Average all token vectors, weighted by attention mask.
+# Ignores [PAD] tokens. More robust signal than CLS for general embeddings.
+# Used by all-MiniLM-L6-v2 and most sentence-transformer models.
+attention_mask = encoded["attention_mask"]       # (1, seq_len)
+mask_expanded = attention_mask.unsqueeze(-1).expand(last_hidden.size()).float()
+mean_embedding = (
+    torch.sum(last_hidden * mask_expanded, 1)
+    / torch.clamp(mask_expanded.sum(1), min=1e-9)
+)                                               # (1, 768)
+
+# ── STRATEGY 3: Max Pooling ───────────────────────────────────────────────
+# Take the maximum value across all token positions for each dimension.
+# Captures the "strongest signal" feature in each dimension.
+# Less commonly used. Can over-amplify outlier tokens.
+max_embedding = torch.max(last_hidden, dim=1)[0]  # (1, 768)
+
+print(f"[CLS] embedding shape: {cls_embedding.shape}")    # torch.Size([1, 768])
+print(f"Mean embedding shape:  {mean_embedding.shape}")  # torch.Size([1, 768])
+\`\`\`
+
+> 💡 **Which pooling to use:** For BERT fine-tuned on downstream tasks, CLS pooling is standard. For general-purpose sentence embeddings with sentence-transformers, mean pooling consistently outperforms CLS on semantic similarity benchmarks — it captures the "average meaning" of the whole sentence rather than relying on one specially designated token. The all-MiniLM-L6-v2 model was trained with contrastive learning and mean pooling specifically for this reason.
+
+## Training: Contrastive Learning
+
+Understanding the architecture is half the picture. Understanding how the model is trained explains why similar sentences end up near each other in embedding space. The training objective directly shapes the geometry of that space.
+
+Modern embedding models are trained with **contrastive learning**. The core idea: show the model pairs of semantically similar sentences (positive pairs) and pairs of dissimilar sentences (negative pairs). Train it to make similar pairs' embeddings close together (high cosine similarity) and dissimilar pairs far apart (low cosine similarity).
+
+\`\`\`python
+import torch
+import torch.nn.functional as F
+
+def contrastive_loss(
+    embeddings_a: torch.Tensor,   # (batch, d) — anchor sentences
+    embeddings_b: torch.Tensor,   # (batch, d) — positive/negative pairs
+    temperature: float = 0.07
+) -> torch.Tensor:
+    """
+    InfoNCE / SimCLR contrastive loss.
+    In-batch negatives: all pairs (i, j) where i≠j are treated as negatives.
+    Diagonal of similarity matrix = positive pairs.
+    """
+    # Normalize to unit sphere — cosine sim = dot product after normalization
+    a = F.normalize(embeddings_a, dim=-1)
+    b = F.normalize(embeddings_b, dim=-1)
+
+    # (batch, batch) similarity matrix
+    # sim[i][j] = cosine similarity between anchor i and pair j
+    similarity = torch.matmul(a, b.T) / temperature
+
+    # Labels: index 0 is the positive for anchor 0, etc.
+    # Cross-entropy pushes diagonal high, off-diagonal low
+    labels = torch.arange(similarity.size(0), device=similarity.device)
+    loss = F.cross_entropy(similarity, labels)
+    return loss
+
+# Example training pair:
+# anchor   = "The cat sat on the mat"
+# positive = "A feline rested upon a rug"   ← semantically similar
+# negatives = all other sentences in the batch (in-batch negatives)
+# After training: cos_sim(anchor, positive) → high
+#                 cos_sim(anchor, negatives) → low
+\`\`\`
+
+The **all-MiniLM-L6-v2** model was trained on over 1 billion sentence pairs using exactly this contrastive objective. The batch size was 1024, run on a TPU v3-8 for 100,000 steps. At that scale, in-batch negatives means each sentence is contrasted against 1,023 other sentences simultaneously — producing a very strong training signal for learning which sentences are meaningfully similar.
+
+> 💡 **Why BERT out-of-the-box produces poor sentence embeddings:** BERT's pre-training objective was masked language modeling — predict a masked token from context. That objective does not directly optimize for sentence-level similarity. Raw BERT embeddings from the [CLS] token actually underperform averaged GloVe embeddings on semantic similarity benchmarks. Fine-tuning with a contrastive objective is what makes sentence-transformer models work. The architecture stays the same; the training signal changes the geometry of the embedding space entirely.
+
+## Putting It All Together: One Sentence, Start to Finish
+
+Here is the complete pipeline for encoding "The cat sat on the mat" with all-MiniLM-L6-v2:
+
+\`\`\`python
+from sentence_transformers import SentenceTransformer
+import torch, numpy as np
+
+# What this one line hides — every stage shown above runs in sequence:
+model = SentenceTransformer("all-MiniLM-L6-v2")
+# Architecture: 6 transformer layers, 384 dimensions, 12 attention heads
+# Max sequence length: 128 tokens
+# Pooling: mean pooling over all token embeddings
+
+sentences = [
+    "The cat sat on the mat",
+    "A feline rested on the rug",
+    "Python is a programming language",
+]
+
+embeddings = model.encode(sentences, normalize_embeddings=True)
+# Shape: (3, 384) — 3 sentences, each 384 dimensions
+
+# Step 1: Tokenize each sentence → token IDs + attention mask
+# Step 2: Look up each ID in embedding table (384-dim vectors)
+# Step 3: Add positional encoding signals
+# Step 4: Run through 6 transformer blocks (attention + FFN each)
+# Step 5: Mean-pool all token vectors → one 384-dim vector
+# Step 6: L2-normalize → unit sphere (optional but recommended)
+
+# Verify: similar sentences should be closer
+cos_sim = np.dot(embeddings[0], embeddings[1])   # cat ↔ feline
+cos_dis = np.dot(embeddings[0], embeddings[2])   # cat ↔ Python
+
+print(f"cat ↔ feline:  {cos_sim:.4f}")  # ~0.81 — high
+print(f"cat ↔ Python:  {cos_dis:.4f}")  # ~0.12 — low
+\`\`\`
+
+### Pooling Strategies — When to Use Which
+
+__POOLING_TABLE__
+
+## The Complete Picture
+
+An embedding model runs 6 sequential stages on your text. Tokenization converts raw characters to integer IDs using BPE or WordPiece sub-word splitting. A lookup table converts those IDs to dense initial vectors — each one a row in the model's embedding matrix. Positional encoding adds a unique position signal so the model knows token order. N transformer blocks then run attention (where every token attends to every other, computing Q·Kᵀ/√d scores then blending values) followed by a position-wise FFN that processes each token's enriched representation. Finally, pooling collapses the sequence of token vectors into one sentence vector — usually via mean pooling.
+
+**The training signal shapes the geometry.** BERT's original MLM objective does not produce good sentence embeddings directly. Contrastive training — where similar pairs are pushed together and dissimilar pairs pulled apart — is what makes modern embedding models like all-MiniLM-L6-v2 actually work for semantic search. When you choose an embedding model, look at how it was trained, not just its architecture or parameter count.
+
+Understanding these internals will help you debug retrieval failures, choose pooling strategies correctly, estimate token budget impacts, and reason about why domain-specific fine-tuning improves performance on niche corpora.`
+  },
+  {
+    id: "vector-rag-vs-vectorless-rag-production-guide",
+    title: "Vector RAG vs Vectorless RAG — The Complete Production Guide",
+    description: "Vector RAG uses embeddings and semantic search. Vectorless RAG uses BM25, keyword search, and structured queries. Neither wins every time. Here's the engineering framework for choosing — and combining — both.",
+    tags: ["rag", "bm25", "vector-search", "hybrid-retrieval", "information-retrieval", "langchain", "embeddings", "ai-engineering"],
+    readTime: "15 min read",
+    publishedAt: "April 2026",
+    popularityScore: 97,
+    isFeatured: false,
+    githubLink: "",
+    content: `Every RAG tutorial you have ever read has the same architecture: embed your documents, store them in Pinecone or Qdrant or Chroma, embed the query, do a cosine similarity lookup, retrieve the top-k chunks, pass to the LLM. That is Vector RAG. It is everywhere. And for a significant fraction of real production queries, it is the wrong tool.
+
+Vectorless RAG does not use embeddings at all. It retrieves using BM25 keyword scoring, full-text inverted indices, SQL queries on structured data, or LLM-driven navigation through document hierarchies. No embedding model, no vector database, no GPU inference budget at query time. In some domains — legal documents, financial filings, product catalogs, code search — vectorless approaches achieve 90%+ of vector RAG performance at a fraction of the cost and latency.
+
+The production answer in 2026 is almost always hybrid retrieval: run both pipelines in parallel and fuse their results. But to do that well, you need to understand how each method works, where each fails, and how to combine them without creating an over-engineered mess. That is what this post covers.
+
+## TL;DR — know this before you choose
+
+- **Vector RAG** converts text to dense embeddings and retrieves by semantic similarity. Best for natural language queries, paraphrased questions, conceptual lookups, and multilingual corpora. Requires an embedding model and a vector database.
+- **Vectorless RAG** uses BM25/TF-IDF keyword scoring, inverted indices, or structured SQL queries. Best for exact identifiers, product codes, legal citations, error messages, and any domain where users query with exact terminology.
+- **BM25 is not simple TF-IDF.** It adds term frequency saturation (extra mentions contribute diminishing returns) and document length normalization (longer docs are not unfairly rewarded). Two tunable parameters — k₁ and b — give it real control over retrieval behavior.
+- **Hybrid retrieval** runs both pipelines in parallel and fuses results via Reciprocal Rank Fusion (RRF). Hybrid is the production standard in 2026 — it provides insurance: when vectors fail for a query, BM25 catches it, and vice versa.
+- **Decision rule:** Start with BM25 as your baseline. Add vector search when you measure a recall gap on conceptual or paraphrased queries. Implement hybrid when neither alone satisfies your accuracy requirements.
+
+## Vector RAG — Semantic Retrieval With Embeddings
+
+Vector RAG's core pipeline is now well-established: at index time, each document chunk is passed through an embedding model (BERT, sentence-transformers, OpenAI text-embedding-3) to produce a dense vector, which is stored in a vector database. At query time, the query is embedded with the same model, and approximate nearest neighbor (ANN) search finds the closest vectors by cosine similarity.
+
+\`\`\`python
+from sentence_transformers import SentenceTransformer
+import chromadb
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+client = chromadb.Client()
+collection = client.create_collection("docs")
+
+# ── INDEX TIME ──────────────────────────────────────
+docs = ["The heart pumps blood through arteries",
+        "Cardiovascular disease is the leading cause of death",
+        "Python is a general-purpose programming language"]
+
+embeddings = model.encode(docs).tolist()
+collection.add(documents=docs, embeddings=embeddings,
+               ids=["d1", "d2", "d3"])
+
+# ── QUERY TIME ──────────────────────────────────────
+query = "heart attack symptoms"          # no keyword overlap with docs
+q_emb = model.encode([query]).tolist()
+
+results = collection.query(query_embeddings=q_emb, n_results=2)
+print(results["documents"])
+# Returns: doc1 and doc2 — semantic match, not keyword match
+# "heart attack" → retrieves "cardiovascular disease" even without the words
+\`\`\`
+
+> 💡 **When Vector RAG wins:** Any query where the user's words do not match the document's words but the meaning is the same. "What makes a good leader?" retrieves documents about management and influence. "How do I fix a slow website?" retrieves documents about performance optimization. The embedding space bridges the vocabulary gap.
+
+### Where Vector RAG Fails
+
+Vector RAG breaks on **exact identifiers**. If a user queries for error code \`ERR_CERT_AUTHORITY_INVALID\`, the embedding model maps that string to a vector somewhere in semantic space — but that position has no reliable relationship to documents containing that exact code. The same is true for product SKUs, invoice numbers, legal citation numbers, drug names, and gene identifiers. The embedding model has never learned that these tokens are identity labels, not semantic units.
+
+It also breaks on **rare domain vocabulary**. A model trained on general web text does not have a precise embedding for "glucocorticoid receptor agonist" or "Section 101(b) of the Patent Act." These phrases may exist in the training data, but the embedding might be unreliable for specialized retrieval. BM25 does not care — it just matches the tokens that are there.
+
+## Vectorless RAG — How BM25 Actually Works
+
+BM25 (Best Matching 25) is not just "keyword search." It is a probabilistic relevance model that ranks documents by answering the question: how much evidence does this document provide that it is about the query topic? It is the default ranking algorithm in Elasticsearch (since v5.0), OpenSearch, and Lucene-based systems worldwide.
+
+To understand why BM25 is better than simple TF-IDF, you need to understand the two problems TF-IDF cannot solve — and how BM25 fixes both.
+
+### Problem 1 — Term Frequency Is Not Linear
+
+TF-IDF scores a document linearly with term frequency. A document mentioning "apple" 500 times should not score 50× higher than one mentioning it 10 times — after a certain point, repetition adds almost no evidence of relevance. BM25 introduces a saturation function controlled by parameter **k₁**.
+
+__BM25_CHART__
+
+### Problem 2 — Long Documents Are Unfairly Rewarded
+
+A 5,000-word document that mentions "neural network" twice should not automatically outrank a 200-word paragraph that mentions it twice. TF-IDF makes this mistake because raw counts favor long documents. BM25 normalizes by document length with parameter **b** (typically 0.75).
+
+\`\`\`python
+from rank_bm25 import BM25Okapi
+
+# ── INDEX TIME ──────────────────────────────────────
+# No embedding model, no GPU, no vector database
+# Just an inverted index built from token frequencies
+
+docs = [
+    "The heart pumps blood through arteries and veins",
+    "Cardiovascular disease is the leading cause of death worldwide",
+    "Python is a general-purpose programming language with clean syntax",
+    "Invoice INV-2024-0042 for client ID 88421 is overdue by 14 days",
+]
+
+tokenized_docs = [doc.lower().split() for doc in docs]
+bm25 = BM25Okapi(tokenized_docs)
+# k1=1.5 and b=0.75 are BM25Okapi defaults — often left as-is
+
+# ── QUERY TIME ──────────────────────────────────────
+# Query 1: Exact identifier — BM25 WINS, vector fails
+query_id = "INV-2024-0042".lower().split()
+scores_id = bm25.get_scores(query_id)
+print(scores_id)          # doc[3] scores highest — correct!
+# Vector RAG: "INV-2024-0042" embeds to something vague → wrong retrieval
+
+# Query 2: Conceptual — Vector RAG wins, BM25 struggles
+query_sem = "myocardial infarction treatment".lower().split()
+scores_sem = bm25.get_scores(query_sem)
+print(scores_sem)          # No match — "myocardial" ≠ "heart" for BM25
+# Vector RAG: "myocardial infarction" → near "heart disease" in embedding space
+\`\`\`
+
+> ⚡ **BM25 is extremely fast.** Inverted index lookup runs in milliseconds even over millions of documents — no GPU, no embedding inference at query time. This makes vectorless RAG the right choice for latency-sensitive applications where query time must stay under 50ms, or for systems that cannot afford embedding infrastructure at scale.
+
+## Beyond BM25 — Other Vectorless Retrieval Strategies
+
+BM25 is the most common vectorless retrieval mechanism, but it is not the only one. Three other approaches deserve mention for specific use cases.
+
+### Structured Query Retrieval (SQL / Graph)
+
+When your data lives in a relational database or graph database, the retrieval is not a search problem — it is a query problem. The LLM generates a SQL or Cypher query from the natural language question, the query runs against the database, and the result is passed as context. This approach gives you exact, reproducible retrieval with zero ambiguity. It is called Text-to-SQL and is widely used for financial reporting, inventory management, and analytics use cases.
+
+\`\`\`python
+# Text-to-SQL vectorless RAG pattern
+# LLM generates the query, database executes it exactly
+
+system_prompt = """You are a SQL query generator.
+Given a user question and a database schema, write a SQL query.
+Return ONLY the SQL, nothing else.
+
+Schema:
+  invoices(id, client_id, amount, due_date, status)
+  clients(id, name, email, region)"""
+
+user_question = "Which invoices for clients in the US are overdue by more than 30 days?"
+
+# LLM returns:
+# SELECT i.id, c.name, i.amount, i.due_date
+# FROM invoices i JOIN clients c ON i.client_id = c.id
+# WHERE c.region = 'US'
+#   AND i.status = 'unpaid'
+#   AND i.due_date < CURRENT_DATE - INTERVAL '30 days'
+
+# The SQL result is then injected into the LLM context for answering
+# Perfect precision, zero hallucination on data values
+\`\`\`
+
+### Hierarchical Reasoning Navigation
+
+For very large structured documents (legal codes, technical manuals, regulatory filings), an LLM navigates a table-of-contents hierarchy step by step — reading summaries at each level and deciding which sub-section to drill into next. This approach has achieved 98.7% accuracy on professional document tasks in research settings. It requires no embeddings, but it does require multiple LLM calls per query.
+
+## Hybrid Retrieval — Running Both in Parallel
+
+The companies winning with RAG in 2026 are not choosing sides. They run both pipelines simultaneously. **Hybrid retrieval is now the production standard for enterprise RAG.** The key insight: BM25 and vector search fail on complementary sets of queries. Running both in parallel gives you coverage that neither achieves alone.
+
+The standard fusion algorithm is **Reciprocal Rank Fusion (RRF)**. It requires no parameter tuning, handles different score scales naturally (BM25 scores are not comparable to cosine similarities), and is robust to individual retriever failures.
+
+> 💡 **Reciprocal Rank Fusion (RRF)**: For each retriever r, find the rank of document d in its results list. Add 1/(k + rank) for each retriever. The constant k (typically 60) prevents high-ranked documents from dominating. Documents appearing in both retrievers' top results get naturally boosted. Documents present in only one retriever's results still score — they are not eliminated.
+
+\`\`\`python
+from langchain.retrievers import BM25Retriever, EnsembleRetriever
+from langchain.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+
+# ── Build both retrievers ───────────────────────────
+embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+vectorstore = Chroma.from_documents(chunks, embeddings)
+
+bm25_retriever = BM25Retriever.from_documents(chunks)
+bm25_retriever.k = 5
+
+vector_retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+
+# ── Ensemble = RRF fusion ──────────────────────────
+# weights=[0.5, 0.5] = equal weighting
+# Increase BM25 weight for exact-match heavy domains (legal, code, finance)
+# Increase vector weight for conceptual/conversational domains
+
+ensemble = EnsembleRetriever(
+    retrievers=[bm25_retriever, vector_retriever],
+    weights=[0.5, 0.5]
+)
+
+# For keyword-heavy domain (e.g. legal, financial IDs):
+# weights=[0.7, 0.3]  → favor BM25
+
+# For semantic domain (e.g. knowledge base, documentation):
+# weights=[0.3, 0.7]  → favor vectors
+
+docs = ensemble.invoke("What is the penalty for late invoice payment?")
+# BM25 catches "invoice", "payment", "penalty" exactly
+# Vector catches "contract terms", "interest charges", "default" semantically
+# RRF fusion ranks documents appearing in both retrievers highest
+\`\`\`
+
+> 💡 **Hybrid retrieval benchmark:** A February 2025 hybrid retrieval study on the ObliQA dataset achieved Recall@10 of 0.8333 and MAP@10 of 0.7016 — significantly outperforming BM25 alone (Recall@10: 0.7611, MAP@10: 0.6237). The LiveRAG 2025 challenge showed that neural re-ranking on top of hybrid retrieval improved MAP from 0.523 to 0.797 — a 52% relative improvement — though at significant latency cost (84s vs 1.74s per question).
+
+## The Complete Decision Table
+
+__VECTORLESS_TABLE__
+
+## The Decision Framework — Use When
+
+**Use Vector RAG when:**
+- Queries are conversational or conceptual — users ask questions in natural language
+- The query vocabulary is unlikely to match the document vocabulary exactly
+- You need multilingual support across a shared embedding space
+- Documents are unstructured and semantically rich (articles, docs, chat logs)
+- You have embedding budget and a vector database already in your stack
+
+**Use Vectorless RAG when:**
+- Queries include exact identifiers — SKUs, invoice numbers, error codes, citations
+- Your domain vocabulary is highly specialized and rare in general training corpora
+- Latency budget is tight — under 50ms per query
+- Retrieval must be auditable — regulated industries (finance, legal, healthcare)
+- Data is already in a relational or graph database — use SQL/Cypher instead of search
+
+**Use Hybrid Retrieval (the production default) when:**
+- Your query mix is heterogeneous — some users type exact codes, others ask conceptual questions
+- You want retrieval insurance — if one method fails on a query, the other compensates
+- You are building an enterprise knowledge base where both precision and recall matter
+- You have established a vector search baseline and measured it failing on specific query types
+- Accuracy requirements are high enough to justify running two parallel retrieval pipelines
+
+## Three Things to Take Away
+
+**First: "vectorless" does not mean "worse."** BM25 retrieves faster, costs less, and is fully explainable. For queries involving exact identifiers, specialized terminology, or structured data, it consistently outperforms vector search. Many production systems would be better served by starting with BM25 as the primary retriever and adding vector search only where it demonstrably improves recall.
+
+**Second: BM25 is not simple keyword matching.** Its saturation function and document length normalization make it a genuinely sophisticated probabilistic ranking algorithm. The parameters k₁ and b are tunable for your specific document distribution. Understanding how the formula works helps you diagnose retrieval failures and configure it correctly for your domain.
+
+**Third: Hybrid retrieval is the production answer in 2026.** Reciprocal Rank Fusion is parameter-free, scale-agnostic, and robust to individual retriever failures. Running BM25 and vector search in parallel with RRF fusion gives you the precision of keyword matching and the recall of semantic search simultaneously. The companies shipping reliable enterprise RAG systems are almost all using this pattern.
+
+The next optimization layer after hybrid retrieval is cross-encoder reranking — taking the top-N candidates from RRF and scoring them with a more accurate but slower model. The LiveRAG 2025 data showed 52% MAP improvement from this step. Whether that latency cost (84s vs 1.74s) is worth it depends entirely on your application's latency budget.`
   }
 ];
 

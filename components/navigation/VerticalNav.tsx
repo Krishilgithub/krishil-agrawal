@@ -69,7 +69,10 @@ export function VerticalNav() {
     <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-6 bg-transparent hidden md:flex">
       {navItems.map((item, index) => {
         const Icon = item.icon;
-        const isActive = isHome && activeIndex === index;
+        const isActive = isHome 
+          ? activeIndex === index 
+          : Boolean(item.route && pathname.startsWith(item.route));
+
         return (
           <Link
             key={item.name}

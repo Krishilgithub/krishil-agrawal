@@ -21,7 +21,7 @@ export function MobileNav() {
   const isHome = pathname === "/";
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "auto";
+    document.body.style.overflow = isOpen ? "hidden" : "";
   }, [isOpen]);
 
   const resolveHref = (item: typeof navItems[number]) => {
@@ -67,6 +67,10 @@ export function MobileNav() {
             <div className="flex flex-col gap-6 w-full max-w-[280px]">
               {navItems.map((item, index) => {
                 const Icon = item.icon;
+                const isActive = isHome 
+                  ? false 
+                  : Boolean(item.route && pathname.startsWith(item.route));
+
                 return (
                   <motion.div
                     key={item.name}
@@ -77,10 +81,10 @@ export function MobileNav() {
                     <Link
                       href={resolveHref(item)}
                       onClick={(e) => handleClick(e, item)}
-                      className="flex items-center gap-6 text-2xl font-outfit font-bold text-gray-800 hover:text-red-500 transition-colors"
+                      className={`flex items-center gap-6 text-2xl font-outfit font-bold transition-colors ${isActive ? "text-red-500" : "text-gray-800 hover:text-red-500"}`}
                     >
-                      <span className="p-4 bg-gray-50 rounded-full border border-gray-100">
-                        <Icon size={24} className="text-gray-600" />
+                      <span className={`p-4 rounded-full border ${isActive ? "bg-red-50 border-red-100" : "bg-gray-50 border-gray-100"}`}>
+                        <Icon size={24} className={isActive ? "text-red-500" : "text-gray-600"} />
                       </span>
                       {item.name}
                     </Link>

@@ -193,14 +193,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${outfit.variable} ${dmSans.variable} h-full antialiased selection:bg-black selection:text-white`}
+      className={`${outfit.variable} ${dmSans.variable} antialiased selection:bg-black selection:text-white scroll-smooth`}
     >
       <head>
         <link rel="canonical" href={BASE_URL} />
         <meta name="theme-color" content="#fafafa" />
         <meta name="color-scheme" content="light" />
       </head>
-      <body suppressHydrationWarning className="min-h-full flex flex-col font-sans overflow-x-hidden relative bg-[#fafafa]">
+      <body suppressHydrationWarning className="min-h-screen flex flex-col font-sans overflow-x-hidden relative bg-[#fafafa]">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
