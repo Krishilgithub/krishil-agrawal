@@ -52,6 +52,16 @@ import {
   SoloOpinion,
 } from "@/components/blogs/SolopreneurComponents";
 import {
+  RagProdHeroStats,
+  RagTwoWorkflows,
+  RagChunkingTable,
+  RagFailureModes,
+  RagVectorDbTable,
+  RagEvalMetrics,
+  RagRealWorldCases,
+  RagVsFinetune,
+} from "@/components/blogs/RagProductionComponents";
+import {
   YTHeroStats,
   YTReqCards,
   YTReqMetrics,
@@ -268,6 +278,16 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__RAG_HYDE_CODE__")        return <RagHydeCode key={index} />;
       if (trimmedBlock === "__RAG_RERANK_CODE__")      return <RagRerankCode key={index} />;
       if (trimmedBlock === "__RAG_RAGAS_CODE__")       return <RagRagasCode key={index} />;
+
+      // ─── RAG Production Tokens ────────────────────────────────────────────
+      if (trimmedBlock === "__RAGPROD_HERO_STATS__")      return <RagProdHeroStats key={index} />;
+      if (trimmedBlock === "__RAGPROD_TWO_WORKFLOWS__")   return <RagTwoWorkflows key={index} />;
+      if (trimmedBlock === "__RAGPROD_CHUNKING_TABLE__")  return <RagChunkingTable key={index} />;
+      if (trimmedBlock === "__RAGPROD_FAILURE_MODES__")   return <RagFailureModes key={index} />;
+      if (trimmedBlock === "__RAGPROD_VECTOR_DB__")       return <RagVectorDbTable key={index} />;
+      if (trimmedBlock === "__RAGPROD_EVAL_METRICS__")    return <RagEvalMetrics key={index} />;
+      if (trimmedBlock === "__RAGPROD_REAL_WORLD__")      return <RagRealWorldCases key={index} />;
+      if (trimmedBlock === "__RAGPROD_VS_FINETUNE__")     return <RagVsFinetune key={index} />;
 
       // ─── AI Solopreneur Tokens ─────────────────────────────────────────────
       if (trimmedBlock === "__SOLO_CASE_STUDIES__")    return <SoloCaseStudies key={index} />;

@@ -2325,6 +2325,182 @@ __YT_TRADEOFFS_PUSH__
 
 __YT_SUMMARY_TABLE__
 `
+  },
+  {
+    id: "rag-in-production-complete-guide",
+    title: "RAG in Production: The Complete Engineering Guide",
+    description: "Every question you have while building a RAG system answered — chunking, retrieval, evaluation, failure modes, vector DBs, and lessons from Morgan Stanley, Perplexity, Notion, and Cursor.",
+    tags: ["GenAI / LLMs", "System Design", "Deep Dive"],
+    readTime: "22 min read",
+    publishedAt: "April 2025",
+    popularityScore: 98,
+    isFeatured: true,
+    githubLink: "",
+    content: `Most teams ship a RAG prototype in a weekend. A working demo, a satisfying "it answered correctly" moment, and a feeling that production is just around the corner.
+
+Then they hit production.
+
+Queries that worked perfectly in testing start returning wrong answers. The retrieval that felt solid on 100 documents falls apart on 50,000. Users ask questions the embedding model never saw coming. And suddenly the thing everyone called "just a wrapper around an LLM" turns out to be a distributed systems problem in disguise.
+
+This post is the guide I wish existed when I first built a RAG system for production. Every section answers a question that actually matters — not "what is RAG" but "what breaks, why it breaks, and how the teams that got it right actually fixed it."
+
+__RAGPROD_HERO_STATS__
+
+## The Two Pipelines Every RAG System Has
+
+Here is the first thing most tutorials skip: a production RAG system is not one pipeline. It is two completely separate workflows with different latency requirements, different failure modes, and different optimization strategies.
+
+The **offline indexing pipeline** runs asynchronously. Its job is to take raw data — PDFs, HTML, database rows, API responses — and turn it into a searchable vector index. Latency here does not matter. Correctness does.
+
+The **online query pipeline** runs synchronously on every user request. Its job is to take a query, find the most relevant context, and hand it to an LLM. Latency here matters enormously. Every extra step you add — reranking, HyDE, query expansion — adds milliseconds that compound at scale.
+
+If you confuse the two, you make terrible tradeoffs. You optimize the wrong thing, add latency to the wrong step, and debug the wrong layer when something breaks.
+
+__RAGPROD_TWO_WORKFLOWS__
+
+> 💡 **Key Insight:** Treat the indexing pipeline and the query pipeline as separate services from day one. Different SLAs, different error handling, different monitoring. Building them as one monolith makes both harder to debug and scale.
+
+## The Chunking Problem — And Why Fixed-Size is Always Wrong
+
+Chunking is where most RAG systems die quietly. You pick a chunk size, maybe 512 tokens, maybe 1000 characters, and everything seems fine until someone asks a question whose answer spans a chunk boundary.
+
+Fixed-size chunking does not respect meaning. It splits mid-sentence, separates a table from its header, and severs a code example from the comment that explains it. The retriever then finds a chunk that contains half an answer and confidently passes it to the LLM.
+
+The LLM, unable to resist, fills in the other half from parametric memory. That is how you get confident wrong answers that pass retrieval metrics and fail on every real question.
+
+**What actually works:**
+
+Structure-aware chunking respects the document hierarchy. If a PDF has sections with H2 headings, chunk at the section boundary. If it is a code repository, chunk at function and class boundaries — not at 512-character intervals. Cursor does exactly this: code is chunked by function, class, and file, and every chunk is annotated with its file path and parent scope.
+
+The parent-child pattern solves a different problem. Store large semantic units as "parent" chunks but index small, precise "child" chunks for retrieval. When you retrieve a child chunk, you return its parent to the LLM. This gives the retriever precision and the LLM context. It is the highest-ROI chunking change you can make on an existing system.
+
+One rule applies everywhere: prepend the document title and section heading to every chunk. A chunk that reads "The maximum value is 4096" is useless without knowing it came from "PostgreSQL configuration limits — max_connections." Always provide that context.
+
+__RAGPROD_CHUNKING_TABLE__
+
+## Retrieval: Why Vector Search Alone Fails in Production
+
+Vector search is semantically powerful and terrible at exact matches.
+
+Ask a pure vector search system "what is the MAX_CONNECTIONS limit in PostgreSQL 16?" and it may return a conceptually similar chunk about database connection pooling — scoring it as more relevant than the actual documentation page that contains the exact term "MAX_CONNECTIONS."
+
+This is not a model bug. It is a fundamental property of dense embeddings. They compress meaning into a fixed-size vector, trading exact-match precision for semantic flexibility. For most queries, this is fine. For queries involving version numbers, product names, configuration keys, error codes, or any domain-specific terminology, it is quietly catastrophic.
+
+The fix is hybrid search: run BM25 (sparse keyword search) in parallel with dense vector search and merge the results using Reciprocal Rank Fusion (RRF). BM25 handles exact matches. Dense search handles paraphrase and semantic intent. RRF merges them without requiring you to tune weights by hand.
+
+Perplexity builds its entire retrieval tier on this pattern. Weaviate ships it built-in. If you are building on Postgres with pgvector, you need to add a BM25 implementation separately — but the tradeoff is worth it.
+
+After retrieval, add a cross-encoder reranker. The initial retrieval returns the top-K candidates efficiently but imprecisely. The reranker reads the full query and each candidate chunk together and produces a precise relevance score. Morgan Stanley's team found this single addition was the primary driver of their recall improvement from 20% to 80%.
+
+## Picking a Vector Database — The Honest Comparison
+
+Every vector database comparison you will find online is written by someone who works at one of these companies. Here is a neutral breakdown based on what actually matters in production.
+
+__RAGPROD_VECTOR_DB__
+
+> ⚠️ **The pgvector trap:** pgvector is a great choice if you already run Postgres and your corpus is under a million vectors. Past that, it struggles with ANN (Approximate Nearest Neighbor) performance and concurrent writes to the index. The mistake teams make is starting with pgvector at small scale and not planning for when they will need to migrate.
+
+## The 4 Failure Modes — And How to Debug Each One
+
+A RAG system in production fails in four distinct ways. Most engineers treat all of them as "the LLM is hallucinating." They are not. Each requires a different fix.
+
+__RAGPROD_FAILURE_MODES__
+
+The most important debugging tool you can build is a trace log that captures, for every query: the original query, the rewritten query (if you use HyDE or multi-query), the retrieved chunks with their scores, the reranked order, the assembled prompt, and the generated response. Without this, you are debugging in the dark.
+
+Langfuse is the best open-source option for this in 2025. LangSmith if you are already in the LangChain ecosystem. Both support the "LLM-as-judge" evaluation pattern where you sample production traces and score them automatically.
+
+## Advanced Retrieval: HyDE and When to Actually Use It
+
+HyDE (Hypothetical Document Embeddings) solves a specific problem: the semantic gap between a short user query and the long documents that contain the answer.
+
+Standard retrieval embeds the query directly and searches for similar vectors. But the query "what causes memory leaks in Go?" is semantically distant from a documentation page that explains it — because the documentation is written as statements, not questions.
+
+HyDE inverts this. Instead of embedding the query, you use an LLM to generate a hypothetical answer to the query, then embed that. Now you are searching answer-to-answer instead of question-to-answer. The semantic match improves significantly.
+
+The cost is an extra LLM call before every retrieval, adding 300-800ms of latency. Use a small, fast model (GPT-4o-mini or a local Ollama model) specifically for the HyDE step. Cache hypothetical embeddings for repeated queries.
+
+When to use it: when your queries are short and vague and your documents are long and structured. When your users ask conceptual questions against technical manuals. When you have tried hybrid search and reranking and are still seeing poor retrieval precision.
+
+When not to use it: when queries contain specific terms, product names, or version numbers. HyDE can generate a hypothetical answer that contains wrong terminology, sending your retriever in the wrong direction. Always pair it with a reranker as a safety net.
+
+## How to Actually Evaluate a RAG System
+
+Most teams evaluate their RAG system by asking it ten questions and checking if the answers look right. This is not evaluation. This is vibes.
+
+A real evaluation pipeline has three layers.
+
+__RAGPROD_EVAL_METRICS__
+
+**Building your golden dataset** is the first step nobody wants to do and the most important thing you can do. A golden dataset is a fixed set of queries with known correct answers and known source chunks. You need at least 50 examples, ideally 200+.
+
+Morgan Stanley's team started with 5 test cases and iterated to hundreds. Every regression — every time a change made a previously-correct answer wrong — was caught by this dataset before it reached users. The evaluation infra was, in their words, as important as the retrieval infra.
+
+RAGAS is the best open-source framework for automated RAG evaluation. It uses an LLM as a judge to score faithfulness (does the answer stay within the retrieved context?), context precision (were the retrieved chunks relevant?), and answer relevancy (does the answer address the question?). It supports reference-free evaluation for production, where you do not have ground-truth answers for every query.
+
+Run regression evals before every deployment. Sample 10% of production traces daily and score them. Alert when faithfulness drops below your baseline. These three things, done consistently, will catch 90% of production degradations before users notice.
+
+## RAG vs Fine-Tuning: The Decision Nobody Makes Correctly
+
+The most common mistake in enterprise AI in 2025 is fine-tuning a model to learn facts. Fine-tuning is not for facts. It is for behavior.
+
+If you need the model to know about your company's products, use RAG. The data changes, the model cannot be retrained every week, and you need citations for compliance.
+
+If you need the model to always respond in a specific JSON schema, always use a specific tone, or always follow a specific clinical reporting format — fine-tune. That is a behavioral change, not a knowledge change. RAG cannot reliably enforce output format on its own.
+
+The 2025 consensus from teams shipping production AI is: start with RAG. Add fine-tuning only when RAG gives you the right information but the wrong behavior.
+
+__RAGPROD_VS_FINETUNE__
+
+## Real Production Systems: What Actually Happened
+
+Theory is one thing. Here is what four production teams actually built, what they learned, and what they would do differently.
+
+__RAGPROD_REAL_WORLD__
+
+The pattern across all four is the same: the bottleneck was never the LLM. It was always the data pipeline, the retrieval quality, or the evaluation infrastructure. The teams that shipped reliable RAG systems built those three things first and treated the LLM as the last mile.
+
+## The Production Checklist
+
+Before you ship a RAG system, these are the non-negotiables:
+
+**Data Pipeline**
+- Structure-aware or parent-child chunking (never fixed-size)
+- Every chunk contains document title and section heading
+- BM25 index built in parallel with vector index
+- Change Data Capture (CDC) pipeline for index freshness
+- Permission filtering at query time, not just index time
+
+**Retrieval**
+- Hybrid BM25 + dense vector search with RRF merge
+- Cross-encoder reranker on top-K candidates
+- Separate retrieval latency SLA from indexing latency
+
+**Generation**
+- System prompt explicitly instructs "say I don't know if the context is insufficient"
+- Citation requirement in every response
+- Temperature at 0.0–0.2 for factual queries
+
+**Evaluation**
+- Golden dataset of 50+ queries before v1 ships
+- RAGAS or equivalent running on production sample daily
+- Full pipeline trace logging (query → chunks → prompt → response)
+- Regression test suite blocking deployment if faithfulness drops
+
+**Observability**
+- Alert on retrieval score distribution shifts
+- Alert on faithfulness score degradation
+- User feedback loop (thumbs up/down) feeding back to eval dataset
+
+> ⚠️ **The one thing most teams skip:** Permission-aware retrieval. If your knowledge base contains documents with different access levels, you must filter retrieved chunks by the querying user's permissions at query time, not just at index time. Failing to do this means a junior employee can indirectly retrieve senior executive documents through the AI interface — a real compliance failure that has happened in production.
+
+## The Honest State of RAG in 2025
+
+RAG works. It works at Morgan Stanley's scale, at Perplexity's real-time pace, at Notion's data volume. It is not magic and it is not simple.
+
+The teams that fail with RAG treat it as a prompt engineering problem. They tune the system prompt and wonder why the answers are still wrong. The teams that succeed treat it as an engineering problem: data pipelines, retrieval algorithms, evaluation frameworks, and observability.
+
+The retrieval layer is where most of the leverage is. If you fix the retriever — hybrid search, better chunking, a reranker — the LLM's answers get dramatically better without touching the model at all. Start there. Always start there.
+`
   }
 ];
-
