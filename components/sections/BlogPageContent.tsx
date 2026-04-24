@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { ArrowLeft, Clock, Calendar, BrainCircuit, Share2, Check, ExternalLink } from "lucide-react";
 import { BlogArticle } from "@/types/blog";
+import { BlogComments } from "@/components/blogs/BlogComments";
 import { GraphRagDiagram1 } from "@/components/blogs/GraphRagDiagram1";
 import { GraphRagDiagram2 } from "@/components/blogs/GraphRagDiagram2";
 import { GraphRagDiagram3 } from "@/components/blogs/GraphRagDiagram3";
@@ -40,6 +41,15 @@ import {
   RagRerankCode,
   RagRagasCode,
 } from "@/components/blogs/RagIcebergComponents";
+import {
+  SoloHeroStats,
+  SoloStackDiagram,
+  SoloWorkflowFlowchart,
+  SoloToolTable,
+  SoloRevenueModels,
+  SoloAutomationLoop,
+  SoloOpinion,
+} from "@/components/blogs/SolopreneurComponents";
 import {
   YTHeroStats,
   YTReqCards,
@@ -258,6 +268,15 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__RAG_RERANK_CODE__")      return <RagRerankCode key={index} />;
       if (trimmedBlock === "__RAG_RAGAS_CODE__")       return <RagRagasCode key={index} />;
 
+      // ─── AI Solopreneur Tokens ─────────────────────────────────────────────
+      if (trimmedBlock === "__SOLO_HERO_STATS__")       return <SoloHeroStats key={index} />;
+      if (trimmedBlock === "__SOLO_STACK_DIAGRAM__")    return <SoloStackDiagram key={index} />;
+      if (trimmedBlock === "__SOLO_WORKFLOW_FLOWCHART__") return <SoloWorkflowFlowchart key={index} />;
+      if (trimmedBlock === "__SOLO_TOOL_TABLE__")       return <SoloToolTable key={index} />;
+      if (trimmedBlock === "__SOLO_REVENUE_MODELS__")   return <SoloRevenueModels key={index} />;
+      if (trimmedBlock === "__SOLO_AUTOMATION_LOOP__")  return <SoloAutomationLoop key={index} />;
+      if (trimmedBlock === "__SOLO_OPINION__")          return <SoloOpinion key={index} />;
+
       // ─── YouTube System Design Tokens ────────────────────────────────────────
       if (trimmedBlock === "__YT_HERO_STATS__")            return <YTHeroStats key={index} />;
       if (trimmedBlock === "__YT_REQ_CARDS__")             return <YTReqCards key={index} />;
@@ -433,6 +452,9 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 0.5 }} className="prose prose-lg max-w-none">
           {typeof blog.content === "string" ? renderContent(blog.content) : blog.content}
         </motion.div>
+
+        {/* Comments Section */}
+        <BlogComments blogId={blog.id} />
 
         {/* Cross-Platform Links */}
         {(blog.substackLink || blog.mediumLink) && (

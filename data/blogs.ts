@@ -2,6 +2,250 @@ import { BlogArticle } from "../types/blog";
 
 export const blogsData: BlogArticle[] = [
   {
+    id: "ai-solopreneur-stack-one-person-business",
+    title: "The AI Solopreneur Stack: 7 Tools to Run a One-Person Business",
+    description: "One person. Zero employees. Full-scale output. Here's the exact AI stack — LLMs, agents, automation, content, and revenue tools — that lets a single operator run a real business in 2025.",
+    tags: ["Agentic AI", "GenAI / LLMs", "Deep Dive"],
+    readTime: "18 min read",
+    publishedAt: "April 2026",
+    popularityScore: 100,
+    isFeatured: true,
+    githubLink: "",
+    content: `In 2020, building a one-person software company meant doing everything yourself — coding, writing, marketing, sales, customer support, and bookkeeping. You wore every hat and burned out in 18 months. The ceiling was real and low.
+
+In 2025, that equation broke. A solo operator with the right AI stack can produce the output of a 10-person team — not by working harder, but by delegating the repeatable, parallelizable parts of their business to machines.
+
+This is not hype. It is an architectural shift. And the people who understand it early are already building businesses that would have been impossible without a co-founder just three years ago.
+
+This post gives you the complete stack: the 7 layers every AI solopreneur needs, the specific tools that power each layer, the workflow that stitches them together, and the revenue models that actually work. By the end, you will have a blueprint you can start implementing this week.
+
+__SOLO_HERO_STATS__
+
+> 💡 **Key Insight:** The AI solopreneur stack is not about replacing human creativity. It is about eliminating the operational drag that eats 70% of a solo founder's time — scheduling, formatting, repurposing, publishing, tracking.
+
+## TL;DR
+
+- The AI solopreneur stack has 7 layers: Brain (LLM), Automation, Agents, Content, Distribution, Revenue, and Knowledge.
+- Monthly tooling cost at the starter tier is under $200. At the power tier, under $500.
+- The core loop is: **Idea → AI Draft → Human Edit → Auto-Publish → Auto-Track → Feed learnings back.**
+- Agentic tools (CrewAI, LangGraph, AutoGen) handle multi-step workflows with no manual babysitting.
+- The 5 viable revenue models for AI solopreneurs are: info products, newsletter + sponsorships, micro-SaaS, consulting, and AI-generated content.
+
+## What Is an AI Solopreneur — and Why Now?
+
+The word "solopreneur" is not new. What is new is the leverage ratio.
+
+Think of traditional leverage: a factory owner owns machines that multiply their output. Each machine serves them while they sleep. An AI solopreneur has the same relationship — but their machines are software agents, language models, and automation workflows. And unlike physical machines, these do not depreciate. They get cheaper and more capable every six months.
+
+The timing matters because of three convergent shifts that happened between 2023 and 2025. First, frontier LLMs (GPT-4o, Claude 3.5, Gemini 1.5 Pro) crossed a quality threshold where their output is genuinely usable with light editing — not just impressive in demos. Second, AI agent frameworks (CrewAI, LangGraph, AutoGen) matured enough to run multi-step tasks reliably without constant human intervention. Third, no-code automation tools (n8n, Make) integrated native LLM nodes, making it trivial to wire AI reasoning into existing workflows.
+
+> ⚠️ **Important distinction:** AI solopreneurs are not prompt engineers who outsource thinking. They use AI to handle operational tasks while they focus on strategy, relationships, and creative direction — the things machines still cannot do well.
+
+The analogy that actually works: think of the AI solopreneur stack as a skeleton crew running a ship. You are the captain. The LLMs are your officers — smart, fast, infinitely patient. The automation workflows are your crew — executing orders without complaint, 24 hours a day. Your job is to set the destination and make the calls that require human judgment.
+
+## The 7-Layer Stack: What Each Layer Does
+
+The AI solopreneur stack is not one tool. It is a layered architecture where each layer has a specific job and can be swapped out independently. Here is the full picture:
+
+__SOLO_STACK_DIAGRAM__
+
+**Layer 1: Brain (LLM)**
+This is your primary reasoning engine. Every other layer either feeds it context or acts on its output. GPT-4o and Claude 3.5 Sonnet are the two workhorses for most solopreneurs in 2025. GPT-4o wins on reasoning, code, and structured output. Claude 3.5 wins on long-context analysis, writing quality, and nuanced tone matching.
+
+**Layer 2: Automation**
+n8n is the self-hosted backbone of choice for most technical solopreneurs. It lets you wire together hundreds of apps and add AI reasoning nodes without writing backend infrastructure. Make (formerly Integromat) is the no-code alternative. Zapier is simpler but more expensive at scale.
+
+**Layer 3: Agents**
+When a task requires multiple steps, tool calls, and decisions — that is an agent job. CrewAI is the easiest entry point for role-based multi-agent systems. LangGraph is the right choice when your workflow has cycles, retries, and complex state. AutoGen handles conversational agent systems where agents negotiate outputs.
+
+**Layer 4: Content**
+ElevenLabs for voice. Runway ML or Pika for video. Descript for AI-assisted editing. These tools convert your text output into multi-media assets without a production team.
+
+**Layer 5: Distribution**
+Beehiiv for newsletters with built-in monetization. Typefully for Twitter/X threads. Buffer for multi-platform scheduling. The goal of this layer is zero-effort publishing after the content is created.
+
+**Layer 6: Revenue**
+LemonSqueezy handles digital products and SaaS billing with modern UX. Gumroad is simpler and battle-tested. Stripe is the backend of choice when you build custom integrations.
+
+**Layer 7: Knowledge**
+This is the layer most solopreneurs forget. Notion AI or Mem.ai stores your decisions, learnings, and second-brain context. This is also where your agents pull domain context from — your personal RAG layer.
+
+## How to Wire the Stack: The Core Automation Loop
+
+Understanding the tools is step one. Understanding how they talk to each other is step two. Here is the workflow that connects all 7 layers into a functioning operational system:
+
+__SOLO_AUTOMATION_LOOP__
+
+The loop works like this. A trigger fires — a scheduled cron job, an incoming email, a webhook from your analytics dashboard. n8n (or Make) picks it up and routes it to the AI layer. The LLM reasons about the input and produces output: a draft, a decision, a structured data object. That output goes to an action — it gets published, sent, stored, or handed off to an agent for multi-step processing. A monitoring step tracks whether the action succeeded and captures performance signals. Everything gets logged to your knowledge base, which feeds context back into the next cycle.
+
+This is not a linear pipeline. It is a loop. Each iteration makes the system more calibrated because it has more signal about what worked.
+
+> 💡 **Key Insight:** The automation loop is most powerful when the monitoring step feeds back into future prompts. If your newsletter subject line "AI in 10 minutes" got 3x the open rate of your last 5 posts, that signal should automatically inform your next prompt: *"Write a subject line similar to 'AI in 10 minutes' — short, specific, curiosity-driving."*
+
+### What a Real n8n Workflow Looks Like
+
+Here is the logic behind a concrete example — an automated content research and drafting pipeline. Understand the flow before reading the pseudocode: n8n polls RSS feeds every morning, GPT-4o scores each item by relevance to your niche, the top-ranked items get passed to Claude for a 3-bullet summary, the output gets appended to your Notion "Ideas" database, and you wake up to a pre-populated content calendar.
+
+\`\`\`javascript
+// n8n Function Node — AI scoring logic (runs inside n8n workflow)
+// Input: RSS feed items array from previous node
+// Output: filtered, scored items ready for Claude summarization
+
+const items = $input.all();
+const niche = "AI engineering and autonomous systems";
+
+// Build batch prompt for GPT-4o
+const scoringPrompt = items.map((item, i) => 
+  \`[\${i}] Title: \${item.json.title}\\nSummary: \${item.json.contentSnippet}\`
+).join("\n\n");
+
+// This runs through OpenAI node (connected via n8n credential)
+// GPT-4o returns: [{ index: 0, score: 8, reason: "..." }, ...]
+const scored = await $evaluateExpression(
+  \`{{$node["OpenAI"].json["choices"][0]["message"]["content"]}}\`
+);
+
+// Filter to top 3 items with score >= 7
+const top = JSON.parse(scored)
+  .filter(s => s.score >= 7)
+  .slice(0, 3)
+  .map(s => items[s.index]);
+
+return top;
+\`\`\`
+
+The key is that no step requires you to manually intervene. You set this up once. Every morning, the pipeline runs. You open Notion and your research is already done.
+
+## Building Your Agent Layer: When Do You Need Agents?
+
+Not every task needs an agent. A single LLM call is faster, cheaper, and less fragile. The rule of thumb: use an agent when the task requires **more than 3 sequential decisions that depend on each other.**
+
+Here is the decision tree. Single, well-defined task with clear output → LLM call. Task needs to search, synthesize, and format → LLM with tool calls. Task needs branching logic, retries, or coordination with other tasks → Agent.
+
+\`\`\`python
+# CrewAI — a research + writing crew for client deliverables
+# Use case: client asks for a competitor analysis report
+from crewai import Agent, Task, Crew
+
+researcher = Agent(
+    role="Market Research Analyst",
+    goal="Find accurate, current data on competitor positioning",
+    backstory="You are a senior analyst who has studied tech markets for 10 years.",
+    tools=[web_search_tool, scraper_tool],   # MCP-compatible tools
+    llm="gpt-4o",
+    verbose=False
+)
+
+writer = Agent(
+    role="Business Writer",
+    goal="Turn research into a clear, executive-ready report",
+    backstory="You write for C-suite audiences. No fluff, all signal.",
+    llm="claude-3-5-sonnet-20241022",
+    verbose=False
+)
+
+research_task = Task(
+    description="Research the top 3 competitors of {company} in the {market} space. "
+                "Focus on pricing, positioning, and recent product changes.",
+    agent=researcher,
+    expected_output="Bullet-point competitor profile, 200 words per competitor"
+)
+
+writing_task = Task(
+    description="Write a 600-word executive brief using the research provided. "
+                "Structure: 1-para summary, 3 competitor profiles, strategic gaps.",
+    agent=writer,
+    expected_output="Formatted markdown report ready for client delivery",
+    context=[research_task]   # writer reads researcher's output
+)
+
+crew = Crew(agents=[researcher, writer], tasks=[research_task, writing_task])
+result = crew.kickoff(inputs={"company": "Acme Corp", "market": "AI developer tools"})
+# Result: complete client report in ~90 seconds, zero manual steps
+\`\`\`
+
+The \`researcher\` and \`writer\` agents run sequentially. The writer receives the researcher's output as context. You kicked off one function call. A client-deliverable report comes back.
+
+> 💡 **Pro tip:** Keep your crews small. 2–3 agents per crew is the sweet spot. More agents mean more LLM calls, higher latency, and harder debugging. If you need more agents, build multiple small crews and chain them.
+
+## The 5 Revenue Models That Actually Work
+
+Having the stack is not the business. The business is the revenue model you build on top of the stack. Here are the 5 that AI solopreneurs are using successfully in 2025:
+
+__SOLO_REVENUE_MODELS__
+
+**Info Products** are the fastest path to first dollar. An AI solopreneur with niche expertise can build a comprehensive prompt library, a course on AI implementation, or a data-driven industry report in a fraction of the time it previously took. AI handles research, outlining, and drafting. You handle positioning and expertise injection.
+
+**Newsletter + Sponsorships** compound over time. The AI stack handles curation (n8n pulling sources), drafting (Claude writing sections), formatting (Beehiw templates), and scheduling (auto-send). You write the editorial angle — the 200-word "why this matters" that makes your newsletter worth reading. Sponsorships at 5,000 subscribers pay $500–1,500 per slot.
+
+**Micro-SaaS** has the highest ceiling but the steepest build curve. The pattern in 2025: identify a niche workflow pain point, wrap an LLM API call in a clean UI, charge $29–99/month. The AI solopreneur builds the product, writes the docs with AI assistance, handles support with an AI chatbot, and deploys on Vercel or Railway.
+
+**Consulting** is the fastest path to high hourly rates if you have domain expertise. AI makes you dramatically more productive — you can take on more clients, deliver faster, and handle the operational overhead (proposals, follow-ups, reports) with templates and automation.
+
+**AI-Generated Content** (faceless YouTube, newsletter aggregators, niche content sites) is the most passive once operational. The risk: platform dependency. The reward: content that scales to audiences without your direct time input beyond strategy.
+
+## A Day in the Life of an AI Solopreneur
+
+Here is what this actually looks like in practice — not the ideal version, but a realistic operating rhythm for someone running a solo AI business:
+
+__SOLO_WORKFLOW_FLOWCHART__
+
+The key pattern: human time is spent on the 20% of tasks that require judgment, relationships, and creative direction. The 80% of repeatable operational work — research, formatting, publishing, tracking — runs on autopilot.
+
+## The Full Tool Stack, Compared
+
+Before you build, you need to choose. Here is every tool in the stack, compared on the dimensions that actually matter for a solo operator:
+
+__SOLO_TOOL_TABLE__
+
+## Expert Take: The Window Is Narrow
+
+__SOLO_OPINION__
+
+Here is the argument in full: the AI solopreneur model works *right now* because there is still a gap between what the tools can do and what most people know the tools can do. That gap is the business opportunity.
+
+In 18 months, the gap closes. Not because the tools disappear — but because everyone will know they exist and competition for attention in every niche will intensify. The solopreneurs who build audience, authority, and distribution *now* will have a compounding asset that late entrants cannot buy.
+
+The window to be an early-mover is 2024–2026. Not 2028.
+
+## Conclusion: The Stack Is the Starting Point, Not the Destination
+
+Three things to take away from this post.
+
+**First:** the AI solopreneur stack is not about one magical tool. It is about 7 layers working together — LLM reasoning feeding automation, automation triggering agents, agents producing content, content going to distribution, distribution building the audience that drives revenue. Each layer amplifies the next.
+
+**Second:** the stack costs less than you think. Starting tier is under $200 a month. You can validate your entire business model before spending serious money on tooling. The constraint is not budget — it is the time you spend learning to wire the layers together. That time investment pays back fast.
+
+**Third:** the automation loop is what separates AI solopreneurs from people who just use AI tools. A tool is something you pick up when you need it. A loop runs whether or not you are at your desk. Build the loop first. Everything else compounds from there.
+
+The forward-looking reality: in three years, every knowledge worker will operate with some version of this stack. The people who build their version now will not just be more efficient — they will have three years of domain data, audience trust, and workflow optimization that cannot be replicated from scratch.
+
+> 💡 **Your first step:** Pick one layer to automate this week. Not all seven. One. The highest-leverage starting point for most people is the content → distribution layer: write once in a long-form format, automate the repurposing into five shorter formats and schedule them. The time savings from that single loop will fund the rest of the stack.
+
+## Call to Action
+
+**Follow along as I document building a solo AI business in public** — the stack, the revenue, the workflows, and the failures. Find me on LinkedIn or subscribe below for the weekly deep-dive.
+
+## Discussion Question
+
+**What is the single biggest operational bottleneck in your current work that you think AI could automate?** Drop it in the comments — I read every one, and the most common answers will become future posts.
+
+## Related Posts to Write Next
+
+- "How to Build Your First AI Agent with LangGraph in 30 Minutes"
+- "The No-Code AI Stack: n8n + GPT-4o for Non-Developers"
+- "AI Pricing Models in 2026: Tokens, Seats, or Usage?"
+
+---
+
+**SEO Checklist**
+- Primary keyword: AI solopreneur stack
+- Secondary keywords: one-person AI business, AI automation tools 2025, solopreneur tools, agentic AI business
+- Suggested URL: /blogs/ai-solopreneur-stack-one-person-business
+- Tags: Agentic AI, GenAI / LLMs, Automation, Solopreneur, Business Strategy
+    `,
+  },
+  {
     id: "mcp-vs-a2a-ai-protocols-guide",
     title: "MCP vs A2A — The 2 Protocols Every AI Developer Needs to Know",
     description: "MCP connects your agent to tools. A2A connects your agent to other agents. Those are two very different problems — and confusing them will wreck your architecture before you write a single line of code.",
