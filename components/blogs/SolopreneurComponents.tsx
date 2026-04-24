@@ -13,7 +13,7 @@ export function SoloCaseStudies() {
       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-xl">🦾</div>
+            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-xl">⚙️</div>
             <div>
               <div className="text-xs font-black tracking-widest uppercase text-gray-400">Case Study #1</div>
               <div className="text-white font-outfit font-bold text-lg leading-tight">OpenClaw</div>
@@ -58,7 +58,7 @@ export function SoloCaseStudies() {
       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
         <div className="bg-gradient-to-br from-red-900 to-red-800 p-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-xl">🏥</div>
+            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-xl">📊</div>
             <div>
               <div className="text-xs font-black tracking-widest uppercase text-red-300">Case Study #2</div>
               <div className="text-white font-outfit font-bold text-lg leading-tight">Matthew Gallagher · Medvi</div>
@@ -137,7 +137,7 @@ export function SoloStackDiagram() {
       border: "#fecaca",
       tools: ["GPT-4o", "Claude 3.5 Sonnet", "Gemini 1.5 Pro"],
       desc: "Core LLM reasoning & content generation",
-      icon: "🧠",
+      icon: "◎",
     },
     {
       label: "AUTOMATION",
@@ -146,7 +146,7 @@ export function SoloStackDiagram() {
       border: "#ddd6fe",
       tools: ["n8n", "Make (Integromat)", "Zapier"],
       desc: "Workflow orchestration & task automation",
-      icon: "⚡",
+      icon: "↻",
     },
     {
       label: "AGENTS",
@@ -155,7 +155,7 @@ export function SoloStackDiagram() {
       border: "#bae6fd",
       tools: ["AutoGen", "CrewAI", "LangGraph"],
       desc: "Multi-step autonomous task execution",
-      icon: "🤖",
+      icon: "⬡",
     },
     {
       label: "CONTENT",
@@ -164,7 +164,7 @@ export function SoloStackDiagram() {
       border: "#bbf7d0",
       tools: ["Descript", "ElevenLabs", "Runway ML"],
       desc: "Video, audio & media production at scale",
-      icon: "🎬",
+      icon: "✦",
     },
     {
       label: "DISTRIBUTION",
@@ -173,7 +173,7 @@ export function SoloStackDiagram() {
       border: "#fde68a",
       tools: ["Beehiiv", "Typefully", "Buffer"],
       desc: "Audience growth & content distribution",
-      icon: "📡",
+      icon: "→",
     },
     {
       label: "REVENUE",
@@ -182,7 +182,7 @@ export function SoloStackDiagram() {
       border: "#fbcfe8",
       tools: ["Gumroad", "LemonSqueezy", "Stripe"],
       desc: "Payment processing & product delivery",
-      icon: "💰",
+      icon: "↑",
     },
     {
       label: "KNOWLEDGE",
@@ -191,7 +191,7 @@ export function SoloStackDiagram() {
       border: "#c7d2fe",
       tools: ["Notion AI", "Obsidian", "Mem.ai"],
       desc: "Personal knowledge base & context store",
-      icon: "📚",
+      icon: "◈",
     },
   ];
 
@@ -206,7 +206,12 @@ export function SoloStackDiagram() {
       <div className="divide-y divide-gray-100 bg-white">
         {layers.map((layer, i) => (
           <div key={i} className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors">
-            <div className="w-8 h-8 flex items-center justify-center text-xl shrink-0">{layer.icon}</div>
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-base font-black shrink-0"
+              style={{ color: layer.color, backgroundColor: layer.bg, border: `1px solid ${layer.border}` }}
+            >
+              {layer.icon}
+            </div>
             <div
               className="text-xs font-black tracking-widest uppercase px-3 py-1 rounded-full shrink-0 w-28 text-center"
               style={{ color: layer.color, backgroundColor: layer.bg, border: `1px solid ${layer.border}` }}
@@ -370,7 +375,7 @@ export function SoloRevenueModels() {
   const models = [
     {
       name: "Info Products",
-      emoji: "📦",
+      emoji: "▦",
       example: "eBook, course, prompt pack",
       effort: "High upfront",
       recurring: false,
@@ -380,7 +385,7 @@ export function SoloRevenueModels() {
     },
     {
       name: "Newsletter + Sponsorships",
-      emoji: "📧",
+      emoji: "◉",
       example: "Weekly AI digest, sponsored slots",
       effort: "Medium, ongoing",
       recurring: true,
@@ -390,7 +395,7 @@ export function SoloRevenueModels() {
     },
     {
       name: "Micro-SaaS / AI APIs",
-      emoji: "⚙️",
+      emoji: "⬡",
       example: "Niche AI tool, API wrapper, Chrome ext.",
       effort: "High dev, low ops",
       recurring: true,
@@ -400,7 +405,7 @@ export function SoloRevenueModels() {
     },
     {
       name: "Consulting / Freelance",
-      emoji: "🤝",
+      emoji: "◇",
       example: "AI implementation for businesses",
       effort: "Low setup, time-bounded",
       recurring: false,
@@ -410,7 +415,7 @@ export function SoloRevenueModels() {
     },
     {
       name: "AI-Generated Content",
-      emoji: "🎬",
+      emoji: "▷",
       example: "YouTube channel, TikTok, faceless brand",
       effort: "Medium, compounding",
       recurring: true,
@@ -431,7 +436,12 @@ export function SoloRevenueModels() {
             className="absolute top-0 left-0 right-0 h-1"
             style={{ backgroundColor: m.color }}
           />
-          <div className="text-3xl mb-3">{m.emoji}</div>
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-2xl mb-4 border"
+            style={{ color: m.color, backgroundColor: m.color + "15", borderColor: m.color + "30" }}
+          >
+            {m.emoji}
+          </div>
           <h4 className="font-outfit font-black text-gray-900 text-lg mb-1">{m.name}</h4>
           <p className="text-sm text-gray-500 mb-3 italic">{m.example}</p>
           <div className="flex gap-2 mb-4 flex-wrap">
@@ -440,7 +450,7 @@ export function SoloRevenueModels() {
               className="text-xs px-2 py-1 rounded-full font-bold"
               style={{ color: m.color, backgroundColor: m.color + "18" }}
             >
-              {m.recurring ? "🔄 Recurring" : "1x Payment"}
+              {m.recurring ? "Recurring" : "One-time"}
             </span>
             <span className="text-xs bg-gray-900 text-white px-2 py-1 rounded-full font-mono">{m.ceiling}</span>
           </div>
