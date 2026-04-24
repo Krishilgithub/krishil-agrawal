@@ -203,6 +203,31 @@ function FeaturedCard({
 export function BlogsPageContent() {
   const [activeCategory, setActiveCategory] = useState<BlogCategory>("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setEmail("");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
 
   const pillarsRef = useRef(null);
   const pillarsInView = useInView(pillarsRef, { once: true });
@@ -533,16 +558,40 @@ export function BlogsPageContent() {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full md:w-auto shrink-0">
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-stretch gap-3 w-full md:w-auto shrink-0 relative">
               <input
                 type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (status !== "idle") setStatus("idle");
+                }}
+                required
+                disabled={status === "loading" || status === "success"}
                 placeholder="your@email.com"
-                className="bg-white/5 border border-white/10 text-white placeholder:text-gray-600 rounded-xl px-5 py-3 text-sm outline-none focus:border-red-500 transition-colors w-full sm:w-60"
+                className="bg-white/5 border border-white/10 text-white placeholder:text-gray-600 rounded-xl px-5 py-3 text-sm outline-none focus:border-red-500 transition-colors w-full sm:w-60 disabled:opacity-50"
               />
-              <button className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-500 transition-colors whitespace-nowrap">
-                Subscribe <ChevronRight size={14} />
+              <button 
+                type="submit" 
+                disabled={status === "loading" || status === "success"}
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-500 transition-colors whitespace-nowrap disabled:bg-gray-700 disabled:text-gray-400"
+              >
+                {status === "loading" ? "Subscribing..." : status === "success" ? "Subscribed!" : "Subscribe"} 
+                {status === "idle" && <ChevronRight size={14} />}
               </button>
-            </div>
+              
+              {/* Status Message */}
+              {status === "success" && (
+                <p className="absolute -bottom-6 left-0 text-xs font-semibold text-emerald-400">
+                  Welcome to the newsletter!
+                </p>
+              )}
+              {status === "error" && (
+                <p className="absolute -bottom-6 left-0 text-xs font-semibold text-red-500">
+                  Failed to subscribe. Try again later.
+                </p>
+              )}
+            </form>
           </div>
         </motion.div>
 

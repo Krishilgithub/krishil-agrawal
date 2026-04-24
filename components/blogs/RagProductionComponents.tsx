@@ -97,7 +97,7 @@ export function RagChunkingTable() {
       <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
         <span className="text-xs font-black tracking-widest uppercase text-gray-500">Chunking Strategy Comparison</span>
       </div>
-      <div className="overflow-x-auto">
+      <div data-lenis-prevent className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
@@ -197,7 +197,7 @@ export function RagVectorDbTable() {
       <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
         <span className="text-xs font-black tracking-widest uppercase text-gray-500">Vector Database Comparison</span>
       </div>
-      <div className="overflow-x-auto">
+      <div data-lenis-prevent className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
@@ -351,7 +351,7 @@ export function RagVsFinetune() {
       <div className="bg-gray-50 px-6 py-3 border-b border-gray-200">
         <span className="text-xs font-black tracking-widest uppercase text-gray-500">RAG vs Fine-Tuning — Decision Matrix</span>
       </div>
-      <div className="overflow-x-auto">
+      <div data-lenis-prevent className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100">
