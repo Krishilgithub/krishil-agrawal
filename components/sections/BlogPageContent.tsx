@@ -40,6 +40,32 @@ import {
   RagRerankCode,
   RagRagasCode,
 } from "@/components/blogs/RagIcebergComponents";
+import {
+  YTHeroStats,
+  YTReqCards,
+  YTReqMetrics,
+  YTHighLevelArchSVG,
+  YTUploaderPipeline,
+  YTTranscodingLayers,
+  YTTranscodingDAG,
+  YTCodecTable,
+  YTStorageCards,
+  YTCdnArchSVG,
+  YTStreamingPipeline,
+  YTDatabaseTable,
+  YTViewCountSteps,
+  YTSearchPipeline,
+  YTMlArchSVG,
+  YTMlSignals,
+  YTAnalyticsLayers,
+  YTLivePipeline,
+  YTScaleCards,
+  YTFaultAccordion,
+  YTTradeoffsConsistency,
+  YTTradeoffsMicro,
+  YTTradeoffsPush,
+  YTSummaryTable,
+} from "@/components/blogs/YouTubeSysDesignComponents";
 
 interface TocItem { id: string; title: string; level: number; }
 
@@ -231,6 +257,32 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__RAG_HYDE_CODE__")        return <RagHydeCode key={index} />;
       if (trimmedBlock === "__RAG_RERANK_CODE__")      return <RagRerankCode key={index} />;
       if (trimmedBlock === "__RAG_RAGAS_CODE__")       return <RagRagasCode key={index} />;
+
+      // ─── YouTube System Design Tokens ────────────────────────────────────────
+      if (trimmedBlock === "__YT_HERO_STATS__")            return <YTHeroStats key={index} />;
+      if (trimmedBlock === "__YT_REQ_CARDS__")             return <YTReqCards key={index} />;
+      if (trimmedBlock === "__YT_REQ_METRICS__")           return <YTReqMetrics key={index} />;
+      if (trimmedBlock === "__YT_HIGH_LEVEL_ARCH__")       return <YTHighLevelArchSVG key={index} />;
+      if (trimmedBlock === "__YT_UPLOAD_PIPELINE__")       return <YTUploaderPipeline key={index} />;
+      if (trimmedBlock === "__YT_TRANSCODE_LAYERS__")      return <YTTranscodingLayers key={index} />;
+      if (trimmedBlock === "__YT_TRANSCODE_DAG__")         return <YTTranscodingDAG key={index} />;
+      if (trimmedBlock === "__YT_CODEC_TABLE__")           return <YTCodecTable key={index} />;
+      if (trimmedBlock === "__YT_STORAGE_CARDS__")         return <YTStorageCards key={index} />;
+      if (trimmedBlock === "__YT_CDN_ARCH__")              return <YTCdnArchSVG key={index} />;
+      if (trimmedBlock === "__YT_STREAMING_PIPELINE__")    return <YTStreamingPipeline key={index} />;
+      if (trimmedBlock === "__YT_DB_TABLE__")              return <YTDatabaseTable key={index} />;
+      if (trimmedBlock === "__YT_VIEW_COUNT_STEPS__")      return <YTViewCountSteps key={index} />;
+      if (trimmedBlock === "__YT_SEARCH_PIPELINE__")       return <YTSearchPipeline key={index} />;
+      if (trimmedBlock === "__YT_ML_ARCH__")               return <YTMlArchSVG key={index} />;
+      if (trimmedBlock === "__YT_ML_SIGNALS__")            return <YTMlSignals key={index} />;
+      if (trimmedBlock === "__YT_ANALYTICS_LAYERS__")      return <YTAnalyticsLayers key={index} />;
+      if (trimmedBlock === "__YT_LIVE_PIPELINE__")         return <YTLivePipeline key={index} />;
+      if (trimmedBlock === "__YT_SCALE_CARDS__")           return <YTScaleCards key={index} />;
+      if (trimmedBlock === "__YT_FAULT_ACCORDION__")       return <YTFaultAccordion key={index} />;
+      if (trimmedBlock === "__YT_TRADEOFFS_CONSISTENCY__") return <YTTradeoffsConsistency key={index} />;
+      if (trimmedBlock === "__YT_TRADEOFFS_MICRO__")       return <YTTradeoffsMicro key={index} />;
+      if (trimmedBlock === "__YT_TRADEOFFS_PUSH__")        return <YTTradeoffsPush key={index} />;
+      if (trimmedBlock === "__YT_SUMMARY_TABLE__")         return <YTSummaryTable key={index} />;
 
       if (trimmedBlock === "__GRAPHRAG_OPINION__") return (
         <div key={index} className="bg-[#13161e] border border-[#252a38] rounded-xl p-8 md:p-10 my-16 relative shadow-lg">

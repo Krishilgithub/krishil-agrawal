@@ -1831,14 +1831,19 @@ This is where production systems diverge from demos. Each concept below exists b
 ### Tier 1 — Pre-Retrieval: Before You Even Search
 
 __RAG_TIER1_CARDS__
+
 __RAG_HYDE_CODE__
+
 ### Tier 2 — Post-Retrieval: After You Find Candidates
 
 __RAG_TIER2_CARDS__
+
 __RAG_RERANK_CODE__
+
 ### Tier 3 — Generation: Quality, Safety, and Control
 
 __RAG_TIER3_CARDS__
+
 __RAG_RAGAS_CODE__
 ## The Deepest Layer — Rarely in Tutorials
 
@@ -1857,6 +1862,193 @@ __RAG_OPINION__
 __RAG_CONCLUSION__
 
 __RAG_CTA__`
+  },
+  {
+    id: "youtube-system-design-architecture",
+    title: "YouTube System Design — Complete Architecture",
+    description: "A complete technical breakdown of how YouTube serves 2.5 billion users — from raw video upload to personalized playback at planetary scale.",
+    tags: ["System Design", "Case Studies", "Deep Dive"],
+    readTime: "22 min read",
+    publishedAt: "May 2026",
+    popularityScore: 99,
+    isFeatured: true,
+    content: `
+__YT_HERO_STATS__
+
+## What Must YouTube Actually Do?
+
+Before any architecture decision, we ground everything in concrete requirements. YouTube's core challenge is that it's simultaneously a **storage system**, a **streaming network**, a **search engine**, and a **personalization engine** — all at exabyte scale.
+
+__YT_REQ_CARDS__
+
+### Non-Functional Requirements
+
+__YT_REQ_METRICS__
+
+## The Big Picture
+
+YouTube follows a **microservices architecture** evolved from a monolith. The system splits into three major subsystems with fundamentally different characteristics: the **write path** (uploads), the **processing path** (transcoding), and the **read path** (streaming + discovery).
+
+__YT_HIGH_LEVEL_ARCH__
+
+> **Architecture Style**: YouTube evolved from a monolith (Python + MySQL in 2005) to a microservices architecture on Google Cloud Platform. The entry point for all traffic is Google's Front-End (GFE) — a globally distributed load balancer that also handles DDoS protection and TLS termination before a single request hits a backend server.
+
+## How Does a Video Get Into YouTube?
+
+Uploading a 4GB video over HTTP in a single request is catastrophically fragile. One dropped connection = start over. YouTube uses **resumable chunked uploads** — a technique that survives flaky networks and allows parallel chunk transfers.
+
+### The Upload Flow — Step by Step
+
+__YT_UPLOAD_PIPELINE__
+
+\`\`\`javascript
+// POST /videos/init — client sends metadata, gets signed URL back
+async function initVideoUpload(req, res) {
+  const { title, description, fileSize, mimeType } = req.body;
+  
+  // Reserve a video ID upfront
+  const videoId = generateVideoId();   // e.g. "dQw4w9WgXcQ"
+  
+  // Write stub to DB (status: UPLOADING)
+  await db.videos.insert({
+    id: videoId,
+    ownerId: req.user.id,
+    title,
+    status: 'UPLOADING',
+    createdAt: Date.now()
+  });
+  
+  // Generate a signed URL — client uploads DIRECTLY to GCS
+  // App server is never in the bandwidth path
+  const signedUrl = await gcs.generateSignedUrl({
+    bucket: 'yt-raw-uploads',
+    object: \`raw/\${videoId}/original\`,
+    expiresIn: 3600,  // 1 hour
+    method: 'PUT',
+    contentType: mimeType
+  });
+  
+  res.json({ videoId, uploadUrl: signedUrl });
+}
+
+// GCS triggers a Pub/Sub event → Kafka on upload complete
+// This decouples upload from transcoding completely
+\`\`\`
+
+## From Raw File to 20 Optimized Formats
+
+This is where YouTube's scale becomes jaw-dropping. Every single uploaded video must be transcoded into **6+ resolutions** (144p → 4K) and **3 codec variants** (H.264, VP9, AV1) — sometimes 20+ output files per video. With 500 hours of video uploaded per minute, this requires thousands of machines running in parallel.
+
+__YT_TRANSCODE_LAYERS__
+
+### The DAG-Based Transcoding Architecture
+
+Transcoding isn't a single job — it's a **Directed Acyclic Graph (DAG)** of parallel tasks. Different resolutions are processed simultaneously on different worker nodes. A task coordinator (similar to Apache Airflow) manages dependencies.
+
+__YT_TRANSCODE_DAG__
+
+> **Smart Encoding Priority**: YouTube prioritizes transcoding popular channels and trending content first. A big creator's upload gets dedicated worker clusters and starts streaming within minutes. Less popular uploads may take longer. This is a deliberate business + infrastructure trade-off.
+
+### AV1 vs VP9 vs H.264 — Why YouTube Uses All Three
+
+__YT_CODEC_TABLE__
+
+## Managing ~1 Exabyte of Video
+
+YouTube's storage system is tiered by access frequency — **hot storage** for recently uploaded or trending content, **warm storage** for regularly accessed content, and **cold/archive storage** for videos rarely viewed. This dramatically reduces cost.
+
+__YT_STORAGE_CARDS__
+
+> **Vitess — How YouTube Scales MySQL**: Vitess is an open-source sharding middleware developed by YouTube that sits between application code and MySQL. It handles query routing, pooling, and horizontal sharding transparently — allowing MySQL to scale to millions of QPS without changing application code. YouTube open-sourced Vitess in 2012 and it's now a CNCF project.
+
+## Getting Video to 200+ Countries in Under 2 Seconds
+
+YouTube's CDN is not a third-party service — it's **Google Media CDN**, one of the largest private networks on Earth. Google owns the fiber infrastructure connecting its data centers and edge nodes, allowing it to bypass the public internet for most of the video's journey.
+
+__YT_CDN_ARCH__
+
+YouTube also uses **ML to predict viral content** and pre-caches it at edge nodes before it actually goes viral. The model analyzes creator popularity, topic trends, social media signals, and viewing pattern correlations to get video segments to the right CDN nodes proactively.
+
+## Why Your Video Quality Adjusts Automatically
+
+YouTube doesn't send you one video file — it sends a sequence of **2–10 second video segments**, each available at multiple resolutions. The player continuously measures your available bandwidth and switches to the best available quality segment-by-segment. This is **Adaptive Bitrate (ABR) streaming**.
+
+__YT_STREAMING_PIPELINE__
+
+> **Why QUIC Matters**: Traditional TCP streams suffer "head-of-line blocking" — if one packet is lost, all subsequent packets wait for the retransmit even if they arrived fine. QUIC (built on UDP) has independent streams, so packet loss in one quality stream doesn't block others. This alone reduces buffering events by 20-30% on mobile networks.
+
+## One Database Can't Rule Them All
+
+YouTube uses multiple database technologies, each selected for its specific access pattern. Using a single database for everything would create bottlenecks and force painful trade-offs between consistency, availability, and write throughput.
+
+__YT_DB_TABLE__
+
+### The View Count Problem — Why Simple Counters Break at Scale
+
+Naively, you'd increment a counter in MySQL for each view. At 1 billion watch hours/day, this creates millions of writes per second on a single counter — a classic hot-key problem. YouTube's solution uses **three layers**:
+
+__YT_VIEW_COUNT_STEPS__
+
+## Finding the Right Video Among 800 Million
+
+YouTube's search processes **hundreds of millions of queries per day**. The search system uses Elasticsearch with heavily customized ranking that goes far beyond simple text matching.
+
+__YT_SEARCH_PIPELINE__
+
+## The Algorithm That Drives 70% of Watch Time
+
+YouTube's recommendation system is the most impactful part of the platform — driving over 70% of total watch time. It uses a **two-stage machine learning pipeline** described in YouTube's famous 2016 paper "Deep Neural Networks for YouTube Recommendations."
+
+__YT_ML_ARCH__
+
+### Key ML Signals Used for Ranking
+
+__YT_ML_SIGNALS__
+
+## Processing Billions of Events Per Day
+
+Every user action on YouTube — a play, pause, skip, like, comment, share — is an event. Billions of these events flow through a **Lambda Architecture** combining real-time streaming and batch processing.
+
+__YT_ANALYTICS_LAYERS__
+
+## Live Streaming: A Fundamentally Different Pipeline
+
+Live streaming can't wait for a full file upload. It needs a completely different ingest protocol and an ultra-low-latency pipeline. YouTube uses **RTMP for ingestion** and **Low-Latency HLS (LL-HLS)** for delivery.
+
+__YT_LIVE_PIPELINE__
+
+## How YouTube Handles Millions of Concurrent Requests
+
+YouTube handles traffic spikes of many orders of magnitude — a single viral video can cause sudden 100x traffic spikes to specific content. The architecture is built to absorb this without manual intervention.
+
+__YT_SCALE_CARDS__
+
+## Staying Up at 99.9% Across the Entire Planet
+
+__YT_FAULT_ACCORDION__
+
+## Every Architecture Decision Has a Cost
+
+Great system design isn't about choosing the "right" answer — it's about knowing what you're trading away when you make a choice.
+
+### Eventual Consistency vs. Strong Consistency
+
+__YT_TRADEOFFS_CONSISTENCY__
+
+### Microservices vs. Monolith
+
+__YT_TRADEOFFS_MICRO__
+
+### Push vs. Pull for Subscriber Feed
+
+__YT_TRADEOFFS_PUSH__
+
+> **Interview Tip — The Trade-off is the Answer**: In system design interviews, examiners are not looking for a "correct" architecture. They're evaluating your understanding of trade-offs. For every choice you make (SQL vs NoSQL, push vs pull, sync vs async), explain what you gain and what you give up. That's what separates good candidates from great ones.
+
+## The Full Stack at a Glance
+
+__YT_SUMMARY_TABLE__
+`
   }
 ];
 

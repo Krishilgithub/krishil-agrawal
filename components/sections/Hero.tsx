@@ -13,12 +13,13 @@ export function Hero() {
     tl.fromTo(
       ".hero-fade-up",
       { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out", delay: 0.2 }
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" },
+      0.1
     ).fromTo(
       ".hero-image-reveal",
-      { scale: 0.8, opacity: 0, filter: "blur(10px)" },
+      { scale: 0.85, opacity: 0, filter: "blur(8px)" },
       { scale: 1, opacity: 1, filter: "blur(0px)", duration: 1, ease: "power2.out" },
-      "-=0.6"
+      0.1
     );
   }, []);
 

@@ -122,20 +122,20 @@ export function RagTldr() {
 type DCard = { badge: string; name: string; desc: string; tier: 1 | 2 | 3 };
 
 const TIER_STYLES: Record<number, { border: string; badge: string; label: string }> = {
-  1: { border: "border-l-blue-400",  badge: "bg-blue-900/30 text-blue-300 border-blue-700/40",  label: "Tier 1" },
-  2: { border: "border-l-yellow-400", badge: "bg-yellow-900/30 text-yellow-300 border-yellow-700/40", label: "Tier 2" },
-  3: { border: "border-l-red-400",   badge: "bg-red-900/30 text-red-300 border-red-700/40",    label: "Tier 3" },
+  1: { border: "border-l-blue-500",  badge: "bg-blue-50 text-blue-600 border-blue-200",  label: "Tier 1" },
+  2: { border: "border-l-amber-500", badge: "bg-amber-50 text-amber-600 border-amber-200", label: "Tier 2" },
+  3: { border: "border-l-red-500",   badge: "bg-red-50 text-red-600 border-red-200",    label: "Tier 3" },
 };
 
 function DepthCard({ card }: { card: DCard }) {
   const s = TIER_STYLES[card.tier];
   return (
-    <div className={`bg-white/5 border border-white/10 border-l-4 ${s.border} rounded-xl p-5`}>
+    <div className={`bg-white border border-gray-100 shadow-sm border-l-4 ${s.border} rounded-xl p-5`}>
       <div className={`text-[9px] font-bold uppercase tracking-[0.12em] border px-2 py-0.5 rounded inline-block mb-3 ${s.badge}`}>
         {card.badge}
       </div>
-      <div className="text-sm font-bold text-white mb-2">{card.name}</div>
-      <div className="text-xs text-white/55 leading-relaxed">{card.desc}</div>
+      <div className="text-sm font-bold text-gray-900 mb-2">{card.name}</div>
+      <div className="text-xs text-gray-600 leading-relaxed">{card.desc}</div>
     </div>
   );
 }
@@ -206,29 +206,29 @@ export function RagEvalMetricsTable() {
     { metric: "Hallucination Rate",what: "% of responses with claims not in retrieved context",      target: "≤ 5% for most apps",        low: "5% = 1 in 20 responses contains fabricated information",       status: "good" },
   ];
   return (
-    <div className="my-10 rounded-2xl overflow-hidden border border-white/10">
-      <div className="bg-white/5 px-5 py-3 border-b border-white/10">
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-300">
+    <div className="my-10 rounded-2xl overflow-hidden border border-gray-200">
+      <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
+        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-600">
           The 5 Evaluation Metrics That Define Production Quality
         </span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-xs">
+        <table className="w-full text-xs bg-white">
           <thead>
-            <tr className="border-b border-white/10">
-              <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider text-blue-300 font-bold bg-white/[0.03]">Metric</th>
-              <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider text-blue-300 font-bold bg-white/[0.03]">What it measures</th>
-              <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider text-blue-300 font-bold bg-white/[0.03] whitespace-nowrap">Target</th>
-              <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider text-blue-300 font-bold bg-white/[0.03]">What low score means</th>
+            <tr className="border-b border-gray-200">
+              <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider text-blue-600 font-bold bg-gray-50">Metric</th>
+              <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider text-blue-600 font-bold bg-gray-50">What it measures</th>
+              <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider text-blue-600 font-bold bg-gray-50 whitespace-nowrap">Target</th>
+              <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider text-blue-600 font-bold bg-gray-50">What low score means</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r, i) => (
-              <tr key={i} className="border-b border-white/5 last:border-0">
-                <td className="px-4 py-3 font-semibold text-white/90">{r.metric}</td>
-                <td className="px-4 py-3 text-white/60 leading-relaxed">{r.what}</td>
-                <td className="px-4 py-3 font-semibold text-blue-300 whitespace-nowrap">{r.target}</td>
-                <td className="px-4 py-3 text-red-300/80 leading-relaxed">{r.low}</td>
+              <tr key={i} className="border-b border-gray-100 last:border-0">
+                <td className="px-4 py-3 font-semibold text-gray-900">{r.metric}</td>
+                <td className="px-4 py-3 text-gray-600 leading-relaxed">{r.what}</td>
+                <td className="px-4 py-3 font-semibold text-blue-600 whitespace-nowrap">{r.target}</td>
+                <td className="px-4 py-3 text-red-500 leading-relaxed">{r.low}</td>
               </tr>
             ))}
           </tbody>
@@ -241,11 +241,11 @@ export function RagEvalMetricsTable() {
 // ─── RAG Iceberg Opinion Block ────────────────────────────────────────────────
 export function RagOpinion() {
   return (
-    <div className="my-14 bg-white/5 border border-white/10 border-l-4 border-l-blue-400 rounded-r-2xl p-8 md:p-10">
-      <p className="font-serif text-xl italic text-white/90 leading-relaxed mb-4">
+    <div className="my-14 bg-blue-50/50 border border-blue-100 border-l-4 border-l-blue-500 rounded-r-2xl p-8 md:p-10">
+      <p className="font-serif text-xl italic text-gray-800 leading-relaxed mb-4">
         The teams I see building reliable production RAG are the ones who set up RAGAS evaluations before they set up Pinecone. They treat evaluation as the foundation, not as the polish at the end. Every builder-layer concept in this post exists because someone eventually measured what was going wrong — and only then could they fix it.
       </p>
-      <div className="text-xs text-white/35 tracking-wide">
+      <div className="text-xs text-gray-500 tracking-wide">
         — Personal take · Based on RAG system design patterns observed across production deployments, 2024–2026
       </div>
     </div>
