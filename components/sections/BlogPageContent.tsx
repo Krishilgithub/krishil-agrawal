@@ -42,6 +42,7 @@ import {
   RagRagasCode,
 } from "@/components/blogs/RagIcebergComponents";
 import {
+  SoloCaseStudies,
   SoloHeroStats,
   SoloStackDiagram,
   SoloWorkflowFlowchart,
@@ -269,6 +270,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__RAG_RAGAS_CODE__")       return <RagRagasCode key={index} />;
 
       // ─── AI Solopreneur Tokens ─────────────────────────────────────────────
+      if (trimmedBlock === "__SOLO_CASE_STUDIES__")    return <SoloCaseStudies key={index} />;
       if (trimmedBlock === "__SOLO_HERO_STATS__")       return <SoloHeroStats key={index} />;
       if (trimmedBlock === "__SOLO_STACK_DIAGRAM__")    return <SoloStackDiagram key={index} />;
       if (trimmedBlock === "__SOLO_WORKFLOW_FLOWCHART__") return <SoloWorkflowFlowchart key={index} />;

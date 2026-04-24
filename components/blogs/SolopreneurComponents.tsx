@@ -3,6 +3,107 @@
 import React from "react";
 
 /* ─────────────────────────────────────────────────────────────
+   CASE STUDIES — OpenClaw & Matthew Gallagher
+───────────────────────────────────────────────────────────── */
+export function SoloCaseStudies() {
+  return (
+    <div className="my-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      {/* ── OpenClaw ── */}
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-xl">🦾</div>
+            <div>
+              <div className="text-xs font-black tracking-widest uppercase text-gray-400">Case Study #1</div>
+              <div className="text-white font-outfit font-bold text-lg leading-tight">OpenClaw</div>
+            </div>
+          </div>
+          <p className="text-gray-400 text-sm leading-relaxed">
+            Open-source autonomous agent framework — a self-hosted AI employee that runs 24/7 on your own infrastructure.
+          </p>
+        </div>
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: "Stack Layer", val: "Agents + Knowledge" },
+              { label: "Pricing", val: "Free & Open Source" },
+              { label: "Interface", val: "WhatsApp / Telegram" },
+              { label: "Memory", val: "Persistent context" },
+            ].map(({ label, val }) => (
+              <div key={label} className="bg-gray-50 rounded-lg p-3">
+                <div className="text-[10px] font-black tracking-widest uppercase text-gray-400 mb-0.5">{label}</div>
+                <div className="text-sm font-semibold text-gray-900">{val}</div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div className="text-xs font-black tracking-widest uppercase text-gray-400 mb-2">What it handles</div>
+            <div className="flex flex-wrap gap-1">
+              {["Email triage", "Calendar mgmt", "CRM updates", "Competitor monitoring", "Shell commands", "Content pipelines"].map((t) => (
+                <span key={t} className="text-[11px] bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded-full font-medium">{t}</span>
+              ))}
+            </div>
+          </div>
+          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+            <div className="text-xs font-black tracking-widest uppercase text-blue-500 mb-1">Solopreneur angle</div>
+            <p className="text-sm text-blue-800 leading-relaxed">
+              3 solopreneurs built revenue businesses <em>around</em> OpenClaw — selling setup services, vertical Skill packs, and content pipeline integrations. One OSS tool → 3 separate income streams.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Matthew Gallagher / Medvi ── */}
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-gradient-to-br from-red-900 to-red-800 p-6">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-xl">🏥</div>
+            <div>
+              <div className="text-xs font-black tracking-widest uppercase text-red-300">Case Study #2</div>
+              <div className="text-white font-outfit font-bold text-lg leading-tight">Matthew Gallagher · Medvi</div>
+            </div>
+          </div>
+          <p className="text-red-200 text-sm leading-relaxed">
+            Telehealth company launched from home with $20K and one co-operator (his brother). No traditional staff.
+          </p>
+        </div>
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: "Started", val: "Sep 2024 · $20K capital" },
+              { label: "Team size", val: "2 (brothers)" },
+              { label: "2025 Revenue", val: "$401 million" },
+              { label: "2026 Projection", val: "> $1.8 billion" },
+            ].map(({ label, val }) => (
+              <div key={label} className="bg-gray-50 rounded-lg p-3">
+                <div className="text-[10px] font-black tracking-widest uppercase text-gray-400 mb-0.5">{label}</div>
+                <div className="text-sm font-semibold text-gray-900">{val}</div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div className="text-xs font-black tracking-widest uppercase text-gray-400 mb-2">Actual AI stack used</div>
+            <div className="flex flex-wrap gap-1">
+              {["ChatGPT", "Claude", "Grok", "Midjourney", "Runway ML", "AI agents (CS)"].map((t) => (
+                <span key={t} className="text-[11px] bg-red-50 text-red-600 border border-red-100 px-2 py-0.5 rounded-full font-medium">{t}</span>
+              ))}
+            </div>
+          </div>
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <div className="text-xs font-black tracking-widest uppercase text-amber-600 mb-1">⚠️ Important nuance</div>
+            <p className="text-sm text-amber-900 leading-relaxed">
+              Gallagher&apos;s business faced real scrutiny — AI-generated marketing imagery, regulatory concerns, ethical debate on Hacker News. The <em>operational model</em> worked. The business practices were contested. Know the difference before you copy the playbook.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
    HERO STATS BAR
 ───────────────────────────────────────────────────────────── */
 export function SoloHeroStats() {

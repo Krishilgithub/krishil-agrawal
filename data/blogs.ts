@@ -43,6 +43,36 @@ The timing matters because of three convergent shifts that happened between 2023
 
 The analogy that actually works: think of the AI solopreneur stack as a skeleton crew running a ship. You are the captain. The LLMs are your officers — smart, fast, infinitely patient. The automation workflows are your crew — executing orders without complaint, 24 hours a day. Your job is to set the destination and make the calls that require human judgment.
 
+## Real-World Proof: Two People Who Already Did It
+
+Theory is useful. Proof is better. Here are two documented cases — one a developer tool, one a telehealth company — showing what the AI solopreneur model looks like when it actually works.
+
+__SOLO_CASE_STUDIES__
+
+### OpenClaw — The Self-Hosted AI Employee
+
+OpenClaw is an open-source autonomous agent framework that runs locally on a laptop, homelab, or VPS and connects to any LLM via API. It is not a SaaS product. It is an operating layer — a runtime that lets one person run AI-driven workflows across their entire business without any cloud vendor lock-in.
+
+The architecture is exactly the 7-layer stack described in this post. OpenClaw acts as the **Agent layer** (Layer 3). The user connects it to GPT-4o or Claude for reasoning, configures Skills (plugins) for specific actions, and interacts with the agent through messaging platforms they already use — WhatsApp, Telegram, Slack, or Signal. The agent then handles email triage, calendar management, competitor monitoring, CRM updates, and even shell command execution — all without the user opening a dashboard.
+
+What makes OpenClaw relevant as a case study is what solopreneurs are building *on top of* it. Because the framework itself is free and open-source, a secondary market has emerged: developers charging for OpenClaw setup and configuration services, vertical-specific Skill packs, and content pipeline integrations. One open-source tool became 3 different revenue streams for 3 different solopreneurs who understood the stack.
+
+> 💡 **Key Insight:** OpenClaw is the clearest production example of Layer 3 (Agents) + Layer 7 (Knowledge) working together. The agent has persistent memory of your preferences and past decisions — something no standard LLM chat session provides. That memory is what turns a chatbot into a business operator.
+
+### Matthew Gallagher — The $401M Solo Operator
+
+Matthew Gallagher is the closest thing the AI era has to a documented "solo unicorn." In September 2024, he launched **Medvi** — a telehealth company — from his home with $20,000 in starting capital and one co-operator: his brother Elliot.
+
+By 2025, Medvi generated **$401 million in revenue**. The 2026 projection exceeded $1.8 billion.
+
+His actual stack: ChatGPT, Claude, and Grok for coding and website copy. Midjourney and Runway for creative assets. AI agents for customer service automation. Instead of hiring compliance, logistics, and pharmacy teams, he connected to existing infrastructure providers — CareValidate for medical compliance and OpenLoop Health for pharmaceutical fulfillment. He did not build those systems. He wired them together.
+
+The lesson is not "just use AI and get rich." Gallagher's story generated significant controversy — concerns about AI-generated marketing imagery, regulatory questions, and debate about whether the model was ethical or sustainable. The Hacker News threads were pointed.
+
+The engineering lesson *is* real though: **the operational model held**. A two-person company ran at the scale of what would previously have required hundreds of employees across legal, ops, content, customer service, and marketing. The bottlenecks that stopped solopreneurs before — operational complexity, content volume, customer support load — were absorbed by the AI layer.
+
+> ⚠️ **Important nuance:** Gallagher's revenue numbers came with legitimate scrutiny about business practices. The takeaway is not to copy his specific market or methods. The takeaway is that the *operational architecture* — AI handling every repeatable workflow, humans handling strategy and compliance judgment — proved it could work at scale no one expected.
+
 ## The 7-Layer Stack: What Each Layer Does
 
 The AI solopreneur stack is not one tool. It is a layered architecture where each layer has a specific job and can be swapped out independently. Here is the full picture:
