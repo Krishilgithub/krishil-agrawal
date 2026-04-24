@@ -1845,6 +1845,7 @@ __RAG_RERANK_CODE__
 __RAG_TIER3_CARDS__
 
 __RAG_RAGAS_CODE__
+
 ## The Deepest Layer — Rarely in Tutorials
 
 __RAG_DEEP_CARDS__
@@ -1861,7 +1862,8 @@ __RAG_OPINION__
 
 __RAG_CONCLUSION__
 
-__RAG_CTA__`
+__RAG_CTA__`,
+    mediumLink: "https://medium.com/@krishilagrawal026/the-hidden-complexity-of-rag-from-beginner-surface-to-builder-depth-04665ffed5ce"
   },
   {
     id: "youtube-system-design-architecture",
