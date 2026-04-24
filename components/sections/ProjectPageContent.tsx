@@ -398,7 +398,7 @@ export function ProjectPageContent({ project }: { project: ProjectCaseStudy }) {
               <div className="px-6 py-4 text-[11px] font-bold tracking-widest text-[#777] uppercase border-b border-white/5">
                 Navigate Section
               </div>
-              <div className="overflow-y-auto p-2 flex flex-col gap-1 max-h-[50vh]">
+              <div data-lenis-prevent className="overflow-y-auto p-2 flex flex-col gap-1 max-h-[50vh]">
                 <button
                   onClick={() => scrollToHeading(headings[0]?.id)}
                   className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm ${

@@ -13,6 +13,7 @@ export function SmoothScroller({ children }: { children: ReactNode }) {
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 2,
+      prevent: (node: Element) => node.hasAttribute("data-lenis-prevent"),
     });
 
     function raf(time: number) {

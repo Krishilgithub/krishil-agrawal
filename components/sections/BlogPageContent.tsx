@@ -503,12 +503,12 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="w-[320px] md:w-[360px] mb-3 bg-[#0a0a0a] text-gray-400 border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col max-h-[60vh] font-outfit"
+                className="w-[320px] md:w-[360px] mb-3 bg-[#0a0a0a] text-gray-400 border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex flex-col font-outfit"
               >
                 <div className="px-6 py-4 text-[11px] font-bold tracking-widest text-[#777] uppercase border-b border-white/5">
                   Table of Contents
                 </div>
-                <div className="overflow-y-auto p-2 flex flex-col gap-1">
+                <div data-lenis-prevent className="overflow-y-auto p-2 flex flex-col gap-1 max-h-[48vh]">
                   <button
                     onClick={() => scrollToHeading(headings[0]?.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm ${
