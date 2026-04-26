@@ -168,6 +168,38 @@ export function SlmImpactDiagram() {
           <Lightbulb size={48} strokeWidth={1.5} className="text-gray-800" />
         </motion.div>
 
+        {/* SVG Connector Lines */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+          <svg className="overflow-visible" width="0" height="0">
+            {impacts.map((_, index) => {
+              const angle = (index * 36) * (Math.PI / 180);
+              const radiusDesktop = 180;
+              
+              // Start line at the edge of the center bulb (radius ~64px)
+              const x1 = Math.cos(angle) * 75;
+              const y1 = Math.sin(angle) * 75;
+              
+              // End line just before the node icon
+              const x2 = Math.cos(angle) * (radiusDesktop - 40);
+              const y2 = Math.sin(angle) * (radiusDesktop - 40);
+              
+              return (
+                <motion.line
+                  key={`line-${index}`}
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  whileInView={{ pathLength: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.8, ease: "easeOut" }}
+                  x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke="#e5e7eb"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              );
+            })}
+          </svg>
+        </div>
+
         {/* Nodes */}
         {impacts.map((item, index) => {
           const angle = (index * 36) * (Math.PI / 180);
@@ -192,14 +224,7 @@ export function SlmImpactDiagram() {
                 transform: `translate(calc(cos(${angle}) * ${radiusDesktop}px), calc(sin(${angle}) * ${radiusDesktop}px))`
               }}
             >
-              {/* Connector line (CSS trick) */}
-              <div 
-                className="absolute w-1 h-12 bg-gray-300 -z-10"
-                style={{ 
-                  transform: `rotate(${angle + Math.PI/2}rad) translateY(-40px)`,
-                  transformOrigin: "bottom center" 
-                }} 
-              />
+              {/* Connector line removed, using SVG above instead */}
               
               <div className={`w-14 h-14 rounded-full border-2 flex items-center justify-center mb-2 shadow-sm ${item.bg} ${item.border} ${item.color}`}>
                 {item.icon}
