@@ -62,6 +62,13 @@ import {
   RagVsFinetune,
 } from "@/components/blogs/RagProductionComponents";
 import {
+  SlmHeroStats,
+  RouterArchitectureDiagram,
+  SlmVslLlmTable,
+  SlmImpactDiagram,
+  SlmGotchasGrid,
+} from "@/components/blogs/SlmBlogComponents";
+import {
   YTHeroStats,
   YTReqCards,
   YTReqMetrics,
@@ -288,6 +295,13 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__RAGPROD_EVAL_METRICS__")    return <RagEvalMetrics key={index} />;
       if (trimmedBlock === "__RAGPROD_REAL_WORLD__")      return <RagRealWorldCases key={index} />;
       if (trimmedBlock === "__RAGPROD_VS_FINETUNE__")     return <RagVsFinetune key={index} />;
+
+      // ─── SLM vs LLM Tokens ─────────────────────────────────────────────
+      if (trimmedBlock === "__SLM_HERO_STATS__")          return <SlmHeroStats key={index} />;
+      if (trimmedBlock === "__SLM_ROUTER_DIAGRAM__")      return <RouterArchitectureDiagram key={index} />;
+      if (trimmedBlock === "__SLM_VS_LLM_TABLE__")        return <SlmVslLlmTable key={index} />;
+      if (trimmedBlock === "__SLM_IMPACT_DIAGRAM__")      return <SlmImpactDiagram key={index} />;
+      if (trimmedBlock === "__SLM_GOTCHAS_GRID__")        return <SlmGotchasGrid key={index} />;
 
       // ─── AI Solopreneur Tokens ─────────────────────────────────────────────
       if (trimmedBlock === "__SOLO_CASE_STUDIES__")    return <SoloCaseStudies key={index} />;
