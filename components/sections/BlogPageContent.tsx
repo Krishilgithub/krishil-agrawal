@@ -75,6 +75,12 @@ import {
   McpTakeaways,
 } from "@/components/blogs/McpBlogComponents";
 import {
+  IdeArchitectureHero,
+  ShadowWorkspaceDiagram,
+  AntigravityFlowDiagram,
+  IdeFeatureTable,
+} from "@/components/blogs/IdeArchitectureComponents";
+import {
   YTHeroStats,
   YTReqCards,
   YTReqMetrics,
@@ -314,6 +320,12 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__MCP_BLOAT_DIAGRAM__")       return <ContextBloatDiagram key={index} />;
       if (trimmedBlock === "__MCP_INTROSPECTION_DIAGRAM__") return <IntrospectionPatternDiagram key={index} />;
       if (trimmedBlock === "__MCP_TAKEAWAYS__")           return <McpTakeaways key={index} />;
+
+      // ─── IDE Architecture Tokens ───────────────────────────────────────────
+      if (trimmedBlock === "__IDE_ARCH_HERO__")           return <IdeArchitectureHero key={index} />;
+      if (trimmedBlock === "__IDE_SHADOW_DIAGRAM__")      return <ShadowWorkspaceDiagram key={index} />;
+      if (trimmedBlock === "__IDE_ANTIGRAVITY_FLOW__")    return <AntigravityFlowDiagram key={index} />;
+      if (trimmedBlock === "__IDE_FEATURE_TABLE__")       return <IdeFeatureTable key={index} />;
 
       // ─── AI Solopreneur Tokens ─────────────────────────────────────────────
       if (trimmedBlock === "__SOLO_CASE_STUDIES__")    return <SoloCaseStudies key={index} />;
