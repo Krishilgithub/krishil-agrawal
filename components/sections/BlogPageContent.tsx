@@ -69,6 +69,12 @@ import {
   SlmGotchasGrid,
 } from "@/components/blogs/SlmBlogComponents";
 import {
+  McpHeroStats,
+  ContextBloatDiagram,
+  IntrospectionPatternDiagram,
+  McpTakeaways,
+} from "@/components/blogs/McpBlogComponents";
+import {
   YTHeroStats,
   YTReqCards,
   YTReqMetrics,
@@ -302,6 +308,12 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__SLM_VS_LLM_TABLE__")        return <SlmVslLlmTable key={index} />;
       if (trimmedBlock === "__SLM_IMPACT_DIAGRAM__")      return <SlmImpactDiagram key={index} />;
       if (trimmedBlock === "__SLM_GOTCHAS_GRID__")        return <SlmGotchasGrid key={index} />;
+
+      // ─── MCP is Dead Tokens ──────────────────────────────────────────────
+      if (trimmedBlock === "__MCP_HERO_STATS__")          return <McpHeroStats key={index} />;
+      if (trimmedBlock === "__MCP_BLOAT_DIAGRAM__")       return <ContextBloatDiagram key={index} />;
+      if (trimmedBlock === "__MCP_INTROSPECTION_DIAGRAM__") return <IntrospectionPatternDiagram key={index} />;
+      if (trimmedBlock === "__MCP_TAKEAWAYS__")           return <McpTakeaways key={index} />;
 
       // ─── AI Solopreneur Tokens ─────────────────────────────────────────────
       if (trimmedBlock === "__SOLO_CASE_STUDIES__")    return <SoloCaseStudies key={index} />;
