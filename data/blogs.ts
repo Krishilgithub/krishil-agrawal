@@ -2661,6 +2661,6 @@ __MCP_TAKEAWAYS__
 
 > 💡 **The Golden Rule for 2026:** If your MCP server forces the agent to read more than 1,000 tokens of tool schemas just to say "Hello", you haven't built a tool. You've built a bottleneck.
 
-Build smart servers. Embrace introspection. And stop blaming the protocol for your context bloat.\`
+Build smart servers. Embrace introspection. And stop blaming the protocol for your context bloat.`
   }
 ];
