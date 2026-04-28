@@ -101,7 +101,7 @@ export function Blogs() {
   return (
     <section
       id="blogs"
-      className="bg-[#fafafa] py-28 md:py-36 px-6 md:px-12 relative"
+      className="bg-[#fafafa] py-16 md:py-36 px-4 sm:px-8 md:px-12 relative"
     >
       <div className="max-w-7xl mx-auto">
 
@@ -122,7 +122,7 @@ export function Blogs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+              className="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
             >
               Blogs<span className="text-red-500">.</span>
             </motion.h2>
@@ -169,7 +169,7 @@ export function Blogs() {
             onClick={() => router.push(`/blogs/${featuredBlog.id}`)}
             className="group cursor-pointer mb-10"
           >
-            <div className="relative bg-[#0a0a0a] rounded-[2rem] p-8 md:p-12 border border-white/5 overflow-hidden">
+            <div className="relative bg-[#0a0a0a] rounded-[2rem] p-6 sm:p-8 md:p-12 border border-white/5 overflow-hidden">
               {/* glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-red-600/15 via-transparent to-violet-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
               <div className="absolute -top-20 -right-20 w-80 h-80 bg-red-600/5 rounded-full blur-3xl" />
@@ -190,7 +190,7 @@ export function Blogs() {
                     ))}
                   </div>
 
-                  <h3 className="font-outfit text-3xl md:text-4xl xl:text-5xl font-extrabold text-white mb-5 leading-tight tracking-tight group-hover:text-red-50 transition-colors">
+                  <h3 className="font-outfit text-xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold text-white mb-4 md:mb-5 leading-tight tracking-tight group-hover:text-red-50 transition-colors">
                     {featuredBlog.title}
                   </h3>
 
@@ -208,9 +208,9 @@ export function Blogs() {
                   </div>
                 </div>
 
-                <div className="shrink-0">
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
-                    <ArrowUpRight size={28} />
+                <div className="shrink-0 hidden sm:flex">
+                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                    <ArrowUpRight size={24} />
                   </div>
                 </div>
               </div>

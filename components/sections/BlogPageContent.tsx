@@ -221,7 +221,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
               <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
               <div className="w-3 h-3 rounded-full bg-green-500/50" />
             </div>
-            <pre className="p-6 text-sm md:text-base text-gray-300 font-mono overflow-x-auto">
+            <pre className="p-4 md:p-6 text-xs sm:text-sm md:text-base text-gray-300 font-mono overflow-x-auto leading-relaxed">
               <code>{codeText}</code>
             </pre>
           </div>
@@ -390,7 +390,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
         const restOfBlock = lines.slice(1).join("\n").trim();
         return (
           <React.Fragment key={index}>
-            <h2 id={id} className="font-outfit text-3xl md:text-4xl font-bold mt-16 mb-6 text-black tracking-tight scroll-mt-24">{titleLine}</h2>
+            <h2 id={id} className="font-outfit text-2xl md:text-4xl font-bold mt-12 md:mt-16 mb-4 md:mb-6 text-black tracking-tight scroll-mt-24">{titleLine}</h2>
             {restOfBlock && <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-6" dangerouslySetInnerHTML={{ __html: formatText(restOfBlock) }} />}
           </React.Fragment>
         );
@@ -403,7 +403,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
         const restOfBlock = lines.slice(1).join("\n").trim();
         return (
           <React.Fragment key={index}>
-            <h3 id={id} className="font-outfit text-2xl font-bold mt-10 mb-4 text-gray-800 scroll-mt-24">{titleLine}</h3>
+            <h3 id={id} className="font-outfit text-xl md:text-2xl font-bold mt-8 md:mt-10 mb-3 md:mb-4 text-gray-800 scroll-mt-24">{titleLine}</h3>
             {restOfBlock && <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-6" dangerouslySetInnerHTML={{ __html: formatText(restOfBlock) }} />}
           </React.Fragment>
         );
@@ -474,7 +474,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       {/* Share — white pill, hover black */}
       <button
         onClick={handleShare}
-        className={`fixed top-5 right-8 z-40 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full shadow-sm border transition-all ${
+        className={`fixed top-5 right-4 md:right-8 z-40 flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-semibold rounded-full shadow-sm border transition-all ${
           copied
             ? "bg-green-50 border-green-200 text-green-700"
             : "bg-white border-gray-200 text-gray-700 hover:bg-black hover:text-white hover:border-black"
@@ -484,7 +484,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       </button>
 
       {/* Article Content */}
-      <article className="w-full max-w-[800px] mx-auto px-6 pt-20 pb-32">
+      <article className="w-full max-w-[800px] mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-24 md:pb-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           {/* Tags */}
           <div className="flex gap-3 mb-8 flex-wrap">
@@ -496,12 +496,12 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
           </div>
 
           {/* Title */}
-          <h1 className="font-outfit text-4xl md:text-6xl font-black mb-8 text-black tracking-tighter leading-tight">
+          <h1 className="font-outfit text-3xl sm:text-4xl md:text-6xl font-black mb-6 md:mb-8 text-black tracking-tighter leading-tight">
             {blog.title}
           </h1>
 
           {/* Meta */}
-          <div className="flex flex-wrap items-center gap-6 pb-12 border-b border-gray-200 text-gray-500 font-medium mb-12">
+          <div className="flex flex-wrap items-center gap-3 md:gap-6 pb-8 md:pb-12 border-b border-gray-200 text-gray-500 font-medium mb-8 md:mb-12 text-sm md:text-base">
             <div className="flex items-center gap-2"><Calendar size={18} /> {blog.publishedAt}</div>
             <div className="flex items-center gap-2"><Clock size={18} /> {blog.readTime}</div>
             <div className="flex items-center gap-2 text-red-500"><BrainCircuit size={18} /> Deep Dive</div>
@@ -561,7 +561,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="w-[320px] md:w-[360px] mb-3 bg-[#0a0a0a] text-gray-400 border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex flex-col font-outfit"
+                className="w-[88vw] max-w-[320px] md:w-[360px] mb-3 bg-[#0a0a0a] text-gray-400 border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex flex-col font-outfit"
               >
                 <div className="px-6 py-4 text-[11px] font-bold tracking-widest text-[#777] uppercase border-b border-white/5">
                   Table of Contents
@@ -595,7 +595,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
 
           <button
             onClick={() => setIsTocOpen(!isTocOpen)}
-            className="bg-[#0a0a0a] hover:bg-black border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-white rounded-full h-12 px-5 flex items-center justify-between gap-6 transition-all duration-300 min-w-[280px] font-outfit"
+            className="bg-[#0a0a0a] hover:bg-black border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-white rounded-full h-12 px-4 md:px-5 flex items-center justify-between gap-4 md:gap-6 transition-all duration-300 min-w-[240px] md:min-w-[280px] font-outfit"
           >
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-1.5 h-1.5 bg-white rounded-full shrink-0 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />

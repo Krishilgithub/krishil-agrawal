@@ -92,7 +92,7 @@ export function TiltCard({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className={`group relative p-8 md:p-10 rounded-[2.5rem] border overflow-hidden flex flex-col h-full transition-all duration-300 cursor-pointer ${t.card}`}
+        className={`group relative p-5 sm:p-7 md:p-10 rounded-[2.5rem] border overflow-hidden flex flex-col h-full transition-all duration-300 cursor-pointer ${t.card}`}
       >
         {/* top accent bar on hover */}
         <div className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-red-500 via-red-400 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
@@ -171,7 +171,7 @@ export function Projects() {
   const teaserProjects = projectsData.slice(0, 3);
 
   return (
-    <section id="projects" className="py-24 md:py-32 px-6 md:px-12 bg-[#fafafa]">
+    <section id="projects" className="py-16 md:py-32 px-4 sm:px-8 md:px-12 bg-[#fafafa]">
       <div className="max-w-7xl mx-auto">
 
         {/* HEADER */}
@@ -191,7 +191,7 @@ export function Projects() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+              className="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
             >
               Projects<span className="text-red-500">.</span>
             </motion.h2>
@@ -229,7 +229,7 @@ export function Projects() {
         </div>
 
         {/* 3-card DARK grid on light bg */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10 w-full mb-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 w-full mb-14">
           {teaserProjects.map((project) => (
             <TiltCard
               key={project.id}

@@ -6,7 +6,7 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export function About() {
   return (
-    <section id="about" className="py-24 px-6 md:px-12 bg-white relative">
+    <section id="about" className="py-16 md:py-24 px-4 sm:px-8 md:px-12 bg-white relative">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>
@@ -24,7 +24,7 @@ export function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+              className="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
             >
               About Me<span className="text-red-500">.</span>
             </motion.h2>
@@ -41,14 +41,14 @@ export function About() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(200px,auto)]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 auto-rows-[minmax(140px,auto)] md:auto-rows-[minmax(200px,auto)]">
           
           {/* Box 1: Core Identity (Takes up 2 columns on Desktop) */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="md:col-span-2 bg-[#111] text-white p-10 md:p-12 rounded-[2rem] flex flex-col justify-center relative overflow-hidden group"
+            className="md:col-span-2 bg-[#111] text-white p-6 sm:p-8 md:p-12 rounded-[2rem] flex flex-col justify-center relative overflow-hidden group"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-red-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-700 pointer-events-none" />
             <h3 className="font-outfit text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-6 z-10 w-full sm:w-[85%]">
@@ -65,7 +65,7 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="col-span-1 bg-red-600 text-white p-10 rounded-[2rem] flex flex-col justify-center items-start shadow-xl shadow-red-600/20"
+            className="col-span-1 bg-red-600 text-white p-6 sm:p-8 md:p-10 rounded-[2rem] flex flex-col justify-center items-start shadow-xl shadow-red-600/20"
           >
             <div className="p-3 bg-white/20 rounded-full mb-6">
               <GraduationCap size={28} />
@@ -81,7 +81,7 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="col-span-1 bg-gray-50 border border-gray-100 p-10 rounded-[2rem] flex flex-col justify-between"
+            className="col-span-1 bg-gray-50 border border-gray-100 p-6 sm:p-8 md:p-10 rounded-[2rem] flex flex-col justify-between"
           >
             <div className="flex justify-between items-start">
               <div className="p-3 bg-white shadow-sm rounded-full text-black">
@@ -105,7 +105,7 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="md:col-span-2 bg-gray-50 border border-gray-200 p-8 md:p-10 rounded-[2rem] flex flex-col sm:flex-row items-center justify-between gap-6"
+            className="md:col-span-2 bg-gray-50 border border-gray-200 p-5 sm:p-7 md:p-10 rounded-[2rem] flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6"
           >
             <div className="flex items-center gap-6">
               <div className="relative flex items-center justify-center h-12 w-12 bg-green-100 rounded-full shrink-0">
@@ -113,7 +113,7 @@ export function About() {
                 <span className="relative inline-flex rounded-full h-5 w-5 bg-green-500"></span>
               </div>
               <div>
-                <h4 className="font-outfit text-2xl font-bold text-black mb-1">Available for Hire</h4>
+                <h4 className="font-outfit text-lg sm:text-2xl font-bold text-black mb-1">Available for Hire</h4>
                 <p className="text-gray-500 font-medium text-sm md:text-base">Ready for full-time engineering roles & freelance AI architecture.</p>
               </div>
             </div>

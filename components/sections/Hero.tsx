@@ -34,37 +34,37 @@ export function Hero() {
   return (
     <section 
       id="hero" 
-      className="relative min-h-screen flex items-center pt-20 pb-10 px-6 sm:px-12 max-w-7xl mx-auto bg-white"
+      className="relative min-h-screen flex items-center pt-16 pb-8 sm:pt-20 sm:pb-10 px-4 sm:px-8 md:px-12 max-w-7xl mx-auto bg-white"
     >
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center z-10 pt-10 md:pt-0">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-16 items-center z-10 pt-4 md:pt-0">
         
         {/* LEFT COLUMN: Content */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left order-1 md:order-1">
           
-          <h1 className="hero-fade-up font-outfit text-5xl sm:text-6xl xl:text-7xl leading-[1.1] tracking-tight font-black text-[#111] mb-6 flex flex-col">
-            <span className="text-2xl md:text-3xl font-medium text-gray-700 tracking-normal mb-2 flex items-center gap-3">
+          <h1 className="hero-fade-up font-outfit text-3xl sm:text-5xl xl:text-7xl leading-[1.1] tracking-tight font-black text-[#111] mb-4 md:mb-6 flex flex-col">
+            <span className="text-base sm:text-2xl md:text-3xl font-medium text-gray-700 tracking-normal mb-2 flex items-center gap-2 sm:gap-3">
               👋 Hi, I&apos;m <span className="font-bold text-black border-b-4 border-red-500">Krishil Agrawal</span>
             </span>
             <span>AI ML Engineer &</span>
             <span>Agentic Developer<span className="text-red-500">.</span></span>
           </h1>
 
-          <p className="hero-fade-up text-lg md:text-xl xl:text-2xl font-light text-gray-600 mb-3 max-w-xl leading-relaxed">
+          <p className="hero-fade-up text-sm sm:text-lg md:text-xl xl:text-2xl font-light text-gray-600 mb-2 sm:mb-3 max-w-xl leading-relaxed">
             Building multi-agent architectures, RAG pipelines, and end-to-end ML systems using LangChain, LangGraph, and PyTorch.
           </p>
           
-          <p className="hero-fade-up text-base text-gray-400 font-medium mb-10">
+          <p className="hero-fade-up text-sm sm:text-base text-gray-400 font-medium mb-6 sm:mb-10">
             Based in Vadodara, India.
           </p>
 
-          <div className="hero-fade-up flex flex-col sm:flex-row gap-4 mb-14 w-full sm:w-auto">
+          <div className="hero-fade-up flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-14 w-full sm:w-auto">
             <MagneticButton>
-              <a href="#contact" className="px-8 py-4 bg-black text-white rounded-full font-semibold hover:scale-105 transition-transform flex justify-center items-center gap-2 shadow-lg hover:shadow-xl w-full sm:w-auto">
-                Hire Me as AI Engineer <ArrowUpRight size={18} />
+              <a href="#contact" className="px-6 sm:px-8 py-3 sm:py-4 bg-black text-white rounded-full font-semibold hover:scale-105 transition-transform flex justify-center items-center gap-2 shadow-lg hover:shadow-xl w-full sm:w-auto text-sm sm:text-base">
+                Hire Me as AI Engineer <ArrowUpRight size={16} />
               </a>
             </MagneticButton>
             <MagneticButton>
-              <a href="#projects" className="px-8 py-4 border border-gray-200 text-black shadow-sm rounded-full font-semibold hover:bg-gray-50 transition-all flex justify-center items-center gap-2 w-full sm:w-auto">
+              <a href="#projects" className="px-6 sm:px-8 py-3 sm:py-4 border border-gray-200 text-black shadow-sm rounded-full font-semibold hover:bg-gray-50 transition-all flex justify-center items-center gap-2 w-full sm:w-auto text-sm sm:text-base">
                 View My Projects
               </a>
             </MagneticButton>
@@ -87,7 +87,7 @@ export function Hero() {
 
         {/* RIGHT COLUMN: Profile Image */}
         <div className="hero-image-reveal flex justify-center items-center order-2 md:order-2 mb-8 md:mb-0 mt-8 md:mt-0 relative">
-          <div className="relative w-[65vw] h-[65vw] max-w-[420px] max-h-[420px] rounded-full overflow-hidden shadow-2xl bg-white border-4 border-gray-50 ring-1 ring-gray-100">
+          <div className="relative w-[55vw] h-[55vw] max-w-[280px] max-h-[280px] sm:max-w-[360px] sm:max-h-[360px] md:max-w-[420px] md:max-h-[420px] rounded-full overflow-hidden shadow-2xl bg-white border-4 border-gray-50 ring-1 ring-gray-100">
             <Image 
               src="/avatar.jpeg" 
               alt="Krishil Agrawal ML Engineer" 

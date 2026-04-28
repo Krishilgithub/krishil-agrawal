@@ -343,6 +343,52 @@ function CenterHub({
   );
 }
 
+/* ─── Mobile Skills Grid ─────────────────────────────────────────────── */
+const allGroups = [
+  ...leftGroups,
+  ...rightGroups,
+];
+
+function MobileSkillsGrid() {
+  return (
+    <div className="flex flex-col gap-6">
+      {allGroups.map((group) => (
+        <div key={group.id}>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-px w-4 rounded-full" style={{ background: group.color }} />
+            <span
+              className="text-[10px] font-bold uppercase tracking-[0.22em]"
+              style={{ color: group.color }}
+            >
+              {group.title}
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {group.items.map((item) => {
+              const iconSrc = item.icon
+                ? `https://cdn.simpleicons.org/${item.icon}/${(item.brandColor ?? "6b7280").replace("#", "")}`
+                : null;
+              return (
+                <div
+                  key={item.name}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-gray-200 text-gray-700 shadow-sm"
+                >
+                  {iconSrc ? (
+                    <img src={iconSrc} alt={item.name} className="w-3.5 h-3.5 object-contain shrink-0" />
+                  ) : (
+                    <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: group.color }} />
+                  )}
+                  <span>{item.name}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ─── Main ───────────────────────────────────────────────────────────── */
 export function Skills() {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -395,7 +441,7 @@ export function Skills() {
   }, []);
 
   return (
-    <section id="skills" className="relative py-28 px-6 md:px-12 overflow-hidden" style={{
+    <section id="skills" className="relative py-16 md:py-28 px-4 sm:px-8 md:px-12 overflow-hidden" style={{
       background: "#fafafa",
       backgroundImage: "radial-gradient(circle, #d4d4d8 0.8px, transparent 0.8px)",
       backgroundSize: "26px 26px",
@@ -435,7 +481,7 @@ export function Skills() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+              className="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
             >
               Stack &amp; Toolkit<span className="text-red-500">.</span>
             </motion.h2>
@@ -453,10 +499,15 @@ export function Skills() {
         </div>
       </div>
 
-      {/* ─── Diagram ─── */}
+      {/* ─── Mobile: stacked pill groups ─── */}
+      <div className="md:hidden relative max-w-7xl mx-auto px-0">
+        <MobileSkillsGrid />
+      </div>
+
+      {/* ─── Desktop: Hub-and-spoke diagram ─── */}
       <div
         ref={containerRef}
-        className="relative max-w-7xl mx-auto overflow-x-auto"
+        className="hidden md:block relative max-w-7xl mx-auto overflow-x-auto"
       >
         {/* SVG layer */}
         <Lines lines={lines} hovered={hovered} />

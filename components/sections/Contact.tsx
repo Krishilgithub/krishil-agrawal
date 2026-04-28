@@ -43,7 +43,7 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="pt-24 pb-8 md:pt-32 md:pb-8 px-6 md:px-12 bg-[#fafafa] relative overflow-hidden">
+    <section id="contact" className="pt-16 pb-8 md:pt-32 md:pb-8 px-4 sm:px-8 md:px-12 bg-[#fafafa] relative overflow-hidden">
       
       {/* Background ambient gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-black/5 pointer-events-none" />
@@ -68,7 +68,7 @@ export function Contact() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.05 }}
-                className="font-outfit text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+                className="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
               >
                 Contact Me<span className="text-red-500">.</span>
               </motion.h2>
@@ -144,7 +144,7 @@ export function Contact() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white p-8 md:p-10 rounded-3xl shadow-2xl border border-gray-100 relative z-10"
+            className="bg-white p-6 md:p-10 rounded-3xl shadow-2xl border border-gray-100 relative z-10"
           >
             <h3 className="font-outfit text-2xl font-bold text-black mb-2">Send a Message</h3>
             <p className="text-gray-500 text-sm mb-8">Have an idea or opportunity? Let&apos;s talk.</p>
