@@ -81,6 +81,13 @@ import {
   IdeFeatureTable,
 } from "@/components/blogs/IdeArchitectureComponents";
 import {
+  MythosHeroStats,
+  MythosAlignmentParadox,
+  ExploitChainDiagram,
+  GlasswingOrgs,
+  MythosTimeline,
+} from "@/components/blogs/MythosBlogComponents";
+import {
   YTHeroStats,
   YTReqCards,
   YTReqMetrics,
@@ -326,6 +333,13 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__IDE_SHADOW_DIAGRAM__")      return <ShadowWorkspaceDiagram key={index} />;
       if (trimmedBlock === "__IDE_ANTIGRAVITY_FLOW__")    return <AntigravityFlowDiagram key={index} />;
       if (trimmedBlock === "__IDE_FEATURE_TABLE__")       return <IdeFeatureTable key={index} />;
+
+      // ─── Claude Mythos Paradox Tokens ─────────────────────────────────────
+      if (trimmedBlock === "__MYTHOS_HERO_STATS__")       return <MythosHeroStats key={index} />;
+      if (trimmedBlock === "__MYTHOS_ALIGNMENT__")        return <MythosAlignmentParadox key={index} />;
+      if (trimmedBlock === "__MYTHOS_EXPLOIT_CHAIN__")    return <ExploitChainDiagram key={index} />;
+      if (trimmedBlock === "__MYTHOS_GLASSWING__")        return <GlasswingOrgs key={index} />;
+      if (trimmedBlock === "__MYTHOS_TIMELINE__")         return <MythosTimeline key={index} />;
 
       // ─── AI Solopreneur Tokens ─────────────────────────────────────────────
       if (trimmedBlock === "__SOLO_CASE_STUDIES__")    return <SoloCaseStudies key={index} />;

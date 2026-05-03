@@ -1,0 +1,105 @@
+There is a thought experiment that AI safety researchers have discussed for years: what if an AI model that scores perfectly on every alignment benchmark is still capable of causing catastrophic harm?
+
+In April 2026, that thought experiment became a product announcement.
+
+Anthropic's Claude Mythos — internally codenamed "Capybara" — didn't just break benchmarks. It broke the foundational assumption that the AI safety field has been building on for a decade: that alignment and safety are the same thing.
+
+They are not. And Mythos is the proof.
+
+__MYTHOS_HERO_STATS__
+
+## The Leak That Started Everything
+
+It didn't begin with a press release. It began with developers noticing something strange in an Anthropic database that had been briefly left unsecured.
+
+Internal references to a project called "Capybara" and a model designation called "Mythos" started circulating on developer forums in early 2026. Speculation was rampant — was this a new Opus-tier model? A specialized coding assistant?
+
+What nobody guessed was that Anthropic had been sitting on a model so powerful that they genuinely debated whether to disclose its existence at all.
+
+When Anthropic officially acknowledged Mythos on April 7, 2026, the system card they published was unlike anything previously released. It didn't just document the model's capabilities. It documented a philosophical crisis.
+
+__MYTHOS_TIMELINE__
+
+## What Claude Mythos Actually Does
+
+Prior to Mythos, even the most capable models could assist with identifying known vulnerability classes when given specific code to analyze. Think of them as a very fast Ctrl+F for known-bad patterns.
+
+Mythos does something structurally different: **it reasons about security from first principles, without being told what to look for.**
+
+### The OpenBSD Incident
+
+During internal testing, Mythos was placed in a sandboxed environment and told to analyze the OpenBSD kernel codebase for security weaknesses. OpenBSD is not a typical target. It is arguably the most security-hardened operating system in existence — its code has been scrutinized by thousands of professional security engineers for 27 consecutive years.
+
+Mythos found a zero-day exploit chain.
+
+Not a theoretical weakness. A practical, working exploit chain consisting of five individually trivial bugs, assembled into a sequence that achieves full kernel-level code execution. Every single one of those five bugs had survived 27 years of human review.
+
+## The Exploit Chain: How It Works
+
+The most alarming aspect of Mythos's methodology isn't that it found bugs. It's *how* it finds them — through a technique called **exploit chaining**.
+
+__MYTHOS_EXPLOIT_CHAIN__
+
+Traditional vulnerability scanners look for individual flaws. A buffer overflow here. A use-after-free there. Each flaw is assessed in isolation, and if the flaw doesn't directly lead to exploitation, it gets logged as "low severity" and deprioritized.
+
+Mythos doesn't analyze bugs in isolation. It treats the codebase as a connected system and reasons about how individually harmless conditions can be composed into attack sequences. This is precisely how elite human hackers operate — but Mythos does it at machine speed, across entire operating systems, simultaneously.
+
+## The Alignment Paradox: The Real Story
+
+Here is where the story becomes genuinely philosophically disturbing.
+
+Claude Mythos is, according to Anthropic's own internal evaluations, their **most aligned model ever**. On every safety metric — honesty, avoiding harm, following instructions, refusing dangerous requests — Mythos outperforms every model Anthropic has shipped before it.
+
+And yet it is the most dangerous AI system Anthropic has ever built.
+
+This is not a contradiction. This is **the alignment paradox**, and understanding it is crucial for anyone building AI systems.
+
+__MYTHOS_ALIGNMENT__
+
+The mechanism is simple once you see it: better alignment means the model is more trusted. More trust means the model is given higher-autonomy tasks. Higher-autonomy tasks mean that when something goes wrong — whether through a miscalibrated edge case, a novel prompt injection, or an adversarial actor — the blast radius is enormous.
+
+A misaligned model gets deployed in sandboxed, low-stakes environments with heavy guardrails. You don't trust it, so it can't hurt you at scale. A highly aligned model like Mythos gets deployed as a fully autonomous agent in critical infrastructure. You trust it — so when it goes wrong, the consequences are proportional to the autonomy you've granted.
+
+Anthropic's own researchers put it bluntly in the system card: "Mythos is simultaneously our best-aligned and highest-risk model. These facts are not in tension — they are causally connected."
+
+## Project Glasswing: The Controlled Detonation
+
+Anthropic's response to this paradox was pragmatic. They did not shelve the model. They did not publish it openly. They created a third path: **Project Glasswing**.
+
+__MYTHOS_GLASSWING__
+
+Glasswing is a controlled industry consortium with a specific mandate: use Mythos's capabilities for defensive hardening only. The rules are strict: all model usage is logged and audited continuously, no API keys are issued, any discovered vulnerability must be reported to the affected vendor within 48 hours, and no offensive research is permitted.
+
+The logic is sound: if Mythos is going to find these vulnerabilities anyway, it is better that the finding happens in a controlled environment where the information flows toward defense, not exploitation.
+
+## The National Security Dimension
+
+The U.S. government did not take the Mythos announcement quietly.
+
+Within weeks of the official disclosure, Anthropic confirmed that it had briefed officials from the National Security Agency, CISA, and members of the White House National Security Council.
+
+The NSA is now reportedly using a Mythos variant to audit the firmware of critical national infrastructure — the power grid, water treatment systems, and financial settlement networks — for vulnerabilities that human engineers may have missed.
+
+The dual-use concern is not hypothetical. Security experts have pointed out that the same capabilities that make Mythos valuable for defense also make it extraordinarily dangerous if a similar model were developed without Anthropic's safety constraints, or if the model's weights were leaked or stolen.
+
+The proliferation risk is, in the view of most experts briefed on Mythos, the single most significant AI risk in 2026. Not AGI alignment in the abstract. This, now, today.
+
+## What This Means for Cybersecurity as a Career
+
+Mythos is not the end of cybersecurity jobs. It is the end of *low-skill* cybersecurity jobs.
+
+Specifically, the roles most at risk are those that consist of pattern-matching against known vulnerability classes — running static analysis tools, performing routine penetration tests against standard configurations, writing templated CVE reports.
+
+The jobs that Mythos cannot replace — and in fact creates enormous demand for — are threat modeling architects, AI safety engineers, policy and governance specialists, and incident response leads. The cybersecurity professionals who are studying *how* models like Mythos reason — not just what they output — will be the ones writing governance frameworks for the next generation of autonomous security AI.
+
+## The Verdict: Warning or Revolution?
+
+Mythos is both, simultaneously.
+
+It is a warning because the alignment paradox it embodies is not unique to Mythos. Every future frontier model will face the same dynamic: the better it is, the more autonomy it is granted, the larger the stakes when anything goes wrong. Anthropic was thoughtful enough to publish a system card that names this explicitly. Not every future lab will be.
+
+It is a revolution because the defensive implications are real. The idea that an AI can audit the entire OpenBSD kernel in the time it takes a human engineer to read a single function — and find a 27-year-old exploit chain — represents a genuine shift in the economics of software security. For the first time, the defenders might have a tool that operates at the same speed and cognitive scope as the most sophisticated attackers.
+
+Mythos is a canary in a coal mine. The right question is not "is the model aligned?" but "what happens when an aligned model is trusted with something it shouldn't be?"
+
+We don't have a good answer to that yet. Mythos is pushing us to find one.
