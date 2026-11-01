@@ -307,7 +307,7 @@ export function MythosHeroStats() {
   ];
 
   return (
-    <div className="my-12 bg-gray-950 text-white rounded-2xl p-8 border border-white/5 shadow-xl">
+    <div className="my-8 md:my-12 bg-gray-950 text-white rounded-2xl p-5 md:p-8 border border-white/5 shadow-xl">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {stats.map((s, i) => (
           <motion.div
@@ -316,9 +316,9 @@ export function MythosHeroStats() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="border-r border-white/10 last:border-r-0 pr-6 last:pr-0"
+            className="md:border-r border-white/10 last:border-r-0 md:pr-6 last:pr-0"
           >
-            <div className="font-outfit text-4xl font-black text-rose-400">{s.val}</div>
+            <div className="font-outfit text-2xl md:text-4xl font-black text-rose-400">{s.val}</div>
             <div className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-2">{s.unit}</div>
             <div className="text-xs text-gray-400 leading-relaxed">{s.desc}</div>
           </motion.div>

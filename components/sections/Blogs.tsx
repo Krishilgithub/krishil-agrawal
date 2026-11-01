@@ -41,14 +41,14 @@ function BlogCard({
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: index * 0.07 }}
       onClick={() => router.push(`/blogs/${blog.id}`)}
-      className="group cursor-pointer bg-white border border-gray-200 rounded-3xl flex flex-col h-full overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative"
+      className="group cursor-pointer bg-white border border-gray-200 rounded-3xl flex flex-col h-full overflow-hidden hover:shadow-2xl md:hover:-translate-y-2 transition-all duration-300 relative"
     >
       {/* Hover accent bar */}
       <div className="h-[3px] w-full bg-gradient-to-r from-red-500 via-red-400 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      <div className="p-7 flex flex-col flex-1">
+      <div className="p-5 md:p-7 flex flex-col flex-1">
         {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-5">
+        <div className="flex flex-wrap gap-1.5 mb-3 md:mb-5">
           {blog.tags.map((tag) => (
             <span
               key={tag}
@@ -60,17 +60,17 @@ function BlogCard({
         </div>
 
         {/* Title */}
-        <h3 className="font-outfit text-[1.2rem] font-bold text-black mb-3 leading-snug group-hover:text-red-600 transition-colors line-clamp-3">
+        <h3 className="font-outfit text-[1.05rem] md:text-[1.2rem] font-bold text-black mb-2 md:mb-3 leading-snug group-hover:text-red-600 transition-colors line-clamp-3">
           {blog.title}
         </h3>
 
         {/* Excerpt */}
-        <p className="text-gray-500 text-sm leading-relaxed mb-auto line-clamp-3">
+        <p className="text-gray-500 text-[13px] md:text-sm leading-relaxed mb-auto line-clamp-2 md:line-clamp-3">
           {blog.description}
         </p>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-5 mt-6 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-4 mt-4 md:pt-5 md:mt-6 border-t border-gray-100">
           <div className="flex items-center gap-3 text-xs text-gray-400">
             <span className="flex items-center gap-1.5 font-semibold">
               <Clock size={12} /> {blog.readTime}
@@ -101,18 +101,18 @@ export function Blogs() {
   return (
     <section
       id="blogs"
-      className="bg-[#fafafa] py-16 md:py-36 px-4 sm:px-8 md:px-12 relative"
+      className="bg-[#fafafa] py-12 md:py-36 px-4 sm:px-8 md:px-12 relative"
     >
       <div className="max-w-7xl mx-auto">
 
         {/* ── HEADER ─────────────────────────────────────────── */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-16">
           <div>
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-5"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-3 md:mb-5"
             >
               <BookOpen size={12} /> Insights & Writings
             </motion.div>
@@ -122,7 +122,7 @@ export function Blogs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+              className="font-outfit text-[1.75rem] sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
             >
               Blogs<span className="text-red-500">.</span>
             </motion.h2>
@@ -132,7 +132,7 @@ export function Blogs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="mt-5 text-gray-500 text-lg max-w-xl leading-relaxed"
+              className="mt-3 md:mt-5 text-gray-500 text-[15px] md:text-lg max-w-xl leading-relaxed"
             >
               Deep dives into real-world ML systems, AI architectures, and
               engineering challenges — written for engineers who build.
@@ -167,16 +167,16 @@ export function Blogs() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             onClick={() => router.push(`/blogs/${featuredBlog.id}`)}
-            className="group cursor-pointer mb-10"
+            className="group cursor-pointer mb-8 md:mb-10"
           >
-            <div className="relative bg-[#0a0a0a] rounded-[2rem] p-6 sm:p-8 md:p-12 border border-white/5 overflow-hidden">
+            <div className="relative bg-[#0a0a0a] rounded-3xl md:rounded-[2rem] p-5 sm:p-8 md:p-12 border border-white/5 overflow-hidden">
               {/* glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-red-600/15 via-transparent to-violet-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
               <div className="absolute -top-20 -right-20 w-80 h-80 bg-red-600/5 rounded-full blur-3xl" />
 
-              <div className="relative z-10 flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center">
+              <div className="relative z-10 flex flex-col md:flex-row gap-6 md:gap-12 items-start md:items-center">
                 <div className="flex-1">
-                  <div className="flex flex-wrap gap-2 mb-6">
+                  <div className="flex flex-wrap gap-1.5 md:gap-2 mb-4 md:mb-6">
                     <span className="px-3 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-[0.15em] rounded-full">
                       Featured
                     </span>
@@ -190,15 +190,15 @@ export function Blogs() {
                     ))}
                   </div>
 
-                  <h3 className="font-outfit text-xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold text-white mb-4 md:mb-5 leading-tight tracking-tight group-hover:text-red-50 transition-colors">
+                  <h3 className="font-outfit text-xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold text-white mb-2.5 md:mb-5 leading-tight tracking-tight group-hover:text-red-50 transition-colors">
                     {featuredBlog.title}
                   </h3>
 
-                  <p className="text-gray-400 text-base md:text-lg leading-relaxed mb-8 max-w-2xl">
+                  <p className="text-gray-400 text-sm md:text-lg leading-relaxed mb-5 md:mb-8 max-w-2xl line-clamp-3 md:line-clamp-none">
                     {featuredBlog.description}
                   </p>
 
-                  <div className="flex items-center gap-6 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 md:gap-6 text-xs md:text-sm text-gray-500">
                     <span className="flex items-center gap-2">
                       <Clock size={14} className="text-red-500" />
                       {featuredBlog.readTime}
@@ -219,7 +219,7 @@ export function Blogs() {
         )}
 
         {/* ── SECTION DIVIDER ────────────────────────────────── */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-5 md:mb-8">
           <span className="font-outfit text-xs font-bold uppercase tracking-[0.15em] text-gray-400">
             Latest Articles
           </span>
@@ -230,13 +230,11 @@ export function Blogs() {
         </div>
 
         {/* ── 3-CARD GRID ────────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-12 -mx-4 px-4 sm:-mx-8 sm:px-8 md:mx-0 md:px-0 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-px-4 sm:scroll-px-8 pb-2 md:pb-0">
           {gridBlogs.map((blog, i) => (
-            <BlogCard
-              key={blog.id}
-              blog={blog}
-              index={i}
-            />
+            <div key={blog.id} className="w-[84%] sm:w-[60%] shrink-0 snap-start md:w-auto">
+              <BlogCard blog={blog} index={i} />
+            </div>
           ))}
         </div>
 
@@ -249,7 +247,7 @@ export function Blogs() {
         >
           <Link
             href="/blogs"
-            className="group inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-red-600 transition-colors duration-200"
+            className="group inline-flex items-center gap-2.5 px-6 py-3 md:px-8 md:py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-red-600 transition-colors duration-200"
           >
             Explore all {blogsData.length} articles
             <ArrowUpRight

@@ -441,7 +441,7 @@ export function Skills() {
   }, []);
 
   return (
-    <section id="skills" className="relative py-16 md:py-28 px-4 sm:px-8 md:px-12 overflow-hidden" style={{
+    <section id="skills" className="relative py-12 md:py-28 px-4 sm:px-8 md:px-12 overflow-hidden" style={{
       background: "#fafafa",
       backgroundImage: "radial-gradient(circle, #d4d4d8 0.8px, transparent 0.8px)",
       backgroundSize: "26px 26px",
@@ -464,14 +464,14 @@ export function Skills() {
         style={{ background: "#14b8a608" }} />
 
       {/* ─── Heading ─── */}
-      <div className="relative max-w-7xl mx-auto mb-20 z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+      <div className="relative max-w-7xl mx-auto mb-0 md:mb-20 z-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-16">
           <div>
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-5"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-3 md:mb-5"
             >
               <Wrench size={12} /> Tech Stack
             </motion.div>
@@ -481,7 +481,7 @@ export function Skills() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+              className="font-outfit text-[1.75rem] sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
             >
               Stack &amp; Toolkit<span className="text-red-500">.</span>
             </motion.h2>
@@ -491,7 +491,7 @@ export function Skills() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="mt-5 text-gray-500 text-lg max-w-xl leading-relaxed"
+              className="mt-3 md:mt-5 text-gray-500 text-[15px] md:text-lg max-w-xl leading-relaxed"
             >
               Tools I use to build scalable intelligent systems.
             </motion.p>

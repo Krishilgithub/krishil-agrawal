@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { SmoothScroller } from "@/components/layout/SmoothScroller";
@@ -19,6 +19,13 @@ const dmSans = DM_Sans({
 });
 
 const BASE_URL = "https://krishil-agrawal.vercel.app";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#fafafa",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -197,7 +204,6 @@ export default function RootLayout({
     >
       <head>
         <link rel="canonical" href={BASE_URL} />
-        <meta name="theme-color" content="#fafafa" />
         <meta name="color-scheme" content="light" />
       </head>
       <body suppressHydrationWarning className="min-h-screen flex flex-col font-sans overflow-x-hidden relative bg-[#fafafa]">

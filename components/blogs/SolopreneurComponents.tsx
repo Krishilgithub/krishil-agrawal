@@ -114,11 +114,11 @@ export function SoloHeroStats() {
     { val: "< $500", desc: "Monthly tooling cost to run a full AI solopreneur stack" },
   ];
   return (
-    <div className="bg-[#0d0d0d] text-white p-8 rounded-2xl flex flex-col md:flex-row gap-8 overflow-x-auto my-12">
+    <div className="bg-[#0d0d0d] text-white p-5 md:p-8 rounded-2xl grid grid-cols-2 md:flex md:flex-row gap-x-4 gap-y-5 md:gap-8 my-8 md:my-12">
       {stats.map(({ val, desc }, i) => (
-        <div key={i} className="flex-1 min-w-[160px] md:border-r last:border-r-0 border-white/10 md:pr-8">
-          <div className="font-outfit text-4xl md:text-5xl font-bold text-red-500 mb-2">{val}</div>
-          <div className="text-sm text-white/50 leading-relaxed tracking-wide">{desc}</div>
+        <div key={i} className="md:flex-1 md:min-w-[160px] md:border-r last:border-r-0 border-white/10 md:pr-8">
+          <div className="font-outfit text-2xl md:text-5xl font-bold text-red-500 mb-1 md:mb-2">{val}</div>
+          <div className="text-xs md:text-sm text-white/50 leading-relaxed md:tracking-wide">{desc}</div>
         </div>
       ))}
     </div>

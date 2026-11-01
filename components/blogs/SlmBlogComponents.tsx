@@ -23,10 +23,10 @@ export function SlmHeroStats() {
     { val: "0.2", desc: "The temperature you should use for Semantic Routers — classification requires determinism, not creativity." },
   ];
   return (
-    <div className="bg-[#0a0a0a] text-white p-8 rounded-2xl flex flex-col md:flex-row gap-8 my-12 shadow-xl">
+    <div className="bg-[#0a0a0a] text-white p-5 md:p-8 rounded-2xl grid grid-cols-2 md:flex md:flex-row gap-x-4 gap-y-5 md:gap-8 my-8 md:my-12 shadow-xl">
       {stats.map(({ val, desc }, i) => (
-        <div key={i} className="flex-1 min-w-[160px] md:border-r last:border-r-0 border-white/10 md:pr-8">
-          <div className="font-outfit text-4xl md:text-5xl font-bold text-violet-500 mb-2">{val}</div>
+        <div key={i} className="md:flex-1 md:min-w-[160px] md:border-r last:border-r-0 border-white/10 md:pr-8">
+          <div className="font-outfit text-2xl md:text-5xl font-bold text-violet-500 mb-1 md:mb-2">{val}</div>
           <div className="text-sm text-white/60 leading-relaxed">{desc}</div>
         </div>
       ))}

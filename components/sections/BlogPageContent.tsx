@@ -222,7 +222,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
         const lines = actualCodeBlock.split("\n");
         const codeText = lines.slice(1, lines.length - 1).join("\n");
         return (
-          <div key={index} className="my-8 rounded-2xl overflow-hidden bg-[#111] border border-white/10 shadow-2xl">
+          <div key={index} className="my-6 md:my-8 -mx-1 md:mx-0 rounded-xl md:rounded-2xl overflow-hidden bg-[#111] border border-white/10 shadow-xl md:shadow-2xl">
             <div className="bg-[#1a1a1a] px-4 py-3 border-b border-white/5 flex gap-2">
               <div className="w-3 h-3 rounded-full bg-red-500/50" />
               <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
@@ -237,11 +237,11 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
 
       if (trimmedBlock === "__STAT_BAR__") {
         return (
-          <div key={index} className="bg-[#1a1916] text-white p-8 rounded-2xl flex flex-col md:flex-row gap-8 overflow-x-auto my-12">
+          <div key={index} className="bg-[#1a1916] text-white p-5 md:p-8 rounded-2xl grid grid-cols-2 md:flex md:flex-row gap-x-4 gap-y-5 md:gap-8 my-8 md:my-12">
             {[["80%","RAG failures trace back to ingestion & chunking, not the LLM"],["87%","Accuracy from adaptive chunking vs 13% for fixed-size baselines (MDPI, 2025)"],["70%","Retrieval lift from semantic chunking over naive baselines"],["2,500","Token \"context cliff\" where response quality drops sharply (Chroma, 2025)"]].map(([val, desc], i) => (
-              <div key={i} className="flex-1 min-w-[160px] md:border-r last:border-r-0 border-white/10 md:pr-8">
-                <div className="font-outfit text-4xl md:text-5xl font-bold text-red-500 mb-2">{val}</div>
-                <div className="text-sm text-white/50 leading-relaxed tracking-wide">{desc}</div>
+              <div key={i} className="md:flex-1 md:min-w-[160px] md:border-r last:border-r-0 border-white/10 md:pr-8">
+                <div className="font-outfit text-2xl md:text-5xl font-bold text-red-500 mb-1 md:mb-2">{val}</div>
+                <div className="text-xs md:text-sm text-white/50 leading-relaxed md:tracking-wide">{desc}</div>
               </div>
             ))}
           </div>
@@ -250,14 +250,14 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
 
       if (trimmedBlock === "__STRATEGY_GRID__") {
         return (
-          <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+          <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 my-6 md:my-8">
             {[
               { level: "Level 1", color: "bg-gray-100 text-gray-500", bar: "bg-gray-400", title: "Fixed-Size / Recursive", desc: "Split by token count. The default in LangChain. Add 10-20% overlap to preserve cross-boundary context.", when: "Homogeneous content — news articles, support tickets, FAQ entries." },
               { level: "Level 2", color: "bg-blue-50 text-blue-600", bar: "bg-blue-500", title: "Semantic Chunking", desc: "Embed every sentence and split on cosine distance drops. Groups by meaning, not character count.", when: "Technical docs, knowledge bases, research papers." },
               { level: "Level 3", color: "bg-green-50 text-green-600", bar: "bg-green-500", title: "Structural / Propositional", desc: "Split on document structure (headers, sections) or use an LLM to extract atomic propositions.", when: "Markdown docs, PDFs with logical sections, legal documents." },
               { level: "Level 4", color: "bg-red-50 text-red-600", bar: "bg-red-500", title: "Agentic Chunking", desc: "An LLM agent inspects the full document, decides the optimal strategy, executes it, and enriches chunks.", when: "Heterogeneous corpora, high-stakes retrieval, enterprise knowledge management." },
             ].map((card, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-xl p-6 relative overflow-hidden">
+              <div key={i} className="bg-white border border-gray-200 rounded-xl p-4 md:p-6 relative overflow-hidden">
                 <div className={`absolute top-0 left-0 right-0 h-[3px] ${card.bar}`} />
                 <div className={`${card.color} text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mb-3`}>{card.level}</div>
                 <h4 className="font-outfit text-lg font-bold text-black mb-2">{card.title}</h4>
@@ -378,9 +378,9 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "__YT_SUMMARY_TABLE__")         return <YTSummaryTable key={index} />;
 
       if (trimmedBlock === "__GRAPHRAG_OPINION__") return (
-        <div key={index} className="bg-[#13161e] border border-[#252a38] rounded-xl p-8 md:p-10 my-16 relative shadow-lg">
-          <div className="absolute -top-[35px] left-8 font-outfit text-8xl text-[#7c6fff] opacity-40 leading-none">&quot;</div>
-          <p className="font-outfit text-xl font-light text-[#e8eaf0] leading-relaxed italic mb-4">
+        <div key={index} className="bg-[#13161e] border border-[#252a38] rounded-xl p-5 md:p-10 my-10 md:my-16 relative shadow-lg">
+          <div className="absolute -top-[28px] md:-top-[35px] left-5 md:left-8 font-outfit text-6xl md:text-8xl text-[#7c6fff] opacity-40 leading-none">&quot;</div>
+          <p className="font-outfit text-base md:text-xl font-light text-[#e8eaf0] leading-relaxed italic mb-4">
             GraphRAG will become the default architecture for enterprise RAG within 18 months — but not because it&apos;s always better. It&apos;ll win because the questions enterprises actually care about are almost all relationship questions. Vector RAG was built for the internet. GraphRAG is built for the enterprise.
           </p>
           <div className="font-outfit text-sm text-[#7a8099] font-bold tracking-wide mt-6">— Author&apos;s Take · April 2026</div>
@@ -388,9 +388,9 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       );
 
       if (trimmedBlock === "__LLM_MEMORY_OPINION__") return (
-        <div key={index} className="relative my-14 p-8 md:p-10 bg-white border border-[#d4d4d8] rounded-xl shadow-sm">
-          <div className="absolute top-3 left-6 font-serif text-8xl text-[#6366f1] opacity-20 leading-none select-none">&quot;</div>
-          <p className="font-serif text-xl italic text-[#18181b] leading-relaxed mb-4 pt-4">
+        <div key={index} className="relative my-10 md:my-14 p-5 md:p-10 bg-white border border-[#d4d4d8] rounded-xl shadow-sm">
+          <div className="absolute top-3 left-6 font-serif text-6xl md:text-8xl text-[#6366f1] opacity-20 leading-none select-none">&quot;</div>
+          <p className="font-serif text-base md:text-xl italic text-[#18181b] leading-relaxed mb-4 pt-4">
             The entire memory industry around LLMs exists because of one architectural fact: the context window is the model&apos;s only sense organ. Memory architecture is competitive advantage disguised as plumbing.
           </p>
           <div className="text-[13px] text-[#a1a1aa] font-medium">— Personal take · Based on production AI system patterns through Q1 2026</div>
@@ -404,8 +404,8 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
         const restOfBlock = lines.slice(1).join("\n").trim();
         return (
           <React.Fragment key={index}>
-            <h2 id={id} className="font-outfit text-2xl md:text-4xl font-bold mt-12 md:mt-16 mb-4 md:mb-6 text-black tracking-tight scroll-mt-24">{titleLine}</h2>
-            {restOfBlock && <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-6" dangerouslySetInnerHTML={{ __html: formatText(restOfBlock) }} />}
+            <h2 id={id} className="font-outfit text-[1.4rem] leading-snug md:text-4xl font-bold mt-10 md:mt-16 mb-3 md:mb-6 text-black tracking-tight scroll-mt-24">{titleLine}</h2>
+            {restOfBlock && <p className="text-base md:text-xl text-gray-600 leading-relaxed mb-5 md:mb-6" dangerouslySetInnerHTML={{ __html: formatText(restOfBlock) }} />}
           </React.Fragment>
         );
       }
@@ -417,8 +417,8 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
         const restOfBlock = lines.slice(1).join("\n").trim();
         return (
           <React.Fragment key={index}>
-            <h3 id={id} className="font-outfit text-xl md:text-2xl font-bold mt-8 md:mt-10 mb-3 md:mb-4 text-gray-800 scroll-mt-24">{titleLine}</h3>
-            {restOfBlock && <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-6" dangerouslySetInnerHTML={{ __html: formatText(restOfBlock) }} />}
+            <h3 id={id} className="font-outfit text-lg md:text-2xl font-bold mt-7 md:mt-10 mb-2 md:mb-4 text-gray-800 scroll-mt-24">{titleLine}</h3>
+            {restOfBlock && <p className="text-base md:text-xl text-gray-600 leading-relaxed mb-5 md:mb-6" dangerouslySetInnerHTML={{ __html: formatText(restOfBlock) }} />}
           </React.Fragment>
         );
       }
@@ -426,8 +426,8 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock.startsWith("> ")) {
         const text = trimmedBlock.replace(/^>\s?/gm, "");
         return (
-          <blockquote key={index} className="my-8 border-l-4 border-red-500 bg-red-50 p-6 rounded-r-2xl">
-            <p className="text-lg text-gray-700 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: formatText(text) }} />
+          <blockquote key={index} className="my-6 md:my-8 border-l-4 border-red-500 bg-red-50 p-4 md:p-6 rounded-r-2xl">
+            <p className="text-base md:text-lg text-gray-700 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: formatText(text) }} />
           </blockquote>
         );
       }
@@ -435,9 +435,9 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock.startsWith("- ")) {
         const items = trimmedBlock.split("\n").filter(l => l.trim().startsWith("- ")).map(l => l.replace(/^-\s/, "").trim());
         return (
-          <ul key={index} className="my-6 space-y-3 pl-2">
+          <ul key={index} className="my-5 md:my-6 space-y-2.5 md:space-y-3 pl-1 md:pl-2">
             {items.map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-gray-700 text-lg">
+              <li key={i} className="flex items-start gap-3 text-gray-700 text-base md:text-lg">
                 <span className="mt-2 w-2 h-2 rounded-full bg-red-500 shrink-0" />
                 <span dangerouslySetInnerHTML={{ __html: formatText(item) }} />
               </li>
@@ -449,9 +449,9 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock.match(/^\d+\. /)) {
         const items = trimmedBlock.split("\n").filter(l => l.trim().match(/^\d+\./)).map(l => l.replace(/^\d+\.\s/, "").trim());
         return (
-          <ol key={index} className="my-6 space-y-3 pl-2">
+          <ol key={index} className="my-5 md:my-6 space-y-2.5 md:space-y-3 pl-1 md:pl-2">
             {items.map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-gray-700 text-lg">
+              <li key={i} className="flex items-start gap-3 text-gray-700 text-base md:text-lg">
                 <span className="font-bold text-red-500 shrink-0 min-w-[20px]">{i + 1}.</span>
                 <span dangerouslySetInnerHTML={{ __html: formatText(item) }} />
               </li>
@@ -463,7 +463,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       if (trimmedBlock === "") return null;
 
       return (
-        <p key={index} className="text-lg md:text-xl text-gray-700 leading-relaxed mb-6"
+        <p key={index} className="text-base md:text-xl text-gray-700 leading-relaxed mb-5 md:mb-6"
           dangerouslySetInnerHTML={{ __html: formatText(trimmedBlock) }} />
       );
     });
@@ -479,7 +479,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       {/* Back to Blogs — white pill, hover black */}
       <Link
         href="/blogs"
-        className="fixed top-5 left-8 z-40 flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 hover:bg-black hover:text-white hover:border-black text-gray-800 text-sm font-semibold rounded-full shadow-sm transition-all"
+        className="fixed top-3 left-4 md:top-5 md:left-8 z-40 flex items-center gap-1.5 md:gap-2 px-3 py-2 md:px-4 md:py-2.5 bg-white border border-gray-200 hover:bg-black hover:text-white hover:border-black text-gray-800 text-[13px] md:text-sm font-semibold rounded-full shadow-sm transition-all"
       >
         <ArrowLeft size={14} />
         Back to Blogs
@@ -488,7 +488,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       {/* Share — white pill, hover black */}
       <button
         onClick={handleShare}
-        className={`fixed top-5 right-4 md:right-8 z-40 flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-semibold rounded-full shadow-sm border transition-all ${
+        className={`fixed top-3 right-4 md:top-5 md:right-8 z-40 flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-semibold rounded-full shadow-sm border transition-all ${
           copied
             ? "bg-green-50 border-green-200 text-green-700"
             : "bg-white border-gray-200 text-gray-700 hover:bg-black hover:text-white hover:border-black"
@@ -498,24 +498,24 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
       </button>
 
       {/* Article Content */}
-      <article className="w-full max-w-[800px] mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-24 md:pb-32">
+      <article className="w-full max-w-[800px] mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-28 md:pb-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           {/* Tags */}
-          <div className="flex gap-3 mb-8 flex-wrap">
+          <div className="flex gap-2 md:gap-3 mb-4 md:mb-8 flex-wrap">
             {blog.tags.map(tag => (
-              <span key={tag} className="px-4 py-1.5 bg-red-50 text-red-600 font-bold text-xs uppercase tracking-widest rounded-full border border-red-100">
+              <span key={tag} className="px-3 py-1 md:px-4 md:py-1.5 bg-red-50 text-red-600 font-bold text-[10px] md:text-xs uppercase tracking-widest rounded-full border border-red-100">
                 {tag}
               </span>
             ))}
           </div>
 
           {/* Title */}
-          <h1 className="font-outfit text-3xl sm:text-4xl md:text-6xl font-black mb-6 md:mb-8 text-black tracking-tighter leading-tight">
+          <h1 className="font-outfit text-[1.75rem] sm:text-4xl md:text-6xl font-black mb-4 md:mb-8 text-black tracking-tighter leading-tight">
             {blog.title}
           </h1>
 
           {/* Meta */}
-          <div className="flex flex-wrap items-center gap-3 md:gap-6 pb-8 md:pb-12 border-b border-gray-200 text-gray-500 font-medium mb-8 md:mb-12 text-sm md:text-base">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 md:gap-6 pb-6 md:pb-12 border-b border-gray-200 text-gray-500 font-medium mb-6 md:mb-12 text-[13px] md:text-base">
             <div className="flex items-center gap-2"><Calendar size={18} /> {blog.publishedAt}</div>
             <div className="flex items-center gap-2"><Clock size={18} /> {blog.readTime}</div>
             <div className="flex items-center gap-2 text-red-500"><BrainCircuit size={18} /> Deep Dive</div>
@@ -532,16 +532,16 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
 
         {/* Cross-Platform Links */}
         {(blog.substackLink || blog.mediumLink) && (
-          <div className="mt-16 pt-10 border-t border-gray-200">
-            <h4 className="font-outfit text-xl font-bold text-black mb-4">Read on other platforms</h4>
-            <div className="flex flex-wrap gap-4">
+          <div className="mt-12 md:mt-16 pt-8 md:pt-10 border-t border-gray-200">
+            <h4 className="font-outfit text-lg md:text-xl font-bold text-black mb-3 md:mb-4">Read on other platforms</h4>
+            <div className="flex flex-wrap gap-2.5 md:gap-4">
               {blog.substackLink && (
-                <a href={blog.substackLink} target="_blank" rel="noreferrer" className="px-6 py-3 bg-[#ff6719] text-white rounded-full font-semibold hover:bg-[#e05b16] transition-colors flex items-center gap-2 shadow-sm">
+                <a href={blog.substackLink} target="_blank" rel="noreferrer" className="px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base bg-[#ff6719] text-white rounded-full font-semibold hover:bg-[#e05b16] transition-colors flex items-center gap-2 shadow-sm">
                   <ExternalLink size={16} /> Read on Substack
                 </a>
               )}
               {blog.mediumLink && (
-                <a href={blog.mediumLink} target="_blank" rel="noreferrer" className="px-6 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-sm">
+                <a href={blog.mediumLink} target="_blank" rel="noreferrer" className="px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-sm">
                   <ExternalLink size={16} /> Read on Medium
                 </a>
               )}
@@ -551,13 +551,13 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
 
         {/* Footer CTA */}
         {blog.githubLink && (
-          <div className="mt-24 pt-12 border-t border-gray-200">
-            <div className="bg-gray-50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 border border-gray-100">
+          <div className="mt-14 md:mt-24 pt-8 md:pt-12 border-t border-gray-200">
+            <div className="bg-gray-50 rounded-2xl md:rounded-3xl p-5 md:p-12 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-5 md:gap-8 border border-gray-100">
               <div>
-                <h4 className="font-outfit text-2xl font-bold text-black mb-2">Want to see the code?</h4>
+                <h4 className="font-outfit text-xl md:text-2xl font-bold text-black mb-1 md:mb-2">Want to see the code?</h4>
                 <p className="text-gray-500">Dive into the repository to see this system running in production.</p>
               </div>
-              <a href={blog.githubLink} target="_blank" rel="noreferrer" className="px-8 py-4 bg-black text-white rounded-full font-bold hover:bg-red-600 transition-colors flex items-center gap-3 whitespace-nowrap shadow-xl">
+              <a href={blog.githubLink} target="_blank" rel="noreferrer" className="px-6 py-3 md:px-8 md:py-4 bg-black text-white rounded-full font-bold text-sm md:text-base hover:bg-red-600 transition-colors flex items-center justify-center gap-3 whitespace-nowrap shadow-xl">
                 <ExternalLink size={20} /> View Repository
               </a>
             </div>
@@ -567,7 +567,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
 
       {/* Floating Bottom TOC */}
       {headings.length > 0 && (
-        <div ref={tocRef} className="fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-[150] flex flex-col items-center">
+        <div ref={tocRef} className="fixed bottom-[calc(16px+env(safe-area-inset-bottom))] md:bottom-8 left-1/2 -translate-x-1/2 z-[150] flex flex-col items-center">
           <AnimatePresence>
             {isTocOpen && (
               <motion.div
@@ -609,7 +609,7 @@ export function BlogPageContent({ blog }: { blog: BlogArticle }) {
 
           <button
             onClick={() => setIsTocOpen(!isTocOpen)}
-            className="bg-[#0a0a0a] hover:bg-black border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-white rounded-full h-12 px-4 md:px-5 flex items-center justify-between gap-4 md:gap-6 transition-all duration-300 min-w-[240px] md:min-w-[280px] font-outfit"
+            className="bg-[#0a0a0a] hover:bg-black border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-white rounded-full h-11 md:h-12 px-4 md:px-5 flex items-center justify-between gap-4 md:gap-6 transition-all duration-300 min-w-[240px] md:min-w-[280px] font-outfit"
           >
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-1.5 h-1.5 bg-white rounded-full shrink-0 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />

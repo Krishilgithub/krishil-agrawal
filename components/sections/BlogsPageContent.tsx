@@ -87,14 +87,14 @@ function BlogCard({
       transition={{ duration: 0.4, delay: Math.min(index, 5) * 0.07 }}
       layout
       onClick={() => router.push(`/blogs/${blog.id}`)}
-      className="group cursor-pointer bg-white border border-gray-200 rounded-3xl flex flex-col h-full overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+      className="group cursor-pointer bg-white border border-gray-200 rounded-3xl flex flex-col h-full overflow-hidden hover:shadow-2xl md:hover:-translate-y-2 transition-all duration-300"
     >
       {/* Hover accent bar */}
       <div className="h-[3px] bg-gradient-to-r from-red-500 via-red-400 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      <div className="p-7 flex flex-col flex-1">
+      <div className="p-5 md:p-7 flex flex-col flex-1">
         {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-5">
+        <div className="flex flex-wrap gap-1.5 mb-3 md:mb-5">
           {blog.tags.map((tag) => (
             <span
               key={tag}
@@ -106,17 +106,17 @@ function BlogCard({
         </div>
 
         {/* Title */}
-        <h3 className="font-outfit text-[1.15rem] font-bold text-black mb-3 leading-snug group-hover:text-red-600 transition-colors line-clamp-3">
+        <h3 className="font-outfit text-[1.05rem] md:text-[1.15rem] font-bold text-black mb-2 md:mb-3 leading-snug group-hover:text-red-600 transition-colors line-clamp-3">
           {blog.title}
         </h3>
 
         {/* Excerpt */}
-        <p className="text-gray-500 text-sm leading-relaxed mb-auto line-clamp-3">
+        <p className="text-gray-500 text-[13px] md:text-sm leading-relaxed mb-auto line-clamp-2 md:line-clamp-3">
           {blog.description}
         </p>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-5 mt-6 border-t border-gray-100">
+        <div className="flex items-center justify-between pt-4 mt-4 md:pt-5 md:mt-6 border-t border-gray-100">
           <div className="flex items-center gap-3 text-xs text-gray-400">
             <span className="flex items-center gap-1.5 font-semibold">
               <Clock size={12} /> {blog.readTime}
@@ -146,15 +146,15 @@ function FeaturedCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       onClick={() => router.push(`/blogs/${blog.id}`)}
-      className="group cursor-pointer mb-12"
+      className="group cursor-pointer mb-8 md:mb-12"
     >
-      <div className="relative bg-[#0a0a0a] rounded-[2rem] p-8 md:p-12 border border-white/5 overflow-hidden">
+      <div className="relative bg-[#0a0a0a] rounded-3xl md:rounded-[2rem] p-5 sm:p-8 md:p-12 border border-white/5 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-red-600/15 via-transparent to-violet-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
         <div className="absolute -top-20 -right-20 w-80 h-80 bg-red-600/5 rounded-full blur-3xl" />
 
-        <div className="relative z-10 flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center">
+        <div className="relative z-10 flex flex-col md:flex-row gap-6 md:gap-12 items-start md:items-center">
           <div className="flex-1">
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex flex-wrap gap-1.5 md:gap-2 mb-4 md:mb-6">
               <span className="px-3 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-[0.15em] rounded-full">
                 Featured
               </span>
@@ -168,15 +168,15 @@ function FeaturedCard({
               ))}
             </div>
 
-            <h2 className="font-outfit text-3xl md:text-4xl xl:text-[2.75rem] font-extrabold text-white mb-5 leading-tight tracking-tight group-hover:text-red-50 transition-colors">
+            <h2 className="font-outfit text-xl sm:text-3xl md:text-4xl xl:text-[2.75rem] font-extrabold text-white mb-2.5 md:mb-5 leading-tight tracking-tight group-hover:text-red-50 transition-colors">
               {blog.title}
             </h2>
 
-            <p className="text-gray-400 text-base md:text-lg leading-relaxed mb-8 max-w-2xl">
+            <p className="text-gray-400 text-sm md:text-lg leading-relaxed mb-5 md:mb-8 max-w-2xl line-clamp-3 md:line-clamp-none">
               {blog.description}
             </p>
 
-            <div className="flex items-center gap-6 text-sm text-gray-500">
+            <div className="flex items-center gap-4 md:gap-6 text-xs md:text-sm text-gray-500">
               <span className="flex items-center gap-2">
                 <Clock size={14} className="text-red-500" />
                 {blog.readTime}
@@ -186,7 +186,7 @@ function FeaturedCard({
             </div>
           </div>
 
-          <div className="shrink-0">
+          <div className="shrink-0 hidden sm:block">
             <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
               <ArrowUpRight size={28} />
             </div>
@@ -270,7 +270,7 @@ export function BlogsPageContent() {
 
       {/* ── TOP NAV BAR ──────────────────────────────────────── */}
       <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-12 h-14 md:h-16 flex items-center justify-between gap-4">
           <Link
             href="/"
             className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-black transition-colors"
@@ -308,14 +308,14 @@ export function BlogsPageContent() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-32">
+      <div className="max-w-7xl mx-auto px-4 md:px-12 pt-8 md:pt-16 pb-12 md:pb-32">
 
         {/* ── PAGE HERO ────────────────────────────────────────── */}
-        <div className="mb-16 max-w-4xl">
+        <div className="mb-6 md:mb-16 max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-3 md:mb-6"
           >
             <BookOpen size={12} /> AI & ML Insights
           </motion.div>
@@ -324,7 +324,7 @@ export function BlogsPageContent() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="font-outfit text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tighter text-black mb-6 leading-[1.05]"
+            className="font-outfit text-[2rem] sm:text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tighter text-black mb-3 md:mb-6 leading-[1.05]"
             itemProp="headline"
           >
             AI & ML Insights by{" "}
@@ -335,7 +335,7 @@ export function BlogsPageContent() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-gray-500 text-lg md:text-xl max-w-2xl leading-relaxed"
+            className="text-gray-500 text-[15px] md:text-xl max-w-2xl leading-relaxed"
           >
             Deep dives into real-world machine learning systems, AI
             architectures, and engineering challenges — written for engineers
@@ -348,7 +348,7 @@ export function BlogsPageContent() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="flex flex-wrap gap-6 mb-16 pb-16 border-b border-gray-200"
+          className="grid grid-cols-2 sm:flex sm:flex-wrap gap-x-4 gap-y-2 sm:gap-6 mb-6 md:mb-16 pb-6 md:pb-16 border-b border-gray-200"
         >
           {[
             { v: `${blogsData.length}+`, l: "Technical deep dives" },
@@ -357,23 +357,23 @@ export function BlogsPageContent() {
             { v: "2026", l: "Current & up-to-date" },
           ].map((s) => (
             <div key={s.l} className="flex items-baseline gap-2">
-              <span className="font-outfit text-2xl font-extrabold text-black">
+              <span className="font-outfit text-lg sm:text-2xl font-extrabold text-black">
                 {s.v}
               </span>
-              <span className="text-xs text-gray-500 font-medium">{s.l}</span>
+              <span className="text-[11px] sm:text-xs text-gray-500 font-medium">{s.l}</span>
             </div>
           ))}
         </motion.div>
 
         {/* ── CONTROLS ─────────────────────────────────────────── */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5 mb-10">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 md:gap-5 mb-6 md:mb-10">
           {/* Category filter pills */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex md:flex-wrap items-center gap-2 w-full lg:w-auto overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 pb-1 md:pb-0">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border transition-all duration-200 ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border whitespace-nowrap shrink-0 transition-all duration-200 ${
                   activeCategory === cat
                     ? "bg-black text-white border-black shadow-md"
                     : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 hover:shadow-sm"
@@ -396,7 +396,7 @@ export function BlogsPageContent() {
               placeholder="Search articles…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-gray-200 text-black pl-10 pr-9 py-2.5 rounded-full text-sm outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all placeholder:text-gray-400 shadow-sm font-medium"
+              className="w-full bg-white border border-gray-200 text-black pl-10 pr-9 py-2.5 rounded-full text-base outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all placeholder:text-gray-400 shadow-sm font-medium"
             />
             {searchQuery && (
               <button
@@ -448,7 +448,7 @@ export function BlogsPageContent() {
 
         {/* ── GRID SECTION LABEL ───────────────────────────────── */}
         {gridBlogs.length > 0 && (
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-4 mb-4 md:mb-8">
             <span className="font-outfit text-xs font-bold uppercase tracking-[0.15em] text-gray-400">
               {isDefaultView ? "All Articles" : "Results"}
             </span>
@@ -462,7 +462,7 @@ export function BlogsPageContent() {
         {/* ── BLOG GRID ────────────────────────────────────────── */}
         <motion.div
           layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-14 md:mb-24"
         >
           <AnimatePresence mode="popLayout">
             {gridBlogs.map((blog, i) => (
@@ -504,32 +504,34 @@ export function BlogsPageContent() {
         )}
 
         {/* ── AUTHORITY PILLARS ────────────────────────────────── */}
-        <motion.div ref={pillarsRef} className="mb-24">
-          <div className="mb-10">
+        <motion.div ref={pillarsRef} className="mb-12 md:mb-24">
+          <div className="mb-5 md:mb-10">
             <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-red-500 mb-2">
               Why Read
             </div>
-            <h2 className="font-outfit text-3xl md:text-4xl font-extrabold text-black tracking-tight">
+            <h2 className="font-outfit text-2xl md:text-4xl font-extrabold text-black tracking-tight">
               What Makes These Articles Different
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
             {pillars.map((p, i) => (
               <motion.div
                 key={p.title}
                 initial={{ opacity: 0, y: 24 }}
                 animate={pillarsInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.1, duration: 0.4 }}
-                className="bg-white border border-gray-200 rounded-3xl p-7 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                className="bg-white border border-gray-200 rounded-2xl md:rounded-3xl p-4 md:p-7 flex md:block gap-4 hover:shadow-lg md:hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center mb-5 border border-red-100">
+                <div className="w-10 h-10 shrink-0 rounded-xl bg-red-50 text-red-500 flex items-center justify-center md:mb-5 border border-red-100">
                   {p.icon}
                 </div>
-                <h3 className="font-outfit text-lg font-bold text-black mb-3">
-                  {p.title}
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{p.body}</p>
+                <div>
+                  <h3 className="font-outfit text-base md:text-lg font-bold text-black mb-1 md:mb-3">
+                    {p.title}
+                  </h3>
+                  <p className="text-gray-500 text-[13px] md:text-sm leading-relaxed">{p.body}</p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -540,16 +542,16 @@ export function BlogsPageContent() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="relative bg-[#0a0a0a] rounded-[2rem] p-10 md:p-14 border border-white/5 overflow-hidden"
+          className="relative bg-[#0a0a0a] rounded-3xl md:rounded-[2rem] p-6 sm:p-10 md:p-14 border border-white/5 overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 via-transparent to-violet-600/10 pointer-events-none" />
           <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-red-600/5 rounded-full blur-3xl" />
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 md:gap-8">
             <div>
               <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-red-500 mb-3">
                 Stay Sharp
               </div>
-              <h2 className="font-outfit text-2xl md:text-3xl font-extrabold text-white mb-2 leading-tight">
+              <h2 className="font-outfit text-xl md:text-3xl font-extrabold text-white mb-2 leading-tight">
                 New AI Engineering deep-dives —
                 <br className="hidden md:block" /> every month.
               </h2>
@@ -569,7 +571,7 @@ export function BlogsPageContent() {
                 required
                 disabled={status === "loading" || status === "success"}
                 placeholder="your@email.com"
-                className="bg-white/5 border border-white/10 text-white placeholder:text-gray-600 rounded-xl px-5 py-3 text-sm outline-none focus:border-red-500 transition-colors w-full sm:w-60 disabled:opacity-50"
+                className="bg-white/5 border border-white/10 text-white placeholder:text-gray-600 rounded-xl px-5 py-3 text-base md:text-sm outline-none focus:border-red-500 transition-colors w-full sm:w-60 disabled:opacity-50"
               />
               <button 
                 type="submit" 

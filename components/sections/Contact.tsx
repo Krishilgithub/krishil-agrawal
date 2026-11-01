@@ -43,22 +43,22 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="pt-16 pb-8 md:pt-32 md:pb-8 px-4 sm:px-8 md:px-12 bg-[#fafafa] relative overflow-hidden">
+    <section id="contact" className="pt-12 pb-8 md:pt-32 md:pb-8 px-4 sm:px-8 md:px-12 bg-[#fafafa] relative overflow-hidden">
       
       {/* Background ambient gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-black/5 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20">
+      <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-16 lg:gap-20">
         
         {/* LEFT COLUMN: TEXT & TRUST SIGNALS */}
         <div className="lg:col-span-7 flex flex-col justify-center">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-16">
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-5"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-3 md:mb-5"
               >
                 <Mail size={12} /> Contact
               </motion.div>
@@ -68,7 +68,7 @@ export function Contact() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.05 }}
-                className="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+                className="font-outfit text-[1.75rem] sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
               >
                 Contact Me<span className="text-red-500">.</span>
               </motion.h2>
@@ -78,29 +78,29 @@ export function Contact() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="mt-5 text-gray-500 text-lg max-w-xl leading-relaxed"
+                className="mt-3 md:mt-5 text-gray-500 text-[15px] md:text-lg max-w-xl leading-relaxed"
               >
                 Open to ML/AI internships, collaborations, and real-world projects. I enjoy working on real-world AI problems and building systems that actually make an impact.
               </motion.p>
             </div>
           </div>
 
-          <div className="w-16 h-1 bg-black/10 rounded-full mb-10" />
+          <div className="hidden md:block w-16 h-1 bg-black/10 rounded-full mb-10" />
 
           {/* Value Proposition */}
-          <div className="mb-12">
-            <h4 className="text-sm font-mono tracking-widest uppercase text-gray-400 font-bold mb-4">
+          <div className="mb-6 md:mb-12">
+            <h4 className="text-[11px] md:text-sm font-mono tracking-widest uppercase text-gray-400 font-bold mb-3 md:mb-4">
               What you can reach out for:
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 md:gap-3">
               {[
                 "ML/AI Internships & Roles",
                 "AI Project Collaborations",
                 "Freelance ML Solutions",
                 "Hackathons & Team-ups"
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 text-gray-700 font-medium">
-                  <CheckCircle2 size={18} className="text-red-500 flex-shrink-0" />
+                <div key={i} className="flex items-center gap-2 md:gap-3 text-gray-700 font-medium text-[13px] md:text-base leading-snug">
+                  <CheckCircle2 size={16} className="text-red-500 flex-shrink-0" />
                   {item}
                 </div>
               ))}
@@ -108,28 +108,28 @@ export function Contact() {
           </div>
 
           {/* Contact Method Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
-            <a href="mailto:krishilagrawal026@gmail.com" className="flex flex-col gap-3 p-5 bg-white border border-gray-200 rounded-2xl hover:border-red-500 hover:shadow-lg transition-all group">
-              <Mail className="text-gray-400 group-hover:text-red-500 transition-colors" size={24} />
+          <div className="grid grid-cols-3 gap-2.5 md:gap-4 mb-2 md:mb-12">
+            <a href="mailto:krishilagrawal026@gmail.com" className="flex flex-col items-center sm:items-start text-center sm:text-left gap-2 sm:gap-3 p-3.5 sm:p-5 bg-white border border-gray-200 rounded-2xl hover:border-red-500 hover:shadow-lg transition-all group">
+              <Mail className="text-gray-400 group-hover:text-red-500 transition-colors" size={22} />
               <div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Email</div>
-                <div className="text-sm font-semibold text-black truncate group-hover:text-red-600 transition-colors">Primary Channel</div>
+                <div className="hidden sm:block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Email</div>
+                <div className="text-sm font-semibold text-black truncate group-hover:text-red-600 transition-colors"><span className="sm:hidden">Email</span><span className="hidden sm:inline">Primary Channel</span></div>
               </div>
             </a>
             
-            <a href="https://www.linkedin.com/in/krishil-agrawal-49aaa9283" target="_blank" rel="noreferrer" className="flex flex-col gap-3 p-5 bg-white border border-gray-200 rounded-2xl hover:border-blue-500 hover:shadow-lg transition-all group">
-              <Globe className="text-gray-400 group-hover:text-blue-500 transition-colors" size={24} />
+            <a href="https://www.linkedin.com/in/krishil-agrawal-49aaa9283" target="_blank" rel="noreferrer" className="flex flex-col items-center sm:items-start text-center sm:text-left gap-2 sm:gap-3 p-3.5 sm:p-5 bg-white border border-gray-200 rounded-2xl hover:border-blue-500 hover:shadow-lg transition-all group">
+              <Globe className="text-gray-400 group-hover:text-blue-500 transition-colors" size={22} />
               <div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Network</div>
+                <div className="hidden sm:block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Network</div>
                 <div className="text-sm font-semibold text-black group-hover:text-blue-600 transition-colors">LinkedIn</div>
               </div>
             </a>
 
-            <a href="https://github.com/Krishilgithub" target="_blank" rel="noreferrer" className="flex flex-col gap-3 p-5 bg-white border border-gray-200 rounded-2xl hover:border-black hover:shadow-lg transition-all group">
-              <Code className="text-gray-400 group-hover:text-black transition-colors" size={24} />
+            <a href="https://github.com/Krishilgithub" target="_blank" rel="noreferrer" className="flex flex-col items-center sm:items-start text-center sm:text-left gap-2 sm:gap-3 p-3.5 sm:p-5 bg-white border border-gray-200 rounded-2xl hover:border-black hover:shadow-lg transition-all group">
+              <Code className="text-gray-400 group-hover:text-black transition-colors" size={22} />
               <div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Code</div>
-                <div className="text-sm font-semibold text-black group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                <div className="hidden sm:block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Code</div>
+                <div className="text-sm font-semibold text-black group-hover:translate-x-1 transition-transform flex items-center justify-center sm:justify-start gap-1">
                   GitHub <ArrowUpRight size={14} />
                 </div>
               </div>
@@ -144,12 +144,12 @@ export function Contact() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white p-6 md:p-10 rounded-3xl shadow-2xl border border-gray-100 relative z-10"
+            className="bg-white p-5 md:p-10 rounded-3xl shadow-xl md:shadow-2xl border border-gray-100 relative z-10"
           >
-            <h3 className="font-outfit text-2xl font-bold text-black mb-2">Send a Message</h3>
-            <p className="text-gray-500 text-sm mb-8">Have an idea or opportunity? Let&apos;s talk.</p>
+            <h3 className="font-outfit text-xl md:text-2xl font-bold text-black mb-1 md:mb-2">Send a Message</h3>
+            <p className="text-gray-500 text-sm mb-5 md:mb-8">Have an idea or opportunity? Let&apos;s talk.</p>
 
-            <form onSubmit={submitForm} className="flex flex-col gap-5">
+            <form onSubmit={submitForm} className="flex flex-col gap-4 md:gap-5">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Name</label>
                 <input 
@@ -197,7 +197,7 @@ export function Contact() {
                   name="message"
                   value={form.message}
                   onChange={handleChange}
-                  rows={4} 
+                  rows={3} 
                   placeholder="Hi Krishil, I saw your ML portfolio and wanted to reach out regarding..." 
                   required
                   className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all font-medium resize-none" 
@@ -209,7 +209,7 @@ export function Contact() {
                 whileTap={{ scale: formState === "loading" ? 1 : 0.98 }}
                 type="submit"
                 disabled={formState === "loading" || formState === "success"}
-                className="w-full mt-2 bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-lg disabled:opacity-70 disabled:cursor-not-allowed hover:bg-red-600 hover:shadow-red-600/20"
+                className="w-full mt-1 md:mt-2 bg-black text-white font-bold py-3.5 md:py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-lg disabled:opacity-70 disabled:cursor-not-allowed hover:bg-red-600 hover:shadow-red-600/20"
               >
                 <AnimatePresence mode="wait">
                   {formState === "idle" && (
@@ -246,7 +246,7 @@ export function Contact() {
             </form>
 
             {/* TRUST SIGNALS */}
-            <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col gap-3">
+            <div className="mt-6 md:mt-8 pt-5 md:pt-6 border-t border-gray-100 flex flex-col gap-2.5 md:gap-3">
               <div className="flex items-center gap-3 text-sm text-gray-500 font-medium">
                 <Clock size={16} className="text-green-500" />
                 Typically responds within 24 hours
@@ -264,7 +264,7 @@ export function Contact() {
 
       </div>
 
-      <div className="max-w-7xl mx-auto mt-24 border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center text-sm font-medium text-gray-400 gap-4 relative z-10">
+      <div className="max-w-7xl mx-auto mt-12 md:mt-24 border-t border-gray-200 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center text-xs md:text-sm font-medium text-gray-400 gap-2 md:gap-4 relative z-10">
         <p>© {new Date().getFullYear()} Krishil Agrawal. All rights reserved.</p>
         <div className="flex gap-6">
           <a href="tel:8320902499" className="hover:text-black transition-colors">

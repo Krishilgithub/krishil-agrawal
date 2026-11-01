@@ -92,7 +92,7 @@ export function TiltCard({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className={`group relative p-5 sm:p-7 md:p-10 rounded-[2.5rem] border overflow-hidden flex flex-col h-full transition-all duration-300 cursor-pointer ${t.card}`}
+        className={`group relative p-5 sm:p-7 md:p-10 rounded-[1.75rem] md:rounded-[2.5rem] border overflow-hidden flex flex-col h-full transition-all duration-300 cursor-pointer ${t.card}`}
       >
         {/* top accent bar on hover */}
         <div className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-red-500 via-red-400 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
@@ -100,60 +100,62 @@ export function TiltCard({
 
         <div className="relative z-10" style={{ transform: "translateZ(40px)" }}>
           {/* Top row */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div className="flex flex-row justify-between items-center mb-4 md:mb-8 gap-3">
             <div className="flex flex-wrap items-center gap-2">
-              <span className={`px-3 py-1.5 border rounded-full text-xs font-bold tracking-widest uppercase ${t.catCls[project.category] ?? ""}`}>
+              <span className={`px-2.5 py-1 md:px-3 md:py-1.5 border rounded-full text-[10px] md:text-xs font-bold tracking-widest uppercase ${t.catCls[project.category] ?? ""}`}>
                 {project.category}
               </span>
-              <span className={`px-3 py-1.5 border rounded-full text-xs font-mono tracking-widest uppercase ${t.tech}`}>
+              <span className={`px-2.5 py-1 md:px-3 md:py-1.5 border rounded-full text-[10px] md:text-xs font-mono tracking-widest uppercase ${t.tech}`}>
                 {project.shortTech.split(",")[0].trim()}
               </span>
             </div>
-            <div className="flex gap-2.5 shrink-0">
+            <div className="flex gap-2 md:gap-2.5 shrink-0">
               {project.links.github && project.links.github !== "#" && (
                 <button
                   onClick={(e) => { e.stopPropagation(); window.open(project.links.github, "_blank"); }}
-                  className={`p-2.5 rounded-full transition-all duration-300 ${t.btnGh}`}
+                  className={`p-2 md:p-2.5 rounded-full transition-all duration-300 ${t.btnGh}`}
+                  aria-label="GitHub repository"
                 >
-                  <Code size={17} />
+                  <Code size={15} />
                 </button>
               )}
               {project.links.demo && project.links.demo !== "#" && (
                 <button
                   onClick={(e) => { e.stopPropagation(); window.open(project.links.demo, "_blank"); }}
-                  className={`p-2.5 rounded-full transition-all duration-300 ${t.btnDm}`}
+                  className={`p-2 md:p-2.5 rounded-full transition-all duration-300 ${t.btnDm}`}
+                  aria-label="Live demo"
                 >
-                  <ExternalLink size={17} />
+                  <ExternalLink size={15} />
                 </button>
               )}
             </div>
           </div>
 
           {/* Type label */}
-          <p className={`text-xs font-bold uppercase tracking-[0.15em] mb-3 ${t.type}`} style={{ transform: "translateZ(30px)" }}>
+          <p className={`text-[10px] md:text-xs font-bold uppercase tracking-[0.15em] mb-1.5 md:mb-3 ${t.type}`} style={{ transform: "translateZ(30px)" }}>
             {project.type}
           </p>
 
           {/* Title */}
           <h3
-            className={`font-outfit text-2xl md:text-3xl font-bold mb-4 transition-colors ${t.title}`}
+            className={`font-outfit text-xl md:text-3xl font-bold mb-2 md:mb-4 transition-colors ${t.title}`}
             style={{ transform: "translateZ(60px)" }}
           >
             {project.title}
           </h3>
 
           {/* Description */}
-          <p className={`text-base leading-relaxed mb-auto pb-8 ${t.desc}`} style={{ transform: "translateZ(30px)" }}>
+          <p className={`text-sm md:text-base leading-relaxed mb-auto pb-5 md:pb-8 line-clamp-3 md:line-clamp-none ${t.desc}`} style={{ transform: "translateZ(30px)" }}>
             {project.shortDescription}
           </p>
 
           {/* Metric stripe */}
-          <div className={`border-t pt-5 mt-auto flex items-center justify-between ${t.divider}`} style={{ transform: "translateZ(20px)" }}>
-            <p className={`text-sm font-medium ${t.metric}`}>
+          <div className={`border-t pt-4 md:pt-5 mt-auto flex items-center justify-between gap-3 ${t.divider}`} style={{ transform: "translateZ(20px)" }}>
+            <p className={`text-xs md:text-sm font-medium line-clamp-1 md:line-clamp-none ${t.metric}`}>
               <span className="text-red-500 mr-2">✦</span>
               {project.shortMetrics}
             </p>
-            <span className={`text-xs font-semibold flex items-center gap-1 transition-colors ${t.arrow}`}>
+            <span className={`text-[11px] md:text-xs font-semibold flex items-center gap-1 whitespace-nowrap shrink-0 transition-colors ${t.arrow}`}>
               Case Study <ArrowUpRight size={12} />
             </span>
           </div>
@@ -171,17 +173,17 @@ export function Projects() {
   const teaserProjects = projectsData.slice(0, 3);
 
   return (
-    <section id="projects" className="py-16 md:py-32 px-4 sm:px-8 md:px-12 bg-[#fafafa]">
+    <section id="projects" className="py-12 md:py-32 px-4 sm:px-8 md:px-12 bg-[#fafafa]">
       <div className="max-w-7xl mx-auto">
 
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-16">
           <div>
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-5"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest mb-3 md:mb-5"
             >
               <Briefcase size={12} /> Projects
             </motion.div>
@@ -191,7 +193,7 @@ export function Projects() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.05 }}
-              className="font-outfit text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
+              className="font-outfit text-[1.75rem] sm:text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter text-black leading-[1.05]"
             >
               Projects<span className="text-red-500">.</span>
             </motion.h2>
@@ -201,7 +203,7 @@ export function Projects() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="mt-5 text-gray-500 text-lg max-w-xl leading-relaxed"
+              className="mt-3 md:mt-5 text-gray-500 text-[15px] md:text-lg max-w-xl leading-relaxed"
             >
               Production AI systems &amp; research. Click any project to explore
               full architectural case studies.
@@ -229,13 +231,11 @@ export function Projects() {
         </div>
 
         {/* 3-card DARK grid on light bg */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 w-full mb-14">
+        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 md:gap-10 mb-8 md:mb-14 -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto sm:overflow-visible snap-x snap-mandatory scroll-px-4 pb-2 sm:pb-0">
           {teaserProjects.map((project) => (
-            <TiltCard
-              key={project.id}
-              project={project}
-              dark={false}
-            />
+            <div key={project.id} className="w-[84%] shrink-0 snap-start sm:w-auto">
+              <TiltCard project={project} dark={false} />
+            </div>
           ))}
         </div>
 
@@ -244,11 +244,11 @@ export function Projects() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4"
         >
           <Link
             href="/projects"
-            className="group inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-red-600 transition-colors duration-200"
+            className="group inline-flex items-center gap-2.5 px-6 py-3 md:px-8 md:py-4 rounded-full bg-black text-white text-sm font-bold hover:bg-red-600 transition-colors duration-200"
           >
             Explore all {projectsData.length} projects
             <ArrowUpRight

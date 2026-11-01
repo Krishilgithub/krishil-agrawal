@@ -35,3 +35,15 @@ body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* ── Mobile ergonomics ─────────────────────────────────────────── */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (max-width: 767px) {
+  /* Remove the grey flash on tap and keep anchored sections clear of the top edge */
+  a, button { -webkit-tap-highlight-color: transparent; }
+  section[id] { scroll-margin-top: 12px; }
+}

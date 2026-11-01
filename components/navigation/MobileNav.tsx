@@ -1,100 +1,130 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { Briefcase, User, Wrench, Mail, BookOpen, Clock, Menu, X } from "lucide-react";
+import { motion } from "framer-motion";
+import { Briefcase, User, Wrench, Mail, BookOpen, Clock } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { name: "About",      icon: User,      anchor: "about" },
-  { name: "Experience", icon: Clock,     anchor: "experience" },
-  { name: "Projects",   icon: Briefcase, route: "/projects", anchor: "projects" },
-  { name: "Blogs",      icon: BookOpen,  route: "/blogs",    anchor: "blogs" },
-  { name: "Skills",     icon: Wrench,    anchor: "skills" },
-  { name: "Contact",    icon: Mail,      anchor: "contact" },
+  { name: "About",    icon: User,      anchor: "about" },
+  { name: "Journey",  icon: Clock,     anchor: "experience" },
+  { name: "Projects", icon: Briefcase, route: "/projects", anchor: "projects" },
+  { name: "Blogs",    icon: BookOpen,  route: "/blogs",    anchor: "blogs" },
+  { name: "Skills",   icon: Wrench,    anchor: "skills" },
+  { name: "Contact",  icon: Mail,      anchor: "contact" },
 ];
 
+/**
+ * Mobile bottom tab bar.
+ * - On the home page, Projects/Blogs scroll to their section; elsewhere they route.
+ * - Hidden on article / case-study pages, which have their own back button and
+ *   floating section indicator at the bottom of the screen.
+ */
 export function MobileNav() {
-  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const isDetailPage = /^\/(projects|blogs)\/[^/]+/.test(pathname);
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-  }, [isOpen]);
+    if (!isHome) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const index = navItems.findIndex((item) => item.anchor === entry.target.id);
+          if (index !== -1) setActiveIndex(index);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+
+    const hero = document.querySelector("#hero");
+    const heroObserver = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setActiveIndex(-1); },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    if (hero) heroObserver.observe(hero);
+
+    navItems.forEach((item) => {
+      const el = document.querySelector(`#${item.anchor}`);
+      if (el) observer.observe(el);
+    });
+
+    return () => { observer.disconnect(); heroObserver.disconnect(); };
+  }, [isHome]);
+
+  if (isDetailPage) return null;
 
   const resolveHref = (item: typeof navItems[number]) => {
+    if (isHome) return `#${item.anchor}`;
     if (item.route) return item.route;
-    return isHome ? `#${item.anchor}` : `/#${item.anchor}`;
+    return `/#${item.anchor}`;
   };
 
   const handleClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     item: typeof navItems[number]
   ) => {
-    setIsOpen(false);
-    if (item.route) return; // Next.js handles routing
-    if (!isHome) return;    // allow full navigation to /#anchor
+    if (!isHome) return; // let Next.js navigate
     e.preventDefault();
-    const el = document.querySelector(`#${item.anchor}`);
-    if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 300);
+    document.querySelector(`#${item.anchor}`)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
-      {/* Floating Bottom Pill */}
-      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[60]">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 bg-black/50 backdrop-blur-xl text-white px-6 py-3.5 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] font-medium border border-white/20 active:scale-95 transition-all"
-        >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-          {isOpen ? "Close" : "Menu"}
-        </button>
-      </div>
+      {/* Spacer so the fixed bar never covers the end of the page (body is flex-col) */}
+      <div aria-hidden className="md:hidden order-last shrink-0 h-[calc(76px+env(safe-area-inset-bottom))]" />
 
-      {/* Full Screen Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: "100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[50] bg-white/95 backdrop-blur-2xl flex flex-col justify-center items-center md:hidden pb-20"
-          >
-            <div className="flex flex-col gap-6 w-full max-w-[280px]">
-              {navItems.map((item, index) => {
-                const Icon = item.icon;
-                const isActive = isHome 
-                  ? false 
-                  : Boolean(item.route && pathname.startsWith(item.route));
+      <motion.nav
+        aria-label="Primary"
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", damping: 24, stiffness: 220, delay: 0.3 }}
+        className="md:hidden fixed inset-x-3 z-[60] bottom-[calc(10px+env(safe-area-inset-bottom))]"
+      >
+        <ul className="grid grid-cols-6 rounded-2xl bg-white/85 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_rgba(0,0,0,0.12)] px-1 py-1">
+          {navItems.map((item, index) => {
+            const Icon = item.icon;
+            const isActive = isHome
+              ? activeIndex === index
+              : Boolean(item.route && pathname.startsWith(item.route));
 
-                return (
-                  <motion.div
-                    key={item.name}
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + index * 0.1 }}
+            return (
+              <li key={item.name}>
+                <Link
+                  href={resolveHref(item)}
+                  onClick={(e) => handleClick(e, item)}
+                  aria-current={isActive ? "page" : undefined}
+                  className="relative flex flex-col items-center justify-center gap-0.5 h-[52px] rounded-xl active:scale-95 transition-transform"
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="mobile-nav-active"
+                      className="absolute inset-0 rounded-xl bg-red-50"
+                      transition={{ type: "spring", damping: 26, stiffness: 300 }}
+                    />
+                  )}
+                  <Icon
+                    size={18}
+                    strokeWidth={isActive ? 2.4 : 2}
+                    className={`relative ${isActive ? "text-red-500" : "text-gray-500"}`}
+                  />
+                  <span
+                    className={`relative text-[10px] leading-none font-semibold tracking-tight ${
+                      isActive ? "text-red-600" : "text-gray-500"
+                    }`}
                   >
-                    <Link
-                      href={resolveHref(item)}
-                      onClick={(e) => handleClick(e, item)}
-                      className={`flex items-center gap-6 text-2xl font-outfit font-bold transition-colors ${isActive ? "text-red-500" : "text-gray-800 hover:text-red-500"}`}
-                    >
-                      <span className={`p-4 rounded-full border ${isActive ? "bg-red-50 border-red-100" : "bg-gray-50 border-gray-100"}`}>
-                        <Icon size={24} className={isActive ? "text-red-500" : "text-gray-600"} />
-                      </span>
-                      {item.name}
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                    {item.name}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </motion.nav>
     </>
   );
 }
